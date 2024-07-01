@@ -35,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import core.presentation.components.MyOutlinedTextField
+import core.presentation.components.ProgressDialog
 import features.profile.presentation.screens.AuthViewModel
 import ndula.composeapp.generated.resources.Res
 import ndula.composeapp.generated.resources.dont_have_account
@@ -58,14 +59,19 @@ fun LoginScreen(
         mutableStateOf(true)
     }
 
+    // Loading dialog
+    if (uiState.isLoading){
+        ProgressDialog(
+            text = "Please wait",
+        )
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.Center
     ){
-
-
         Text(
             stringResource(Res.string.login_title),
             style = MaterialTheme.typography.h4.copy(
@@ -108,6 +114,7 @@ fun LoginScreen(
                     stringResource(Res.string.password)
                 )
             },
+            obscureText = obscurePassword,
             trailingIcon = {
                 IconButton(
                     onClick = {obscurePassword = !obscurePassword}
@@ -146,7 +153,7 @@ fun LoginScreen(
                 stringResource(Res.string.dont_have_account),
                 style = MaterialTheme.typography.body1
             )
-            Spacer(modifier = Modifier.width(10.dp))
+            Spacer(modifier = Modifier.width(5.dp))
             TextButton(
                 onClick = onNavigateToSignUp
             ){

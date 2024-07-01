@@ -1,6 +1,7 @@
 package features.profile.presentation.screens
 
 import androidx.lifecycle.ViewModel
+import core.domain.InputValidation
 import features.profile.presentation.screens.login_screen.LoginScreenEvent
 import features.profile.presentation.screens.login_screen.LoginScreenState
 import features.profile.presentation.screens.signup_screen.SignUpScreenEvent
@@ -9,7 +10,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class AuthViewModel: ViewModel() {
+class AuthViewModel(
+    private val inputValidation: InputValidation
+): ViewModel() {
 
     private val _loginScreenState = MutableStateFlow(LoginScreenState())
     val loginScreenState: StateFlow<LoginScreenState> = _loginScreenState.asStateFlow()

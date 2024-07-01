@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import core.presentation.NdulaTheme
+import core.presentation.utils.getKoinViewModel
 import features.profile.presentation.navigation.authNavGraph
 import features.profile.presentation.screens.AuthViewModel
 import features.profile.presentation.utils.AUTH_GRAPH_ROUTE
@@ -27,7 +28,7 @@ fun App(
             color = MaterialTheme.colors.background,
             modifier = Modifier.fillMaxSize()
         ){
-            val authViewModel = AuthViewModel()
+            val authViewModel = getKoinViewModel<AuthViewModel>()
 
             val navController = rememberNavController()
 
