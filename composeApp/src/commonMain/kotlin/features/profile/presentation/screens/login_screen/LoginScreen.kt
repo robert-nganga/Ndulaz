@@ -95,8 +95,17 @@ fun LoginScreen(
                 Text(
                     stringResource(Res.string.email)
                 )
-            }
+            },
+            isError = uiState.emailError != null
         )
+        if (uiState.emailError != null){
+            Text(
+                uiState.emailError!!,
+                style = TextStyle(
+                    color = MaterialTheme.colors.error
+                )
+            )
+        }
         Spacer(modifier = Modifier.height(16.dp))
         MyOutlinedTextField(
             value = uiState.password,
@@ -124,13 +133,22 @@ fun LoginScreen(
                         "Password icon"
                     )
                 }
-            }
+            },
+            isError = uiState.passwordError != null
         )
+        if (uiState.passwordError != null){
+            Text(
+                uiState.passwordError!!,
+                style = TextStyle(
+                    color = MaterialTheme.colors.error
+                )
+            )
+        }
         Spacer(modifier = Modifier.height(32.dp))
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-
+                  authViewModel.onLoginScreenEvent(LoginScreenEvent.OnLoginClicked)
             },
             shape = RoundedCornerShape(18.dp)
         ){

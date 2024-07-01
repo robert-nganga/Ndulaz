@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import core.presentation.components.MyOutlinedTextField
+import core.presentation.components.ProgressDialog
 import features.profile.presentation.screens.AuthViewModel
 import features.profile.presentation.screens.login_screen.LoginScreenEvent
 import ndula.composeapp.generated.resources.Res
@@ -45,6 +46,7 @@ import ndula.composeapp.generated.resources.login
 import ndula.composeapp.generated.resources.login_title
 import ndula.composeapp.generated.resources.password
 import ndula.composeapp.generated.resources.sign_up
+import ndula.composeapp.generated.resources.sign_up_title
 import org.jetbrains.compose.resources.stringResource
 
 
@@ -60,6 +62,12 @@ fun SignUpScreen(
         mutableStateOf(true)
     }
 
+    if (uiState.isLoading){
+        ProgressDialog(
+            text = "Please wait"
+        )
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -67,7 +75,7 @@ fun SignUpScreen(
         verticalArrangement = Arrangement.Center
     ){
         Text(
-            stringResource(Res.string.login_title),
+            stringResource(Res.string.sign_up_title),
             style = MaterialTheme.typography.h4.copy(
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.1.sp
@@ -89,8 +97,15 @@ fun SignUpScreen(
                 Text(
                     stringResource(Res.string.full_name)
                 )
-            }
+            },
+            isError = uiState.nameError != null
         )
+        uiState.nameError?.let {
+            Text(
+                text = it,
+                color = MaterialTheme.colors.error
+            )
+        }
         Spacer(modifier = Modifier.height(16.dp))
         MyOutlinedTextField(
             value = uiState.email,
@@ -107,8 +122,15 @@ fun SignUpScreen(
                 Text(
                     stringResource(Res.string.email)
                 )
-            }
+            },
+            isError = uiState.emailError != null
         )
+        uiState.emailError?.let {
+            Text(
+                text = it,
+                color = MaterialTheme.colors.error
+            )
+        }
         Spacer(modifier = Modifier.height(16.dp))
         MyOutlinedTextField(
             value = uiState.password,
@@ -136,13 +158,21 @@ fun SignUpScreen(
                         "Password icon"
                     )
                 }
-            }
+            },
+            isError = uiState.passwordError != null
         )
+        uiState.passwordError?.let {
+            Text(
+                text = it,
+                color = MaterialTheme.colors.error
+            )
+        }
         Spacer(modifier = Modifier.height(32.dp))
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-
+                  authViewModel.onSignUpScreenEvent(SignUpScreenEvent.OnSignUpClicked)
+                println("Button clicked")
             },
             shape = RoundedCornerShape(18.dp)
         ){
