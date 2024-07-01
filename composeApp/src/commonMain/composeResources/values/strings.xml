@@ -1,0 +1,11 @@
+<resources>
+    <string name="login_title">Login to your account</string>
+    <string name="login">Login</string>
+    <string name="sign_up">Sign up</string>
+    <string name="sign_up_title">Create a new account"</string>
+    <string name="already_have_account">Already have an account?</string>
+    <string name="dont_have_account">Don't have an account</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="full_name">Full names</string>
+</resources>

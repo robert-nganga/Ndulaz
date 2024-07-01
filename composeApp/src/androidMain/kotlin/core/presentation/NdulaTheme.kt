@@ -10,6 +10,7 @@ import androidx.core.view.WindowCompat
 import core.presentation.ui.buildMaterialTheme
 import core.presentation.ui.darkColorScheme
 import core.presentation.ui.lightColorScheme
+import core.presentation.ui.typography
 
 @Composable
 actual fun NdulaTheme(
@@ -45,5 +46,6 @@ actual fun NdulaTheme(
     MaterialTheme(
         colors = colorScheme,
         content = content,
+        typography = typography
     )
 }
