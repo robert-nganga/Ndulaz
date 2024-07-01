@@ -9,6 +9,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import core.presentation.NdulaTheme
 import features.profile.presentation.navigation.authNavGraph
+import features.profile.presentation.screens.AuthViewModel
 import features.profile.presentation.utils.AUTH_GRAPH_ROUTE
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -26,6 +27,7 @@ fun App(
             color = MaterialTheme.colors.background,
             modifier = Modifier.fillMaxSize()
         ){
+            val authViewModel = AuthViewModel()
 
             val navController = rememberNavController()
 
@@ -33,7 +35,7 @@ fun App(
                 navController = navController,
                 startDestination = AUTH_GRAPH_ROUTE
             ){
-                authNavGraph(navController)
+                authNavGraph(navController, authViewModel)
             }
 
         }
