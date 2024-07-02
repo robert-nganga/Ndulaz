@@ -6,7 +6,7 @@ import org.koin.core.context.unloadKoinModules
 actual class KoinInitializer {
     actual fun init(){
         startKoin {
-            modules(appModule, viewModelModule)
+            modules(appModule, viewModelModule, dataStoreModule)
         }
     }
 }

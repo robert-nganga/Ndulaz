@@ -171,8 +171,7 @@ fun SignUpScreen(
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-                  authViewModel.onSignUpScreenEvent(SignUpScreenEvent.OnSignUpClicked)
-                println("Button clicked")
+                authViewModel.onSignUpScreenEvent(SignUpScreenEvent.OnSignUpClicked)
             },
             shape = RoundedCornerShape(18.dp)
         ){
