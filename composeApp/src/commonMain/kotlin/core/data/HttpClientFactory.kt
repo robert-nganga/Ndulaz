@@ -28,6 +28,9 @@ object HttpClientFactory {
                             BearerTokens(user.token, "")
                         } ?: BearerTokens("", "")
                     }
+                    sendWithoutRequest {
+                        true
+                    }
                 }
             }
         }

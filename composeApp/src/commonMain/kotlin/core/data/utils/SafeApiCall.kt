@@ -1,31 +1,10 @@
 package core.data.utils
 
 
-import core.domain.exceptions.NetworkError
-import core.domain.exceptions.ServerError
-import io.ktor.client.call.*
-import io.ktor.client.network.sockets.*
-import io.ktor.client.plugins.*
+import io.ktor.client.call.NoTransformationFoundException
+import io.ktor.client.network.sockets.ConnectTimeoutException
+import io.ktor.client.plugins.ServerResponseException
 
-@Deprecated("Use dataResultSafeApiCall")
-suspend fun <T> safeApiCall(block: suspend () -> T): T {
-    try {
-        return block()
-    } catch (e: Exception) {
-        //Timber.e(e)
-        when (e) {
-            is ServerResponseException, is NoTransformationFoundException -> {
-                throw ServerError(e)
-            }
-
-            is ConnectTimeoutException -> {
-                throw NetworkError()
-            }
-
-            else -> throw e
-        }
-    }
-}
 
 suspend fun <T : Any> dataResultSafeApiCall(
     apiCall: suspend () -> T
