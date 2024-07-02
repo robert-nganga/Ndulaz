@@ -6,9 +6,10 @@ import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.flow.firstOrNull
 
 object HttpClientFactory {
-    fun createHttpClient(authToken: String?): HttpClient {
+    fun createHttpClient(tokenProvider: TokenProvider): HttpClient {
         return HttpClient {
             install(ContentNegotiation){
                 json()
@@ -16,7 +17,12 @@ object HttpClientFactory {
             install(Auth){
                 bearer {
                     loadTokens {
-                        BearerTokens("", "")
+                        val accessToken = tokenProvider.fetch().firstOrNull()
+                        BearerTokens(accessToken ?: "", "")
+                    }
+                    refreshTokens {
+                        val refreshToken = tokenProvider.fetch().firstOrNull()
+                        BearerTokens(refreshToken ?: "", "")
                     }
                 }
             }
