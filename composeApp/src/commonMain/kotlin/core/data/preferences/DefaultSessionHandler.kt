@@ -21,7 +21,7 @@ class DefaultSessionHandler(
     private val json: Json = Json { ignoreUnknownKeys = true }
 ) : SessionHandler {
 
-    override suspend fun getUser(): Flow<User?> = dataStore.data
+    override fun getUser(): Flow<User?> = dataStore.data
         .catch {
             emit(emptyPreferences())
         }.map { preferences ->
