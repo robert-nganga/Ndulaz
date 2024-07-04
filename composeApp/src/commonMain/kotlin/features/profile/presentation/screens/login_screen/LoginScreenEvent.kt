@@ -4,4 +4,5 @@ sealed interface LoginScreenEvent {
     data class OnEmailChanged(val email: String): LoginScreenEvent
     data class OnPasswordChange(val password: String): LoginScreenEvent
     data object OnLoginClicked: LoginScreenEvent
+    data object DismissError: LoginScreenEvent
 }

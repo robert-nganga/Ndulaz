@@ -33,7 +33,7 @@ class AuthRepositoryImpl(
 
     override suspend fun signUp(signUpRequest: SignUpRequest): DataResult<User> {
         return dataResultSafeApiCall {
-            val response = httpClient.post("$BASE_URL/auth/signup") {
+            val response = httpClient.post("$BASE_URL/auth/register") {
                 contentType(ContentType.Application.Json)
                 setBody(signUpRequest)
             }

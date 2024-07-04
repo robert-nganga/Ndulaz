@@ -4,7 +4,7 @@ data class SignUpScreenState(
     val name: String = "",
     val email: String = "",
     val password: String = "",
-    val signUpError: String = "",
+    val signUpError: String? = null,
     val emailError: String? = null,
     val passwordError: String? = null,
     val nameError: String? = null,

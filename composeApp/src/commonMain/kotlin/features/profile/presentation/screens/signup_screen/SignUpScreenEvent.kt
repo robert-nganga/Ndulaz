@@ -6,4 +6,6 @@ sealed interface SignUpScreenEvent {
     data class OnPasswordChanged(val password: String) : SignUpScreenEvent
     data object OnSignUpClicked : SignUpScreenEvent
 
+    data object DismissError: SignUpScreenEvent
+
 }

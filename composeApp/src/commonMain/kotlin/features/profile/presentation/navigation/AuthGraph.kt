@@ -10,6 +10,7 @@ import features.profile.presentation.screens.signup_screen.SignUpScreen
 import features.profile.presentation.utils.AUTH_GRAPH_ROUTE
 import features.profile.presentation.utils.LOGIN_SCREEN
 import features.profile.presentation.utils.SIGNUP_SCREEN
+import features.shop.presentation.utils.SHOP_GRAPH_ROUTE
 
 
 fun NavGraphBuilder.authNavGraph(navController: NavController, authViewModel: AuthViewModel){
@@ -22,6 +23,13 @@ fun NavGraphBuilder.authNavGraph(navController: NavController, authViewModel: Au
                 authViewModel = authViewModel,
                 onNavigateToSignUp = {
                     navController.navigate(SIGNUP_SCREEN)
+                },
+                onNavigateToHome = {
+                    navController.navigate(SHOP_GRAPH_ROUTE){
+                        popUpTo(AUTH_GRAPH_ROUTE){
+                            inclusive = true
+                        }
+                    }
                 }
             )
         }
@@ -31,6 +39,13 @@ fun NavGraphBuilder.authNavGraph(navController: NavController, authViewModel: Au
                 authViewModel = authViewModel,
                 onNavigateToLogin = {
                     navController.navigate(LOGIN_SCREEN)
+                },
+                onNavigateToHome = {
+                    navController.navigate(SHOP_GRAPH_ROUTE){
+                        popUpTo(AUTH_GRAPH_ROUTE){
+                            inclusive = true
+                        }
+                    }
                 }
             )
         }
