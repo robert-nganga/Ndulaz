@@ -11,5 +11,6 @@ data class HomeScreenState(
 sealed interface HomeScreenShoesState{
     data class Success(val shoes: List<Shoe>) : HomeScreenShoesState
     data class Error(val errorMessage: String) : HomeScreenShoesState
+    data object Idle : HomeScreenShoesState
     data object Loading : HomeScreenShoesState
 }

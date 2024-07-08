@@ -21,6 +21,11 @@ class HomeScreenViewModel(
     val homeScreenState = _homeScreenState.asStateFlow()
 
 
+    init {
+        getShoes()
+        getCategories()
+        selectedCategory("All")
+    }
 
     fun getShoes() = viewModelScope.launch {
         _homeScreenState.update {
@@ -52,6 +57,31 @@ class HomeScreenViewModel(
 
         }
 
+    }
+
+    fun selectedCategory(category: String) {
+        _homeScreenState.update {
+            it.copy(
+                selectedCategory = category
+            )
+        }
+    }
+
+    fun getCategories() = viewModelScope.launch {
+        val response = repository.getCategories()
+        when(response){
+            is DataResult.Empty -> {}
+            is DataResult.Loading -> {}
+            is DataResult.Error -> {}
+            is DataResult.Success -> {
+                val categories = response.data.map { it.name } + "All"
+                _homeScreenState.update {
+                    it.copy(
+                        categories = categories
+                    )
+                }
+            }
+        }
     }
 
     fun logout() = viewModelScope.launch {

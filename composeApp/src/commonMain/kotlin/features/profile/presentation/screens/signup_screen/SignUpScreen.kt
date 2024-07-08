@@ -79,6 +79,7 @@ fun SignUpScreen(
 
     LaunchedEffect(uiState.isSignUpSuccessful){
         if (uiState.isSignUpSuccessful){
+            authViewModel.resetSignUpState()
             onNavigateToHome()
         }
     }

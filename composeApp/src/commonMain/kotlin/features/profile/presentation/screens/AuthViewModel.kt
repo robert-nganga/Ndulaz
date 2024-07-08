@@ -2,6 +2,7 @@ package features.profile.presentation.screens
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import core.data.preferences.SessionHandler
 import core.data.utils.DataResult
 import core.domain.InputValidation
 import domain.requests.SignInRequest
@@ -12,19 +13,45 @@ import features.profile.presentation.screens.login_screen.LoginScreenEvent
 import features.profile.presentation.screens.login_screen.LoginScreenState
 import features.profile.presentation.screens.signup_screen.SignUpScreenEvent
 import features.profile.presentation.screens.signup_screen.SignUpScreenState
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
+
+
+enum class AuthStatus{
+    LoggedIn,
+    Loading,
+    LoggedOut
+}
 
 class AuthViewModel(
     private val inputValidation: InputValidation,
     private val authRepository: AuthRepository,
+    private val sessionHandler: SessionHandler
 ): ViewModel() {
+
+    val isLoggedIn = sessionHandler
+        .getUser()
+        .map { user->
+            if (user != null){
+                println("flow logged in")
+                AuthStatus.LoggedIn
+            } else{
+                println("flow logged out")
+                AuthStatus.LoggedOut
+            }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            initialValue = AuthStatus.Loading,
+            started = SharingStarted.WhileSubscribed()
+        )
 
 
     private val _loginScreenState = MutableStateFlow(LoginScreenState())
@@ -69,11 +96,24 @@ class AuthViewModel(
                 if (isLoginFormValid()) {
                     login()
                 }
-
             }
             is LoginScreenEvent.DismissError -> {
                 _loginScreenState.value = _loginScreenState.value.copy(authError = null)
             }
+        }
+    }
+
+    fun resetLoginState() = viewModelScope.launch {
+        delay(300)
+        _loginScreenState.update {
+            LoginScreenState()
+        }
+    }
+
+    fun resetSignUpState() = viewModelScope.launch {
+        delay(300)
+        _signUpScreenState.update {
+            SignUpScreenState()
         }
     }
 

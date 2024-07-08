@@ -77,6 +77,7 @@ fun LoginScreen(
 
     LaunchedEffect(uiState.isLoginSuccessful){
         if (uiState.isLoginSuccessful){
+            authViewModel.resetLoginState()
             onNavigateToHome()
         }
     }
