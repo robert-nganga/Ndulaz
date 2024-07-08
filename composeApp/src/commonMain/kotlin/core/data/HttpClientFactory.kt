@@ -17,20 +17,13 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.serialization.json.Json
 
 object HttpClientFactory {
     fun createHttpClient(sessionHandler: SessionHandler): HttpClient {
         return HttpClient {
             expectSuccess = true
             install(ContentNegotiation){
-                json(
-                    Json {
-                    ignoreUnknownKeys = true
-                    isLenient = true
-                    encodeDefaults = true
-                }
-                )
+                json()
             }
             install(Auth){
                 bearer {

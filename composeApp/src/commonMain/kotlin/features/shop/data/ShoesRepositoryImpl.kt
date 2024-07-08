@@ -23,8 +23,11 @@ class ShoesRepositoryImpl(
         val shoeResponse = response.body<ShoeResponse>()
         shoeResponse.shoes
     }
-    override suspend fun getCategories(): DataResult<List<Category>> {
-        TODO("Not yet implemented")
+    override suspend fun getCategories(): DataResult<List<Category>> = dataResultSafeApiCall {
+        val response = httpClient.get("$BASE_URL/categories/all"){
+        }
+        val categoryResponse = response.body<List<Category>>()
+        categoryResponse
     }
 
     override suspend fun getShoeById(id: Int): DataResult<Shoe> {

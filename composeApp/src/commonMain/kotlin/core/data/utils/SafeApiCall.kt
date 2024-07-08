@@ -13,9 +13,8 @@ suspend fun <T : Any> dataResultSafeApiCall(
     apiCall: suspend () -> T
 ): DataResult<T> = try {
     DataResult.Success(apiCall.invoke())
-} catch (exception: Exception) {
-    println("API error ${exception.message}")
-   //exception.printStackTrace()
+} catch (exception: Exception) { println("API error ${exception.message}")
+   exception.printStackTrace()
     //Timber.e(throwable)
     when (exception) {
         is ServerResponseException, is NoTransformationFoundException -> {

@@ -1,5 +1,8 @@
 package features.shop.domain.models
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Category(
     val description: String,
     val id: Int,
