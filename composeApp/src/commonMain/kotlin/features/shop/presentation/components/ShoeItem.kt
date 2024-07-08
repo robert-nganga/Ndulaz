@@ -9,12 +9,17 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.StarHalf
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,8 +65,8 @@ fun ShoeItem(
                 },
                 modifier = Modifier
                     .clip(RoundedCornerShape(16.dp))
-                    .height(160.dp)
-                    .background(color = Color.Gray.copy(alpha = 0.8f))
+                    .height(140.dp)
+                    .background(color = Color.Gray.copy(alpha = 0.4f))
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
@@ -96,7 +101,7 @@ fun ShoeItem(
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(6.dp))
-                        .background(color = Color.Black.copy(alpha = 0.15f))
+                        .background(color = MaterialTheme.colors.primary.copy(alpha = 0.15f))
                         .padding(8.dp)
                 ){
                     val stock = shoe.sizes.sumOf { it.quantity }
@@ -104,7 +109,6 @@ fun ShoeItem(
                         "$stock in stock",
                         style = TextStyle(
                             fontSize = 10.sp,
-                            color = Color.Black,
                             letterSpacing = 0.2.sp
                         )
                     )
@@ -119,5 +123,38 @@ fun ShoeItem(
                 )
             )
         }
+        WishListIcon(
+            isSelected = false,
+            modifier = Modifier
+                .align(Alignment.TopEnd),
+            onClick = {}
+        )
     }
+}
+
+@Composable
+fun WishListIcon(
+    isSelected: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+){
+    Box(
+        modifier = modifier
+            .padding(16.dp)
+            .clip(CircleShape)
+            .background(color = Color.Black.copy(alpha = 0.2f))
+            .clickable {
+                onClick()
+            }
+
+    ){
+        Icon(
+            if (isSelected) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+            contentDescription = "",
+            modifier = modifier
+                .padding(6.dp)
+                .size(25.dp)
+        )
+    }
+
 }

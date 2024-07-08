@@ -74,10 +74,11 @@ class HomeScreenViewModel(
             is DataResult.Loading -> {}
             is DataResult.Error -> {}
             is DataResult.Success -> {
-                val categories = response.data.map { it.name } + "All"
+                val categories = response.data.map { it.name }.toMutableList()
+                categories.add(0, "All")
                 _homeScreenState.update {
                     it.copy(
-                        categories = categories
+                        categories = categories.toList()
                     )
                 }
             }
