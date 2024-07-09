@@ -15,7 +15,7 @@ val appModule = module {
 
     single { InputValidation() }
     single { DefaultSessionHandler(dataStore = get()) }.bind<SessionHandler>()
-    single { HttpClientFactory.createHttpClient(sessionHandler = get()) }
+    single { HttpClientFactory.createHttpClient(sessionHandler = get(), engine = get()) }
     single { AuthRepositoryImpl(httpClient = get(), sessionHandler = get()) }.bind<AuthRepository>()
     single { ShoesRepositoryImpl(httpClient = get()) }.bind<ShoesRepository>()
 

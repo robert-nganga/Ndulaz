@@ -32,6 +32,9 @@ kotlin {
     }
     
     sourceSets {
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+        }
         
         androidMain.dependencies {
             implementation(compose.preview)
@@ -65,6 +68,7 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.androidx.datastore.preferences.core)
             implementation(libs.androidx.datastore.preferences)
+            implementation(libs.ktor.client.logging)
         }
     }
 }

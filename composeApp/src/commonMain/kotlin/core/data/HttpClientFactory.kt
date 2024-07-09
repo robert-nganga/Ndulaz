@@ -7,23 +7,35 @@ import core.domain.exceptions.ForbiddenException
 import core.domain.exceptions.UnauthorizedException
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
+import io.ktor.util.logging.Logger
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.serialization.json.Json
 
 object HttpClientFactory {
-    fun createHttpClient(sessionHandler: SessionHandler): HttpClient {
-        return HttpClient {
+    fun createHttpClient(sessionHandler: SessionHandler, engine: HttpClientEngine): HttpClient {
+        return HttpClient(engine) {
             expectSuccess = true
             install(ContentNegotiation){
-                json()
+                json(
+                    Json {
+                        ignoreUnknownKeys = true
+                    }
+                )
+            }
+            install(Logging){
+                level = LogLevel.ALL
             }
             install(Auth){
                 bearer {
@@ -38,7 +50,8 @@ object HttpClientFactory {
                         } ?: BearerTokens("", "")
                     }
                     sendWithoutRequest {
-                        true
+                        !it.url.pathSegments.contains("auth")
+                        //true
                     }
                 }
             }
