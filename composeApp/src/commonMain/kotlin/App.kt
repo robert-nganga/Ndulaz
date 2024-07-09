@@ -19,6 +19,7 @@ import features.profile.presentation.screens.AuthViewModel
 import features.profile.presentation.utils.AUTH_GRAPH_ROUTE
 import features.shop.presentation.navigation.shopNavGraph
 import features.shop.presentation.screens.home_screen.HomeScreenViewModel
+import features.shop.presentation.screens.product_details_screen.ProductDetailsViewModel
 import features.shop.presentation.utils.SHOP_GRAPH_ROUTE
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinContext
@@ -40,6 +41,7 @@ fun App(
             ){
                 val authViewModel = getKoinViewModel<AuthViewModel>()
                 val homeScreenViewModel = getKoinViewModel<HomeScreenViewModel>()
+                val productDetailsViewModel = getKoinViewModel<ProductDetailsViewModel>()
                 val navController = rememberNavController()
 
                 val authStatus by authViewModel.isLoggedIn.collectAsState()
@@ -80,7 +82,7 @@ fun App(
                             startDestination = if (authStatus == AuthStatus.LoggedIn) SHOP_GRAPH_ROUTE else AUTH_GRAPH_ROUTE
                         ){
                             authNavGraph(navController, authViewModel)
-                            shopNavGraph(navController, homeScreenViewModel)
+                            shopNavGraph(navController, productDetailsViewModel)
                         }
 
                     }

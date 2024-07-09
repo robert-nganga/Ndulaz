@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import features.shop.domain.models.Shoe
 import features.shop.presentation.components.CategoryItem
 import ndula.composeapp.generated.resources.Res
 import ndula.composeapp.generated.resources.banner1
@@ -47,7 +48,10 @@ import presentation.components.ShoeList
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HomeScreen(viewModel: HomeScreenViewModel) {
+fun HomeScreen(
+    viewModel: HomeScreenViewModel,
+    onProductClick: (Shoe) -> Unit,
+) {
 
     val uiState by viewModel.homeScreenState.collectAsState()
 
@@ -108,7 +112,9 @@ fun HomeScreen(viewModel: HomeScreenViewModel) {
                 val shoes = (uiState.shoesState as HomeScreenShoesState.Success).shoes
                 ShoeList(
                     shoes = shoes,
-                    onClick = {}
+                    onClick = {
+                        onProductClick(it)
+                    }
                 )
             }
 
