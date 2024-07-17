@@ -6,6 +6,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -15,11 +17,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.StarHalf
 import androidx.compose.material.icons.automirrored.outlined.ArrowBackIos
@@ -39,24 +45,25 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import features.shop.domain.models.Shoe
 import features.shop.domain.models.Size
+import features.shop.presentation.components.ExpandableText
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import ndula.composeapp.generated.resources.Res
+import ndula.composeapp.generated.resources.add_to_cart
 import ndula.composeapp.generated.resources.description
+import ndula.composeapp.generated.resources.quantity
 import ndula.composeapp.generated.resources.size
+import ndula.composeapp.generated.resources.total_price
 import org.jetbrains.compose.resources.stringResource
 
 
 @Composable
 fun ProductDetailsScreen(
-    viewModel: ProductDetailsViewModel
+    viewModel: ProductDetailsViewModel,
+    onNavigateBack: () -> Unit
 ){
 
     val uiState by viewModel.productDetailsState.collectAsState()
-
-    var selectedSize by remember {
-        mutableStateOf(Size(0,0))
-    }
 
     when{
         uiState.product == null ->{
@@ -68,31 +75,196 @@ fun ProductDetailsScreen(
             }
         }
         else -> {
-
-            Column(
-                modifier = Modifier.fillMaxSize()
+            Scaffold(
+                bottomBar = {
+                    ProductDetailsBottomBar(
+                        totalPrice = "Ksh 1000.00",
+                        onAddToCart = {}
+                    )
+//                    BottomAppBar(
+//                        modifier = Modifier.fillMaxWidth(),
+//                        backgroundColor = MaterialTheme.colors.background
+//                    ) {
+//                        ProductDetailsBottomBar(
+//                            totalPrice = "Ksh 1000.00",
+//                            onAddToCart = {}
+//                        )
+//                    }
+                }
             ){
-                Spacer(modifier = Modifier.height(10.dp))
-                ImagesSection(
-                    images = uiState.product!!.images
+                ProductDetailsScreenContent(
+                    uiState = uiState,
+                    onEvent = viewModel::onEvent,
+                    onNavigateBack = onNavigateBack
                 )
-                Spacer(modifier = Modifier.height(16.dp))
-                ProductInfoSection(
-                    shoe = uiState.product!!
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                SizeSection(
-                    sizes = uiState.product!!.sizes,
-                    selectedSize = selectedSize,
-                    onSizeSelected = {
-                        selectedSize = it
-                    }
-                )
-
             }
         }
     }
+}
 
+@Composable
+fun ProductDetailsScreenContent(
+    uiState: ProductDetailsState,
+    modifier: Modifier = Modifier,
+    onEvent: (ProductDetailsEvent) -> Unit,
+    onNavigateBack: () -> Unit
+){
+    Column(
+        modifier = modifier.fillMaxSize()
+    ){
+        Spacer(modifier = Modifier.height(10.dp))
+        ImagesSection(
+            images = uiState.product!!.images,
+            onNavigateBack = onNavigateBack
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        ProductInfoSection(
+            shoe = uiState.product
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        SizeSection(
+            sizes = uiState.product.sizes,
+            selectedSize = uiState.selectedSize,
+            onSizeSelected = {
+                onEvent(ProductDetailsEvent.OnSizeSelected(it))
+            }
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        QuantitySection(
+            quantity = uiState.quantity,
+            onQuantityChanged = {
+                onEvent(ProductDetailsEvent.OnQuantityChange(it))
+            }
+        )
+    }
+}
+
+@Composable
+fun ProductDetailsBottomBar(
+    modifier: Modifier = Modifier,
+    totalPrice: String,
+    onAddToCart: ()-> Unit
+){
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(
+                color = MaterialTheme.colors.background
+            )
+    ){
+        Column {
+            Divider(
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colors.primary.copy(
+                    alpha = 0.15f
+                )
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = 16.dp,
+                        vertical = 16.dp
+                    ),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ){
+                Column {
+                    Text(
+                        stringResource(Res.string.total_price),
+                        style = MaterialTheme.typography.body1
+                    )
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Text(
+                        totalPrice,
+                        style = MaterialTheme.typography.h6,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Spacer(modifier = Modifier.width(20.dp))
+                Button(
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(18.dp),
+                    onClick = onAddToCart
+                ){
+                    Text(
+                        stringResource(Res.string.add_to_cart),
+                        modifier = Modifier.padding(
+                            horizontal = 16.dp,
+                            vertical = 10.dp
+                        ),
+                        style = MaterialTheme.typography.body1.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        color = MaterialTheme.colors.onPrimary
+                    )
+                }
+            }
+        }
+
+
+    }
+}
+
+@Composable
+fun QuantitySection(
+    modifier: Modifier = Modifier,
+    quantity: Int,
+    onQuantityChanged: (Int)-> Unit
+){
+    Row(
+        modifier = modifier
+            .padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            stringResource(Res.string.quantity),
+            style = MaterialTheme.typography.h6
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(32.dp))
+                .background(
+                    color = MaterialTheme.colors.primary.copy(alpha = 0.18f)
+                ),
+            contentAlignment = Alignment.Center
+        ){
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextButton(
+                    onClick = {
+                        if (quantity > 1){
+                            onQuantityChanged(quantity - 1)
+                        }
+                    }
+                ){
+                    Text(
+                        "-",
+                        style = MaterialTheme.typography.h5,
+                        modifier = Modifier
+                    )
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(
+                    quantity.toString(),
+                    style = MaterialTheme.typography.h6
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+                TextButton(
+                    onClick = {
+                        onQuantityChanged(quantity + 1)
+                    }
+                ){
+                    Text(
+                        "+",
+                        style = MaterialTheme.typography.h5,
+                        modifier = Modifier
+                    )
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -142,13 +314,17 @@ fun ProductInfoSection(
             style = MaterialTheme.typography.h6
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            shoe.description,
-            style = MaterialTheme.typography.body2
+        ExpandableText(
+            text = shoe.description
         )
+//        Text(
+//            shoe.description,
+//            style = MaterialTheme.typography.body2
+//        )
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SizeSection(
     modifier: Modifier = Modifier,
@@ -165,42 +341,85 @@ fun SizeSection(
             stringResource(Res.string.size),
             style = MaterialTheme.typography.h6
         )
-        Row {
+        Spacer(modifier = Modifier.height(10.dp))
+        FlowRow(
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
             sizes.forEach { size ->
-                Box(
-                    modifier = modifier
-                        .border(
-                            width = 1.5.dp,
-                            color = MaterialTheme.colors.primary,
-                            shape = RoundedCornerShape(12.dp)
-                        )
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(
-                            color = if (selectedSize == size) MaterialTheme.colors.primary else MaterialTheme.colors.primary.copy(alpha = 0.08f)
-                        )
-                        .clickable { onSizeSelected(size) },
-                    contentAlignment = Alignment.Center
-                ){
-                    Text(
-                        text = size.size.toString(),
-                        color = if (selectedSize == size) MaterialTheme.colors.onPrimary else MaterialTheme.colors.primary,
-                        modifier = Modifier.padding(
-                            horizontal = 12.dp,
-                            vertical = 8.dp
-                        )
-                    )
-                }
+                SizeItem(
+                    size = size,
+                    isSelectable = size.quantity < 6,
+                    isSelected = size == selectedSize,
+                    onSizeSelected = {
+                        onSizeSelected(size)
+                    }
+                )
+                Spacer(modifier = Modifier.width(10.dp))
             }
         }
     }
 
 }
 
+@Composable
+fun SizeItem(
+    size: Size,
+    modifier: Modifier = Modifier,
+    isSelectable: Boolean,
+    isSelected: Boolean,
+    onSizeSelected: ()-> Unit
+){
+    val textColor = if (isSelected) {
+        MaterialTheme.colors.onPrimary
+    } else {
+        if (isSelectable){
+            MaterialTheme.colors.primary
+        } else{
+            MaterialTheme.colors.primary.copy(alpha = 0.3f)
+        }
+    }
+    Box(
+        modifier = modifier
+            .border(
+                width = 1.5.dp,
+                color = if (isSelected) MaterialTheme.colors.primary else MaterialTheme.colors.primary.copy(alpha = 0.25f),
+                shape = RoundedCornerShape(4.dp)
+            )
+            .clip(RoundedCornerShape(4.dp))
+            .background(
+                color = if (isSelected) MaterialTheme.colors.primary else Color.Transparent
+            )
+            .isSelectable(
+                isSelectable = isSelectable,
+                onClick = onSizeSelected
+            ),
+        contentAlignment = Alignment.Center
+    ){
+        Text(
+            text = "EU ${size.size}",
+            color = textColor,
+            modifier = Modifier.padding(
+                horizontal = 14.dp,
+                vertical = 8.dp
+            )
+        )
+    }
+}
+
+fun Modifier.isSelectable(isSelectable: Boolean, onClick: ()-> Unit): Modifier {
+    return if (isSelectable) {
+        this.clickable { onClick() }
+    } else {
+        this
+    }
+}
+
 
 @Composable
 fun ImagesSection(
     modifier: Modifier = Modifier,
-    images: List<String>
+    images: List<String>,
+    onNavigateBack: () -> Unit
 ){
     var selectedImage by remember {
         mutableStateOf(images[0])
@@ -225,7 +444,7 @@ fun ImagesSection(
                     )
                 },
                 modifier = Modifier
-                    .fillMaxHeight(0.4f)
+                    .fillMaxHeight(0.3f)
                     .fillMaxWidth()
                     .background(color = Color.Gray.copy(alpha = 0.4f))
             )
@@ -265,7 +484,7 @@ fun ImagesSection(
             }
         }
         IconButton(
-            onClick = {},
+            onClick = onNavigateBack,
             modifier = Modifier.align(Alignment.TopStart)
         ){
             Icon(

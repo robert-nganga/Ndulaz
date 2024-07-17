@@ -11,6 +11,30 @@ class ProductDetailsViewModel: ViewModel(){
     private val _productDetailsState = MutableStateFlow(ProductDetailsState())
     val productDetailsState = _productDetailsState.asStateFlow()
 
+    init {
+        println("Product details view model")
+    }
+
+    fun onEvent(event: ProductDetailsEvent){
+        when(event){
+            is ProductDetailsEvent.OnAddToCart -> {}
+            is ProductDetailsEvent.OnQuantityChange -> {
+                _productDetailsState.update {
+                    it.copy(
+                        quantity = event.newQuantity
+                    )
+                }
+            }
+            is ProductDetailsEvent.OnSizeSelected -> {
+                _productDetailsState.update {
+                    it.copy(
+                        selectedSize = event.size
+                    )
+                }
+            }
+        }
+    }
+
 
     fun onProductSelected(product: Shoe){
         _productDetailsState.update {

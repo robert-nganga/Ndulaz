@@ -9,17 +9,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import core.presentation.NdulaTheme
 import core.presentation.utils.getKoinViewModel
-import features.profile.presentation.navigation.authNavGraph
 import features.profile.presentation.screens.AuthStatus
 import features.profile.presentation.screens.AuthViewModel
 import features.profile.presentation.utils.AUTH_GRAPH_ROUTE
-import features.shop.presentation.navigation.shopNavGraph
-import features.shop.presentation.screens.home_screen.HomeScreenViewModel
-import features.shop.presentation.screens.product_details_screen.ProductDetailsViewModel
 import features.shop.presentation.utils.SHOP_GRAPH_ROUTE
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinContext
@@ -40,8 +35,6 @@ fun App(
                 modifier = Modifier.fillMaxSize()
             ){
                 val authViewModel = getKoinViewModel<AuthViewModel>()
-                val homeScreenViewModel = getKoinViewModel<HomeScreenViewModel>()
-                val productDetailsViewModel = getKoinViewModel<ProductDetailsViewModel>()
                 val navController = rememberNavController()
 
                 val authStatus by authViewModel.isLoggedIn.collectAsState()
@@ -77,13 +70,18 @@ fun App(
                                 loggedIn++
                             }
                         }
-                        NavHost(
+                        MainScreen(
+                            authViewModel =authViewModel,
                             navController = navController,
-                            startDestination = if (authStatus == AuthStatus.LoggedIn) SHOP_GRAPH_ROUTE else AUTH_GRAPH_ROUTE
-                        ){
-                            authNavGraph(navController, authViewModel)
-                            shopNavGraph(navController, productDetailsViewModel)
-                        }
+                            isLoggedIn = authStatus == AuthStatus.LoggedIn
+                        )
+//                        NavHost(
+//                            navController = navController,
+//                            startDestination = if (authStatus == AuthStatus.LoggedIn) SHOP_GRAPH_ROUTE else AUTH_GRAPH_ROUTE
+//                        ){
+//                            authNavGraph(navController, authViewModel)
+//                            shopNavGraph(navController, productDetailsViewModel)
+//                        }
 
                     }
                 }

@@ -10,4 +10,7 @@
     <string name="full_name">Full names</string>
     <string name="description">Description</string>
     <string name="size">Size</string>
+    <string name="quantity">Quantity</string>
+    <string name="total_price">Total price</string>
+    <string name="add_to_cart">Add to cart</string>
 </resources>

@@ -1,5 +1,10 @@
 package features.shop.presentation.navigation
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.Text
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -20,8 +25,8 @@ fun NavGraphBuilder.shopNavGraph(
     productDetailsViewModel: ProductDetailsViewModel
 ){
 
-    navigation(startDestination = HOME_SCREEN, route = SHOP_GRAPH_ROUTE){
-        composable(HOME_SCREEN){
+    navigation(startDestination = BottomNavItem.Home.route, route = SHOP_GRAPH_ROUTE){
+        composable(BottomNavItem.Home.route){
             val homeScreenViewModel = getKoinViewModel<HomeScreenViewModel>()
             HomeScreen(
                 viewModel = homeScreenViewModel,
@@ -34,9 +39,45 @@ fun NavGraphBuilder.shopNavGraph(
             )
         }
 
+        composable(BottomNavItem.Cart.route){
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ){
+                Text(
+                    "Cart route"
+                )
+            }
+        }
+
+        composable(BottomNavItem.WishList.route){
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ){
+                Text(
+                    "Wish list route"
+                )
+            }
+        }
+
+        composable(BottomNavItem.Profile.route){
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ){
+                Text(
+                    "Profile route"
+                )
+            }
+        }
+
         composable(PRODUCT_DETAILS_SCREEN){
             ProductDetailsScreen(
                 viewModel = productDetailsViewModel,
+                onNavigateBack = {
+                    navController.navigateUp()
+                }
             )
         }
     }
