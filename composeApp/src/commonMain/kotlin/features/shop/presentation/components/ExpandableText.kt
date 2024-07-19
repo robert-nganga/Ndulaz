@@ -29,20 +29,38 @@ fun ExpandableText(
     var expanded by remember { mutableStateOf(false) }
     val displayText = if (expanded) {
         buildAnnotatedString {
-            append(text)
+            withStyle(
+                style = SpanStyle(
+                    color = MaterialTheme.colors.onBackground
+                )
+            ){
+                append(text)
+            }
             append(" ")
             pushStringAnnotation(tag = "SEE_LESS", annotation = "See Less")
-            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+            withStyle(style = SpanStyle(
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colors.onBackground
+            )) {
                 append("See Less")
             }
             pop()
         }
     } else {
         buildAnnotatedString {
-            append(text.take(100) + "...")
+            withStyle(
+                style = SpanStyle(
+                    color = MaterialTheme.colors.onBackground
+                )
+            ){
+                append(text.take(100) + "...")
+            }
             append(" ")
             pushStringAnnotation(tag = "SEE_MORE", annotation = "See More")
-            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+            withStyle(style = SpanStyle(
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colors.onBackground
+            )) {
                 append("See More")
             }
             pop()

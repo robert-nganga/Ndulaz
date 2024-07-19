@@ -13,4 +13,9 @@
     <string name="quantity">Quantity</string>
     <string name="total_price">Total price</string>
     <string name="add_to_cart">Add to cart</string>
+    <string name="variation">Variation</string>
+    <string name="price">Price</string>
+    <string name="stock">Stock</string>
+    <string name="units_left">Units left</string>
+    <string name="out_of_stock">Out of stock</string>
 </resources>

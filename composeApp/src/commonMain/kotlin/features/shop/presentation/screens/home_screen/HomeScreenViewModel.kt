@@ -27,7 +27,7 @@ class HomeScreenViewModel(
         selectedCategory("All")
     }
 
-    fun getShoes() = viewModelScope.launch {
+    private fun getShoes() = viewModelScope.launch {
         _homeScreenState.update {
             it.copy(
                 shoesState = HomeScreenShoesState.Loading
@@ -67,9 +67,8 @@ class HomeScreenViewModel(
         }
     }
 
-    fun getCategories() = viewModelScope.launch {
-        val response = repository.getCategories()
-        when(response){
+    private fun getCategories() = viewModelScope.launch {
+        when(val response = repository.getCategories()){
             is DataResult.Empty -> {}
             is DataResult.Loading -> {}
             is DataResult.Error -> {}

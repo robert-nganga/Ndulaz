@@ -10,13 +10,16 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
@@ -25,10 +28,12 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.StarHalf
 import androidx.compose.material.icons.automirrored.outlined.ArrowBackIos
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Verified
+import androidx.compose.material.icons.rounded.AddShoppingCart
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -39,21 +44,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import features.shop.domain.models.Brand
 import features.shop.domain.models.Shoe
-import features.shop.domain.models.Size
+import features.shop.domain.models.ShoeVariant
 import features.shop.presentation.components.ExpandableText
+import features.shop.presentation.utils.getColor
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import ndula.composeapp.generated.resources.Res
 import ndula.composeapp.generated.resources.add_to_cart
 import ndula.composeapp.generated.resources.description
-import ndula.composeapp.generated.resources.quantity
+import ndula.composeapp.generated.resources.out_of_stock
+import ndula.composeapp.generated.resources.price
 import ndula.composeapp.generated.resources.size
-import ndula.composeapp.generated.resources.total_price
+import ndula.composeapp.generated.resources.units_left
+import ndula.composeapp.generated.resources.variation
 import org.jetbrains.compose.resources.stringResource
 
 
@@ -76,26 +86,27 @@ fun ProductDetailsScreen(
         }
         else -> {
             Scaffold(
+                modifier = Modifier
+                    .fillMaxSize(),
                 bottomBar = {
                     ProductDetailsBottomBar(
-                        totalPrice = "Ksh 1000.00",
-                        onAddToCart = {}
+                        selectedVariation = uiState.selectedVariation,
+                        onAddToCart = {},
+                        quantity = uiState.quantity,
+                        onQuantityChanged = {
+                            viewModel.onEvent(ProductDetailsEvent.OnQuantityChange(it))
+                        }
                     )
-//                    BottomAppBar(
-//                        modifier = Modifier.fillMaxWidth(),
-//                        backgroundColor = MaterialTheme.colors.background
-//                    ) {
-//                        ProductDetailsBottomBar(
-//                            totalPrice = "Ksh 1000.00",
-//                            onAddToCart = {}
-//                        )
-//                    }
                 }
             ){
                 ProductDetailsScreenContent(
+                    modifier = Modifier.padding(it),
                     uiState = uiState,
                     onEvent = viewModel::onEvent,
-                    onNavigateBack = onNavigateBack
+                    onNavigateBack = {
+                        viewModel.resetState()
+                        onNavigateBack()
+                    }
                 )
             }
         }
@@ -110,39 +121,61 @@ fun ProductDetailsScreenContent(
     onNavigateBack: () -> Unit
 ){
     Column(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
     ){
-        Spacer(modifier = Modifier.height(10.dp))
         ImagesSection(
             images = uiState.product!!.images,
-            onNavigateBack = onNavigateBack
+            onNavigateBack = onNavigateBack,
+            selectedImage = uiState.selectedImage,
+            onImageSelected = {
+                onEvent(ProductDetailsEvent.OnImageSelected(it))
+            }
         )
         Spacer(modifier = Modifier.height(16.dp))
         ProductInfoSection(
             shoe = uiState.product
         )
+        uiState.selectedVariation?.let {
+            Spacer(modifier = Modifier.height(16.dp))
+            VariationInfo(
+                variation = it
+            )
+        }
+        // Find an efficient way to achieve this
+        if (uiState.colors.size >1){
+            Spacer(modifier = Modifier.height(16.dp))
+            ColorSection(
+                colors = uiState.colors,
+                selectedColor = uiState.selectedColor,
+                onColorSelected = {
+                    onEvent(ProductDetailsEvent.OnColorSelected(it))
+                }
+            )
+        }
         Spacer(modifier = Modifier.height(16.dp))
         SizeSection(
-            sizes = uiState.product.sizes,
+            shoeSizes = uiState.sizes,
             selectedSize = uiState.selectedSize,
             onSizeSelected = {
                 onEvent(ProductDetailsEvent.OnSizeSelected(it))
             }
         )
         Spacer(modifier = Modifier.height(16.dp))
-        QuantitySection(
-            quantity = uiState.quantity,
-            onQuantityChanged = {
-                onEvent(ProductDetailsEvent.OnQuantityChange(it))
-            }
+        DescriptionSection(
+            description = uiState.product.description
         )
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
 @Composable
 fun ProductDetailsBottomBar(
     modifier: Modifier = Modifier,
-    totalPrice: String,
+    selectedVariation: ShoeVariant? = null,
+    quantity: Int,
+    onQuantityChanged: (Int) -> Unit,
     onAddToCart: ()-> Unit
 ){
     Box(
@@ -157,7 +190,8 @@ fun ProductDetailsBottomBar(
                 modifier = Modifier.fillMaxWidth(),
                 color = MaterialTheme.colors.primary.copy(
                     alpha = 0.15f
-                )
+                ),
+                thickness = 0.8.dp
             )
             Row(
                 modifier = Modifier
@@ -166,103 +200,168 @@ fun ProductDetailsBottomBar(
                         horizontal = 16.dp,
                         vertical = 16.dp
                     ),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ){
-                Column {
-                    Text(
-                        stringResource(Res.string.total_price),
-                        style = MaterialTheme.typography.body1
-                    )
-                    Spacer(modifier = Modifier.height(5.dp))
-                    Text(
-                        totalPrice,
-                        style = MaterialTheme.typography.h6,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
+                QuantityButtons(
+                    quantity = quantity,
+                    onQuantityChanged = onQuantityChanged
+                )
                 Spacer(modifier = Modifier.width(20.dp))
                 Button(
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(18.dp),
-                    onClick = onAddToCart
+                    onClick = onAddToCart,
+                    enabled = selectedVariation != null
                 ){
-                    Text(
-                        stringResource(Res.string.add_to_cart),
-                        modifier = Modifier.padding(
-                            horizontal = 16.dp,
-                            vertical = 10.dp
-                        ),
-                        style = MaterialTheme.typography.body1.copy(
-                            fontWeight = FontWeight.Bold
-                        ),
-                        color = MaterialTheme.colors.onPrimary
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            Icons.Rounded.AddShoppingCart,
+                            contentDescription = "",
+                        )
+                        Text(
+                            stringResource(Res.string.add_to_cart),
+                            modifier = Modifier.padding(
+                                horizontal = 16.dp,
+                                vertical = 10.dp
+                            ),
+                            style = MaterialTheme.typography.body1.copy(
+                                fontWeight = FontWeight.Bold
+                            ),
+                        )
+                    }
                 }
             }
         }
+    }
+}
 
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun ColorSection(
+    colors: List<String>,
+    selectedColor: String,
+    onColorSelected: (String)-> Unit,
+    modifier: Modifier = Modifier
+){
+    Column(
+        modifier = modifier
+            .padding(
+                horizontal = 16.dp
+            )
+    ) {
+        Text(
+            "Color",
+            style = MaterialTheme.typography.h6.copy(
+                letterSpacing = 0.08.sp
+            )
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        FlowRow {
+            colors.forEach { color ->
+                ColorItem(
+                    color = color,
+                    isSelected = color == selectedColor,
+                    onColorSelected = {
+                        onColorSelected(color)
+                    }
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+            }
+        }
+    }
 
+}
+
+@Composable
+fun ColorItem(
+    modifier: Modifier = Modifier,
+    color: String,
+    isSelected: Boolean,
+    onColorSelected: ()-> Unit
+){
+    Box(
+        modifier = modifier
+            .size(40.dp)
+            .clip(CircleShape)
+            .background(
+                color = color.getColor()
+            )
+            .border(
+                width = 1.5.dp,
+                color = if (isSelected) MaterialTheme.colors.primary.copy( alpha = 0.6f) else MaterialTheme.colors.primary.copy( alpha = 0.2f),
+                shape = CircleShape
+            )
+            .clickable { onColorSelected() },
+        contentAlignment = Alignment.Center
+    ){
+        if (isSelected){
+            Icon(
+                Icons.Filled.Check,
+                contentDescription = "",
+                modifier = Modifier.size(30.dp),
+                tint = if (color == "White") Color.Black else Color.White
+            )
+        }
     }
 }
 
 @Composable
-fun QuantitySection(
+fun QuantityButtons(
     modifier: Modifier = Modifier,
-    quantity: Int,
-    onQuantityChanged: (Int)-> Unit
+    onQuantityChanged: (Int)-> Unit,
+    quantity: Int
 ){
     Row(
         modifier = modifier
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        Box(
+            modifier = Modifier
+                .size(35.dp)
+                .clip(CircleShape)
+                .background(
+                    color = MaterialTheme.colors.primary.copy(alpha = 0.5f)
+                )
+                .clickable { onQuantityChanged(quantity - 1) },
+            contentAlignment = Alignment.Center
+        ){
+            Text(
+                "-",
+                style = MaterialTheme.typography.h6.copy(
+                    color = MaterialTheme.colors.onPrimary
+                ),
+                modifier = Modifier
+                    .padding(2.dp)
+            )
+        }
+        Spacer(modifier = Modifier.width(10.dp))
         Text(
-            stringResource(Res.string.quantity),
+            quantity.toString(),
             style = MaterialTheme.typography.h6
         )
         Spacer(modifier = Modifier.width(10.dp))
         Box(
             modifier = Modifier
-                .clip(RoundedCornerShape(32.dp))
+                .size(35.dp)
+                .clip(CircleShape)
                 .background(
-                    color = MaterialTheme.colors.primary.copy(alpha = 0.18f)
-                ),
+                    color = MaterialTheme.colors.primary,
+                )
+                .clickable { onQuantityChanged(quantity + 1)},
             contentAlignment = Alignment.Center
         ){
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                TextButton(
-                    onClick = {
-                        if (quantity > 1){
-                            onQuantityChanged(quantity - 1)
-                        }
-                    }
-                ){
-                    Text(
-                        "-",
-                        style = MaterialTheme.typography.h5,
-                        modifier = Modifier
-                    )
-                }
-                Spacer(modifier = Modifier.width(10.dp))
-                Text(
-                    quantity.toString(),
-                    style = MaterialTheme.typography.h6
-                )
-                Spacer(modifier = Modifier.width(10.dp))
-                TextButton(
-                    onClick = {
-                        onQuantityChanged(quantity + 1)
-                    }
-                ){
-                    Text(
-                        "+",
-                        style = MaterialTheme.typography.h5,
-                        modifier = Modifier
-                    )
-                }
-            }
+            Text(
+                "+",
+                style = MaterialTheme.typography.h6.copy(
+                    color = MaterialTheme.colors.onPrimary
+                ),
+                modifier = Modifier
+                    .padding(2.dp)
+            )
         }
     }
 }
@@ -278,11 +377,19 @@ fun ProductInfoSection(
             .padding(horizontal = 16.dp)
     ) {
         Text(
-            text = shoe.name,
+            text = "Ksh ${shoe.price}",
             style = MaterialTheme.typography.h5,
             fontWeight = FontWeight.Bold,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+            shoe.name,
+            style = MaterialTheme.typography.h6.copy(
+                color = MaterialTheme.colors.onBackground.copy(
+                    alpha = 0.8f
+                ),
+                letterSpacing = 0.08.sp
+            )
         )
         Spacer(modifier = Modifier.height(10.dp))
         Row(
@@ -292,13 +399,16 @@ fun ProductInfoSection(
                 modifier = Modifier
                     .clip(RoundedCornerShape(6.dp))
                     .background(color = MaterialTheme.colors.primary.copy(alpha = 0.15f))
-                    .padding(8.dp)
+                    .padding(
+                        horizontal = 8.dp,
+                        vertical = 2.dp
+                    )
             ){
                 Text(
                     "23 sold",
                 )
             }
-            Spacer(modifier = Modifier.width(10.dp))
+            Spacer(modifier = Modifier.width(8.dp))
             Icon(
                 Icons.AutoMirrored.Filled.StarHalf,
                 contentDescription = "",
@@ -306,21 +416,143 @@ fun ProductInfoSection(
             Spacer(modifier = Modifier.width(5.dp))
             Text(
                 "4.6 (20 reviews)",
+                style = MaterialTheme.typography.body2
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        shoe.brand?.let {
+            Spacer(modifier = Modifier.height(16.dp))
+            BrandItem(
+                brand = it
+            )
+        }
+    }
+}
+
+@Composable
+fun BrandItem(
+    modifier: Modifier = Modifier,
+    brand: Brand
+){
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 6.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        KamelImage(
+            asyncPainterResource(brand.logoUrl ?: ""),
+            contentDescription = "",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(24.dp)
+                .clip(CircleShape),
+            colorFilter = ColorFilter.tint(
+                color = MaterialTheme.colors.onBackground
+            )
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Text(
+            brand.name,
+            style = MaterialTheme.typography.body2.copy(
+                fontWeight = FontWeight.Bold
+            )
+        )
+        Spacer(modifier = Modifier.width(5.dp))
+        Icon(
+            Icons.Filled.Verified,
+            contentDescription = "",
+            tint = Color.Blue,
+            modifier = Modifier.size(12.dp)
+        )
+    }
+}
+
+@Composable
+fun DescriptionSection(
+    modifier: Modifier = Modifier,
+    description: String,
+){
+    Column(
+        modifier = modifier
+            .padding(
+                horizontal = 16.dp
+            )
+    ) {
         Text(
             stringResource(Res.string.description),
-            style = MaterialTheme.typography.h6
+            style = MaterialTheme.typography.h6.copy(
+                letterSpacing = 0.08.sp
+            )
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(4.dp))
         ExpandableText(
-            text = shoe.description
+            text = description
         )
-//        Text(
-//            shoe.description,
-//            style = MaterialTheme.typography.body2
-//        )
+    }
+}
+
+
+@Composable
+fun VariationInfo(
+    variation: ShoeVariant,
+    modifier: Modifier = Modifier
+){
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+        ) {
+        Text(
+            "${stringResource(Res.string.variation)}:",
+            style = MaterialTheme.typography.body1.copy(
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 0.08.sp
+            )
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Column {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "${stringResource(Res.string.price)}: ",
+                    style = MaterialTheme.typography.body2.copy(
+                        color = MaterialTheme.colors.onBackground.copy(
+                            alpha = 0.6f
+                        )
+                    )
+                )
+                Text(
+                    "Ksh ${variation.price}",
+                    style = MaterialTheme.typography.body1.copy(
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 0.08.sp
+                    )
+                )
+            }
+            Spacer(modifier = Modifier.height(5.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "Stock: ",
+                    style = MaterialTheme.typography.body2.copy(
+                        color = MaterialTheme.colors.onBackground.copy(
+                            alpha = 0.6f
+                        )
+                    )
+                )
+                Text(
+                    if (variation.quantity > 0) "${variation.quantity} ${stringResource(Res.string.units_left)}"
+                        else stringResource(Res.string.out_of_stock),
+                    style = MaterialTheme.typography.body1.copy(
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 0.08.sp
+                    )
+                )
+            }
+        }
     }
 }
 
@@ -328,9 +560,9 @@ fun ProductInfoSection(
 @Composable
 fun SizeSection(
     modifier: Modifier = Modifier,
-    sizes: List<Size>,
-    onSizeSelected: (Size)-> Unit,
-    selectedSize: Size
+    shoeSizes: List<Int>,
+    onSizeSelected: (Int)-> Unit,
+    selectedSize: Int
 ){
     Column(
         modifier = modifier
@@ -339,31 +571,32 @@ fun SizeSection(
     ){
         Text(
             stringResource(Res.string.size),
-            style = MaterialTheme.typography.h6
+            style = MaterialTheme.typography.h6.copy(
+                letterSpacing = 0.08.sp
+            )
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         FlowRow(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            sizes.forEach { size ->
+            shoeSizes.forEach { shoeSize ->
                 SizeItem(
-                    size = size,
-                    isSelectable = size.quantity < 6,
-                    isSelected = size == selectedSize,
+                    size = shoeSize,
+                    isSelectable = true,
+                    isSelected = shoeSize == selectedSize,
                     onSizeSelected = {
-                        onSizeSelected(size)
+                        onSizeSelected(shoeSize)
                     }
                 )
                 Spacer(modifier = Modifier.width(10.dp))
             }
         }
     }
-
 }
 
 @Composable
 fun SizeItem(
-    size: Size,
+    size: Int,
     modifier: Modifier = Modifier,
     isSelectable: Boolean,
     isSelected: Boolean,
@@ -396,11 +629,11 @@ fun SizeItem(
         contentAlignment = Alignment.Center
     ){
         Text(
-            text = "EU ${size.size}",
+            text = "EU $size",
             color = textColor,
             modifier = Modifier.padding(
-                horizontal = 14.dp,
-                vertical = 8.dp
+                horizontal = 12.dp,
+                vertical = 6.dp
             )
         )
     }
@@ -418,12 +651,11 @@ fun Modifier.isSelectable(isSelectable: Boolean, onClick: ()-> Unit): Modifier {
 @Composable
 fun ImagesSection(
     modifier: Modifier = Modifier,
+    selectedImage: String,
     images: List<String>,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onImageSelected: (String) -> Unit
 ){
-    var selectedImage by remember {
-        mutableStateOf(images[0])
-    }
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -444,7 +676,7 @@ fun ImagesSection(
                     )
                 },
                 modifier = Modifier
-                    .fillMaxHeight(0.3f)
+                    .height(240.dp)
                     .fillMaxWidth()
                     .background(color = Color.Gray.copy(alpha = 0.4f))
             )
@@ -476,7 +708,7 @@ fun ImagesSection(
                                 shape = RoundedCornerShape(8.dp)
                             )
                             .clickable {
-                                selectedImage = image
+                                onImageSelected(image)
                             }
                     )
                     Spacer(modifier = Modifier.width(10.dp))

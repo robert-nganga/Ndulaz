@@ -104,7 +104,7 @@ fun ShoeItem(
                         .background(color = MaterialTheme.colors.primary.copy(alpha = 0.15f))
                         .padding(8.dp)
                 ){
-                    val stock = shoe.sizes.sumOf { it.quantity }
+                    val stock = shoe.variants.sumOf { it.quantity }
                     Text(
                         "$stock in stock",
                         style = TextStyle(
