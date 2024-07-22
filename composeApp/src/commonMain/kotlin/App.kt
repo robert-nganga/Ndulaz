@@ -75,19 +75,8 @@ fun App(
                             navController = navController,
                             isLoggedIn = authStatus == AuthStatus.LoggedIn
                         )
-//                        NavHost(
-//                            navController = navController,
-//                            startDestination = if (authStatus == AuthStatus.LoggedIn) SHOP_GRAPH_ROUTE else AUTH_GRAPH_ROUTE
-//                        ){
-//                            authNavGraph(navController, authViewModel)
-//                            shopNavGraph(navController, productDetailsViewModel)
-//                        }
-
                     }
                 }
-
-
-
             }
         }
     }

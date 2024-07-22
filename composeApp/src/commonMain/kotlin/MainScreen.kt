@@ -1,6 +1,7 @@
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
@@ -23,6 +24,7 @@ import features.profile.presentation.utils.AUTH_GRAPH_ROUTE
 import features.shop.presentation.navigation.BottomNavItem
 import features.shop.presentation.navigation.shopNavGraph
 import features.shop.presentation.screens.product_details_screen.ProductDetailsViewModel
+import features.shop.presentation.utils.PRODUCT_DETAILS_SCREEN
 import features.shop.presentation.utils.SHOP_GRAPH_ROUTE
 
 
@@ -43,6 +45,11 @@ fun MainScreen(
         else -> false
     }
 
+    val enableStatusPadding = when(navBackStackEntry?.destination?.route){
+        PRODUCT_DETAILS_SCREEN -> false
+        else -> true
+    }
+
     Scaffold(
         bottomBar = {
             if (showBottomBar){
@@ -54,7 +61,7 @@ fun MainScreen(
         }
     ){
         NavHost(
-            modifier = Modifier.navigationBarsPadding(),
+            modifier = if (enableStatusPadding) Modifier.navigationBarsPadding().systemBarsPadding() else Modifier.navigationBarsPadding(),
             navController = navController,
             startDestination = if (isLoggedIn) SHOP_GRAPH_ROUTE else AUTH_GRAPH_ROUTE
         ){
@@ -62,8 +69,6 @@ fun MainScreen(
             shopNavGraph(navController, productDetailsViewModel)
         }
     }
-
-
 }
 
 @Composable

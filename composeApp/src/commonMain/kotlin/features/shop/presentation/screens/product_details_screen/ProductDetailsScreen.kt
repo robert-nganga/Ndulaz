@@ -27,6 +27,8 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.StarHalf
@@ -35,11 +37,11 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material.icons.rounded.AddShoppingCart
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -74,9 +76,17 @@ fun ProductDetailsScreen(
 ){
 
     val uiState by viewModel.productDetailsState.collectAsState()
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(uiState.errorMessage){
+        if(uiState.errorMessage != null){
+            snackBarHostState.showSnackbar(uiState.errorMessage!!)
+            viewModel.onEvent(ProductDetailsEvent.OnResetError)
+        }
+    }
 
     when{
-        uiState.product == null ->{
+        uiState.product == null -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -88,10 +98,11 @@ fun ProductDetailsScreen(
             Scaffold(
                 modifier = Modifier
                     .fillMaxSize(),
+                snackbarHost = { SnackbarHost(snackBarHostState) },
                 bottomBar = {
                     ProductDetailsBottomBar(
                         selectedVariation = uiState.selectedVariation,
-                        onAddToCart = {},
+                        onAddToCart = { viewModel.onEvent(ProductDetailsEvent.OnAddToCart) },
                         quantity = uiState.quantity,
                         onQuantityChanged = {
                             viewModel.onEvent(ProductDetailsEvent.OnQuantityChange(it))
@@ -326,7 +337,7 @@ fun QuantityButtons(
                 .background(
                     color = MaterialTheme.colors.primary.copy(alpha = 0.5f)
                 )
-                .clickable { onQuantityChanged(quantity - 1) },
+                .clickable { if (quantity > 1) onQuantityChanged(quantity - 1) },
             contentAlignment = Alignment.Center
         ){
             Text(

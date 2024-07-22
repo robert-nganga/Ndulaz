@@ -20,7 +20,20 @@ class ProductDetailsViewModel: ViewModel(){
 
     fun onEvent(event: ProductDetailsEvent){
         when(event){
-            is ProductDetailsEvent.OnAddToCart -> {}
+            is ProductDetailsEvent.OnAddToCart -> {
+                if(_productDetailsState.value.selectedVariation == null) return
+                val stock = _productDetailsState.value.selectedVariation?.quantity!!
+                val errorMessage = when {
+                    stock == 0 -> "This item is out of stock"
+                    _productDetailsState.value.quantity > stock -> "You can only buy $stock items"
+                    else -> null
+                }
+                _productDetailsState.update {
+                    it.copy(
+                        errorMessage = errorMessage
+                    )
+                }
+            }
             is ProductDetailsEvent.OnQuantityChange -> {
                 _productDetailsState.update {
                     it.copy(
@@ -46,6 +59,14 @@ class ProductDetailsViewModel: ViewModel(){
                 _productDetailsState.update {
                     it.copy(
                         selectedImage = event.image
+                    )
+                }
+            }
+
+            ProductDetailsEvent.OnResetError -> {
+                _productDetailsState.update {
+                    it.copy(
+                        errorMessage = null
                     )
                 }
             }

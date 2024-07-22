@@ -12,4 +12,5 @@ data class ProductDetailsState(
     val selectedColor: String = "",
     val selectedVariation: ShoeVariant? = null,
     val quantity: Int = 1,
+    val errorMessage: String? = null
 )

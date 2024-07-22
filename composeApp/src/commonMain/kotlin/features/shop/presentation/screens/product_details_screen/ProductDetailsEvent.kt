@@ -5,5 +5,6 @@ sealed interface ProductDetailsEvent {
     data class OnColorSelected(val color: String): ProductDetailsEvent
     data class OnQuantityChange(val newQuantity: Int): ProductDetailsEvent
     data class OnImageSelected(val image: String): ProductDetailsEvent
-    data object OnAddToCart : ProductDetailsEvent
+    data object OnResetError: ProductDetailsEvent
+    data object OnAddToCart: ProductDetailsEvent
 }
