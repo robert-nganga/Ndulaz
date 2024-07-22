@@ -38,11 +38,36 @@ class HomeScreenViewModel(
             is HomeScreenEvents.OnFetchCategories -> {
                 fetchAllCategories()
             }
-            is HomeScreenEvents.OnFetchPopularShoes -> {
-                fetchPaginatedShoes()
-            }
             is HomeScreenEvents.OnSelectCategory -> {
                 updateSelectedCategory(event.category)
+                filterShoesByCategory(event.category)
+            }
+        }
+    }
+
+    private fun filterShoesByCategory(category: String) = viewModelScope.launch {
+        _homeScreenState.update {
+            it.copy(
+                popularShoesState = PopularShoesState.Loading
+            )
+        }
+        val result = if(category == "All") repository.getShoes(page = 1, limit = 15) else repository.filterShoesByCategory(category)
+        when (result) {
+            is DataResult.Empty -> {}
+            is DataResult.Loading -> {}
+            is DataResult.Error -> {
+                _homeScreenState.update {
+                    it.copy(
+                        popularShoesState = PopularShoesState.Error(
+                            errorMessage = result.exc?.parseErrorMessageFromException() ?: "Unknown error"
+                        )
+                    )
+                }
+            }
+            is DataResult.Success -> {
+                _homeScreenState.update {
+                    it.copy(popularShoesState = PopularShoesState.Success(shoes = result.data))
+                }
             }
         }
     }
@@ -71,31 +96,31 @@ class HomeScreenViewModel(
         }
     }
 
-    private fun fetchPaginatedShoes() = viewModelScope.launch {
-        _homeScreenState.update {
-            it.copy(
-                popularShoesState = PopularShoesState.Loading
-            )
-        }
-        when (val result = repository.getShoes(page = 1, limit = 15)) {
-            is DataResult.Empty -> {}
-            is DataResult.Loading -> {}
-            is DataResult.Error -> {
-                _homeScreenState.update {
-                    it.copy(
-                        popularShoesState = PopularShoesState.Error(
-                            errorMessage = result.exc?.parseErrorMessageFromException() ?: "Unknown error"
-                        )
-                    )
-                }
-            }
-            is DataResult.Success -> {
-                _homeScreenState.update {
-                    it.copy(popularShoesState = PopularShoesState.Success(shoes = result.data))
-                }
-            }
-        }
-    }
+//    private fun fetchPaginatedShoes() = viewModelScope.launch {
+//        _homeScreenState.update {
+//            it.copy(
+//                popularShoesState = PopularShoesState.Loading
+//            )
+//        }
+//        when (val result = repository.getShoes(page = 1, limit = 15)) {
+//            is DataResult.Empty -> {}
+//            is DataResult.Loading -> {}
+//            is DataResult.Error -> {
+//                _homeScreenState.update {
+//                    it.copy(
+//                        popularShoesState = PopularShoesState.Error(
+//                            errorMessage = result.exc?.parseErrorMessageFromException() ?: "Unknown error"
+//                        )
+//                    )
+//                }
+//            }
+//            is DataResult.Success -> {
+//                _homeScreenState.update {
+//                    it.copy(popularShoesState = PopularShoesState.Success(shoes = result.data))
+//                }
+//            }
+//        }
+//    }
 
     private fun updateSelectedCategory(category: String) {
         _homeScreenState.update {

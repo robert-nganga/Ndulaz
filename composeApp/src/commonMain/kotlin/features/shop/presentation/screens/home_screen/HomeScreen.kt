@@ -76,7 +76,6 @@ fun HomeScreen(
     LaunchedEffect(Unit){
         viewModel.onEvent(HomeScreenEvents.OnFetchBrands)
         viewModel.onEvent(HomeScreenEvents.OnFetchCategories)
-        viewModel.onEvent(HomeScreenEvents.OnFetchPopularShoes)
         viewModel.onEvent(HomeScreenEvents.OnSelectCategory("All"))
     }
 
