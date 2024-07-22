@@ -1,6 +1,7 @@
 package features.shop.domain.repository
 
 import core.data.utils.DataResult
+import features.shop.domain.models.Brand
 import features.shop.domain.models.Category
 import features.shop.domain.models.Shoe
 
@@ -11,4 +12,5 @@ interface ShoesRepository {
     suspend fun filterShoesByCategory(category: String): DataResult<List<Shoe>>
     suspend fun filterShoesByBrand(brand: String): DataResult<List<Shoe>>
     suspend fun searchShoes(query: String): DataResult<List<Shoe>>
+    suspend fun getAllBrands(): DataResult<List<Brand>>
 }

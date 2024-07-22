@@ -1,4 +1,4 @@
-package presentation.components
+package features.shop.presentation.components
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -10,7 +10,7 @@ import features.shop.domain.models.Shoe
 
 
 @Composable
-fun ShoeList(
+fun ShoesVerticalGrid(
     shoes: List<Shoe>,
     onClick: (Shoe) -> Unit,
     modifier: Modifier = Modifier
@@ -18,7 +18,7 @@ fun ShoeList(
     LazyVerticalGrid(
         modifier = modifier,
         columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(horizontal = 13.5.dp, vertical = 16.dp)
+        contentPadding = PaddingValues(horizontal = 13.5.dp, vertical = 7.5.dp)
     ){
         items(shoes.size){
             ShoeItem(

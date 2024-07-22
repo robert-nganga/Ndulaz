@@ -11,7 +11,7 @@ import io.ktor.http.HttpStatusCode
 import kotlinx.serialization.SerializationException
 
 
-fun Exception.errorMessage(): String {
+fun Exception.parseErrorMessageFromException(): String {
     return when (this) {
         is ServerResponseException -> "We're experiencing server issues. Please try again later."
         is NoTransformationFoundException -> "There was an issue processing the data. Please try again."

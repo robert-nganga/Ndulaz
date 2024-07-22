@@ -8,7 +8,7 @@ import core.domain.InputValidation
 import domain.requests.SignInRequest
 import domain.requests.SignUpRequest
 import features.profile.domain.repositories.AuthRepository
-import features.profile.domain.utils.errorMessage
+import features.profile.domain.utils.parseErrorMessageFromException
 import features.profile.presentation.screens.login_screen.LoginScreenEvent
 import features.profile.presentation.screens.login_screen.LoginScreenState
 import features.profile.presentation.screens.signup_screen.SignUpScreenEvent
@@ -162,7 +162,7 @@ class AuthViewModel(
             is DataResult.Error -> {
                 _loginScreenState.update {
                     it.copy(
-                        authError = response.exc?.errorMessage() ?: "Unknown error occurred",
+                        authError = response.exc?.parseErrorMessageFromException() ?: "Unknown error occurred",
                         isLoading = false
                     )
                 }
@@ -197,7 +197,7 @@ class AuthViewModel(
             is DataResult.Error -> {
                 _signUpScreenState.update {
                     it.copy(
-                        signUpError = response.exc?.errorMessage() ?: "Unknown error occurred",
+                        signUpError = response.exc?.parseErrorMessageFromException() ?: "Unknown error occurred",
                         isLoading = false
                     )
                 }
