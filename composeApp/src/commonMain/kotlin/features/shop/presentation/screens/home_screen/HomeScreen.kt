@@ -66,6 +66,7 @@ import features.shop.presentation.components.ShoesVerticalGrid
 fun HomeScreen(
     viewModel: HomeScreenViewModel,
     onProductClick: (Shoe) -> Unit,
+    onNavigateToMostPopular: ()-> Unit
 ) {
 
     val uiState by viewModel.homeScreenState.collectAsState()
@@ -113,7 +114,7 @@ fun HomeScreen(
             onCategorySelected = {
                 viewModel.onEvent(HomeScreenEvents.OnSelectCategory(it))
             },
-            onSeeAllClick = {}
+            onSeeAllClick = onNavigateToMostPopular
         )
         PopularShoesSection(
             modifier = Modifier.fillMaxSize(),

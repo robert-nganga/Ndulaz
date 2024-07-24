@@ -12,12 +12,13 @@ import androidx.navigation.navigation
 import core.presentation.utils.getKoinViewModel
 import features.shop.presentation.screens.home_screen.HomeScreen
 import features.shop.presentation.screens.home_screen.HomeScreenViewModel
+import features.shop.presentation.screens.most_popular_screen.MostPopularScreen
+import features.shop.presentation.screens.most_popular_screen.MostPopularScreenViewModel
 import features.shop.presentation.screens.product_details_screen.ProductDetailsScreen
 import features.shop.presentation.screens.product_details_screen.ProductDetailsViewModel
-import features.shop.presentation.utils.HOME_SCREEN
+import features.shop.presentation.utils.MOST_POPULAR_SCREEN
 import features.shop.presentation.utils.PRODUCT_DETAILS_SCREEN
 import features.shop.presentation.utils.SHOP_GRAPH_ROUTE
-
 
 
 fun NavGraphBuilder.shopNavGraph(
@@ -33,6 +34,11 @@ fun NavGraphBuilder.shopNavGraph(
                 onProductClick = {
                     productDetailsViewModel.onProductSelected(it)
                     navController.navigate(PRODUCT_DETAILS_SCREEN){
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToMostPopular = {
+                    navController.navigate(MOST_POPULAR_SCREEN){
                         launchSingleTop = true
                     }
                 }
@@ -77,6 +83,22 @@ fun NavGraphBuilder.shopNavGraph(
                 viewModel = productDetailsViewModel,
                 onNavigateBack = {
                     navController.navigateUp()
+                }
+            )
+        }
+
+        composable(MOST_POPULAR_SCREEN){
+            val mostPopularScreenViewModel = getKoinViewModel<MostPopularScreenViewModel>()
+            MostPopularScreen(
+                viewModel = mostPopularScreenViewModel,
+                onNavigateBack = {
+                     navController.navigateUp()
+                },
+                onShoeClick = {
+                    productDetailsViewModel.onProductSelected(it)
+                    navController.navigate(PRODUCT_DETAILS_SCREEN){
+                        launchSingleTop = true
+                    }
                 }
             )
         }

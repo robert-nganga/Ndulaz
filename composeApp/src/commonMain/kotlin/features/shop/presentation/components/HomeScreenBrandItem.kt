@@ -38,7 +38,7 @@ fun HomeScreenBrandItem(
                 .clip(CircleShape)
                 .background(
                     color = MaterialTheme.colors.primary.copy(
-                        alpha = 0.09f
+                        alpha = 0.12f
                     )
                 )
                 .clickable { onItemClick() }

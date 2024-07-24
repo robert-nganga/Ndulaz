@@ -96,32 +96,6 @@ class HomeScreenViewModel(
         }
     }
 
-//    private fun fetchPaginatedShoes() = viewModelScope.launch {
-//        _homeScreenState.update {
-//            it.copy(
-//                popularShoesState = PopularShoesState.Loading
-//            )
-//        }
-//        when (val result = repository.getShoes(page = 1, limit = 15)) {
-//            is DataResult.Empty -> {}
-//            is DataResult.Loading -> {}
-//            is DataResult.Error -> {
-//                _homeScreenState.update {
-//                    it.copy(
-//                        popularShoesState = PopularShoesState.Error(
-//                            errorMessage = result.exc?.parseErrorMessageFromException() ?: "Unknown error"
-//                        )
-//                    )
-//                }
-//            }
-//            is DataResult.Success -> {
-//                _homeScreenState.update {
-//                    it.copy(popularShoesState = PopularShoesState.Success(shoes = result.data))
-//                }
-//            }
-//        }
-//    }
-
     private fun updateSelectedCategory(category: String) {
         _homeScreenState.update {
             it.copy(
