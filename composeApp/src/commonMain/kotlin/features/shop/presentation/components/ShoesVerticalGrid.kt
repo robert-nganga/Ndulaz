@@ -22,7 +22,7 @@ fun ShoesVerticalGrid(
         contentPadding = PaddingValues(horizontal = 13.5.dp, vertical = 7.5.dp)
     ){
         items(shoes.size){
-            ShoeItem(
+            NewShoeItem(
                 shoe = shoes[it],
                 onShoeSelected = { onClick(it) },
                 onWishListClicked = onWishListClicked

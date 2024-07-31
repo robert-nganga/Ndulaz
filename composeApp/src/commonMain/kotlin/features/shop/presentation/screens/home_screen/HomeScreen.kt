@@ -58,7 +58,7 @@ import features.shop.domain.models.Brand
 import features.shop.domain.models.Shoe
 import features.shop.presentation.components.CategoryItem
 import features.shop.presentation.components.HomeScreenBrandItem
-import features.shop.presentation.components.ShoeItem
+import features.shop.presentation.components.NewShoeItem
 import features.shop.presentation.components.ShoesVerticalGrid
 import features.shop.presentation.utils.getFirstName
 import features.shop.presentation.utils.getGreetings
@@ -113,7 +113,7 @@ fun HomeScreen(
             SnackbarHost(snackBarHostState) { snackBarData ->
                 Snackbar(
                     modifier = Modifier.padding(bottom = 60.dp),
-                   snackbarData =  snackBarData,
+                    snackbarData =  snackBarData,
                     backgroundColor = if (uiState.addToWishListError) MaterialTheme.colors.error else Color.Green,
                     contentColor = MaterialTheme.colors.onPrimary
                 )
@@ -125,7 +125,9 @@ fun HomeScreen(
                 .fillMaxSize(),
             columns = GridCells.Fixed(2),
             contentPadding = PaddingValues(
-                bottom = 50.dp
+                start = 11.dp,
+                end = 11.dp,
+                bottom = 55.dp
             )
         ){
             item(
@@ -135,7 +137,10 @@ fun HomeScreen(
             ){
                 Column(
                     modifier = Modifier
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .padding(
+                            horizontal = 5.dp
+                        ),
                 ){
                     HomeScreenAppBar(
                         onSearchClick = {},
@@ -178,7 +183,7 @@ fun HomeScreen(
                     item(
                         span = {
                             GridItemSpan(2)
-                        }
+                        },
                     ){
                         Box(
                             modifier = Modifier
@@ -197,7 +202,7 @@ fun HomeScreen(
                     item(
                         span = {
                             GridItemSpan(2)
-                        }
+                        },
                     ){
                         Box(
                             modifier = Modifier
@@ -211,9 +216,11 @@ fun HomeScreen(
                 }
                 is PopularShoesState.Success -> {
                     val shoes = (uiState.popularShoesState as PopularShoesState.Success).shoes
-                    items(shoes.size){
+                    items(
+                       count =  shoes.size
+                    ){
                         val shoe = shoes[it]
-                        ShoeItem(
+                        NewShoeItem(
                             shoe = shoe,
                             onShoeSelected = { onProductClick(shoe) },
                             onWishListClicked = {
@@ -226,12 +233,8 @@ fun HomeScreen(
 
                 }
             }
-
         }
     }
-
-
-
 }
 
 @Composable
@@ -251,8 +254,7 @@ fun BrandsSection(
             ) {
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ){
@@ -274,7 +276,6 @@ fun BrandsSection(
                 Row(
                     modifier = Modifier
                         .horizontalScroll(rememberScrollState())
-                        .padding(horizontal = 16.dp),
                 ) {
                     brands.forEach { brand ->
                         HomeScreenBrandItem(
@@ -344,8 +345,7 @@ fun CategoriesSection(
     Column {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -374,7 +374,6 @@ fun CategoriesSection(
                 Row(
                     modifier = modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
                         .horizontalScroll(rememberScrollState()),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ){
@@ -402,10 +401,7 @@ fun HomeScreenAppBar(
 ){
     Row(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(
-                horizontal = 16.dp
-            ),
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ){
         user?.let { user ->
@@ -502,7 +498,6 @@ fun BannersSection(
             state = pagerState,
             modifier = modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
                 .height(160.dp)
                 .clip(RoundedCornerShape(24.dp)),
             pageSpacing = 10.dp
