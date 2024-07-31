@@ -7,15 +7,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import core.presentation.utils.getKoinViewModel
+import features.shop.presentation.screens.brand_screen.BrandScreen
+import features.shop.presentation.screens.brand_screen.BrandScreenViewModel
 import features.shop.presentation.screens.home_screen.HomeScreen
 import features.shop.presentation.screens.home_screen.HomeScreenViewModel
 import features.shop.presentation.screens.most_popular_screen.MostPopularScreen
 import features.shop.presentation.screens.most_popular_screen.MostPopularScreenViewModel
 import features.shop.presentation.screens.product_details_screen.ProductDetailsScreen
 import features.shop.presentation.screens.product_details_screen.ProductDetailsViewModel
+import features.shop.presentation.screens.wish_list_screen.WishListScreen
+import features.shop.presentation.screens.wish_list_screen.WishListViewModel
+import features.shop.presentation.utils.BRAND_SCREEN
 import features.shop.presentation.utils.MOST_POPULAR_SCREEN
 import features.shop.presentation.utils.PRODUCT_DETAILS_SCREEN
 import features.shop.presentation.utils.SHOP_GRAPH_ROUTE
@@ -41,6 +48,11 @@ fun NavGraphBuilder.shopNavGraph(
                     navController.navigate(MOST_POPULAR_SCREEN){
                         launchSingleTop = true
                     }
+                },
+                onNavigateToBrand = {
+                    navController.navigate("$BRAND_SCREEN/${it.name}"){
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -57,14 +69,11 @@ fun NavGraphBuilder.shopNavGraph(
         }
 
         composable(BottomNavItem.WishList.route){
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ){
-                Text(
-                    "Wish list route"
-                )
-            }
+            val wishListViewModel = getKoinViewModel<WishListViewModel>()
+            WishListScreen(
+                viewModel = wishListViewModel,
+               onShoeClick = {}
+            )
         }
 
         composable(BottomNavItem.Profile.route){
@@ -100,6 +109,25 @@ fun NavGraphBuilder.shopNavGraph(
                         launchSingleTop = true
                     }
                 }
+            )
+        }
+        composable(
+            route = "$BRAND_SCREEN/{brandName}",
+            arguments = listOf(navArgument("brandName") { type = NavType.StringType })
+        ){ backStackEntry ->
+            val brandScreenViewModel = getKoinViewModel<BrandScreenViewModel>()
+            BrandScreen(
+                viewModel = brandScreenViewModel,
+                onShoeClick = {
+                    productDetailsViewModel.onProductSelected(it)
+                    navController.navigate(PRODUCT_DETAILS_SCREEN){
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateBack = {
+                     navController.popBackStack()
+                },
+                brandName = backStackEntry.arguments?.getString("brandName")
             )
         }
     }

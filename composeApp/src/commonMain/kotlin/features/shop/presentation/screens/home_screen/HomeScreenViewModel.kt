@@ -6,6 +6,7 @@ import core.data.preferences.SessionHandler
 import core.data.utils.DataResult
 import features.profile.domain.utils.parseErrorMessageFromException
 import features.shop.domain.repository.ShoesRepository
+import features.shop.domain.repository.WishListRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,7 +16,8 @@ import kotlinx.coroutines.launch
 
 class HomeScreenViewModel(
     private val sessionHandler: SessionHandler,
-    private val repository: ShoesRepository
+    private val shoesRepository: ShoesRepository,
+    private val wishListRepository: WishListRepository
 ):ViewModel() {
 
 
@@ -42,6 +44,64 @@ class HomeScreenViewModel(
                 updateSelectedCategory(event.category)
                 filterShoesByCategory(event.category)
             }
+
+            is HomeScreenEvents.OnAddItemToWishList -> {
+                addItemToWishList(event.shoeId)
+            }
+        }
+    }
+
+    fun resetWishListMessage() {
+        _homeScreenState.update {
+            it.copy(
+                addToWishListMessage = null,
+                addToWishListError = false
+            )
+        }
+    }
+
+    private fun addItemToWishList(shoeId: Int) = viewModelScope.launch {
+        when(val response = wishListRepository.addItemToWishList(shoeId)){
+            is DataResult.Empty -> {}
+            is DataResult.Error -> {
+                _homeScreenState.update {
+                    it.copy(
+                        addToWishListMessage = "Couldn't add item to wish list",
+                        addToWishListError = true
+                    )
+                }
+            }
+            is DataResult.Loading -> {}
+            is DataResult.Success -> {
+                _homeScreenState.update {
+                    it.copy(
+                        addToWishListMessage = "Item added to wish list"
+                    )
+                }
+                updateItemWishListStatus(shoeId)
+            }
+        }
+    }
+
+    private fun updateItemWishListStatus(shoeId: Int) {
+        if (_homeScreenState.value.popularShoesState is PopularShoesState.Success){
+            val shoes = (_homeScreenState.value.popularShoesState as PopularShoesState.Success).shoes
+            val new = shoes.map {
+                if(it.id == shoeId){
+                    it.copy(
+                        isInWishList = !it.isInWishList
+                    )
+                } else {
+                    it
+                }
+            }
+            _homeScreenState.update {
+                it.copy(
+                    popularShoesState = PopularShoesState.Success(
+                        shoes = new
+                    )
+                )
+            }
         }
     }
 
@@ -51,7 +111,7 @@ class HomeScreenViewModel(
                 popularShoesState = PopularShoesState.Loading
             )
         }
-        val result = if(category == "All") repository.getShoes(page = 1, limit = 15) else repository.filterShoesByCategory(category)
+        val result = if(category == "All") shoesRepository.getShoes(page = 1, limit = 15) else shoesRepository.filterShoesByCategory(category)
         when (result) {
             is DataResult.Empty -> {}
             is DataResult.Loading -> {}
@@ -78,7 +138,7 @@ class HomeScreenViewModel(
                 brandsState = BrandsState.Loading
             )
         }
-        when (val result = repository.getAllBrands()) {
+        when (val result = shoesRepository.getAllBrands()) {
             is DataResult.Empty -> {}
             is DataResult.Loading -> {}
             is DataResult.Error -> {
@@ -108,7 +168,7 @@ class HomeScreenViewModel(
         _homeScreenState.update {
             it.copy( categoriesState = CategoriesState.Loading )
         }
-        when(val response = repository.getCategories()){
+        when(val response = shoesRepository.getCategories()){
             is DataResult.Empty -> {}
             is DataResult.Loading -> {}
             is DataResult.Error -> {

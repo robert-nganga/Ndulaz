@@ -9,6 +9,7 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +17,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -26,6 +30,10 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
@@ -40,6 +48,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -49,6 +58,8 @@ import features.shop.domain.models.Brand
 import features.shop.domain.models.Shoe
 import features.shop.presentation.components.CategoryItem
 import features.shop.presentation.components.HomeScreenBrandItem
+import features.shop.presentation.components.ShoeItem
+import features.shop.presentation.components.ShoesVerticalGrid
 import features.shop.presentation.utils.getFirstName
 import features.shop.presentation.utils.getGreetings
 import features.shop.presentation.utils.getInitials
@@ -56,9 +67,12 @@ import ndula.composeapp.generated.resources.Res
 import ndula.composeapp.generated.resources.banner1
 import ndula.composeapp.generated.resources.banner2
 import ndula.composeapp.generated.resources.banner3
+import ndula.composeapp.generated.resources.most_popular
+import ndula.composeapp.generated.resources.see_all
+import ndula.composeapp.generated.resources.top_brands
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
-import features.shop.presentation.components.ShoesVerticalGrid
+import org.jetbrains.compose.resources.stringResource
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -66,13 +80,15 @@ import features.shop.presentation.components.ShoesVerticalGrid
 fun HomeScreen(
     viewModel: HomeScreenViewModel,
     onProductClick: (Shoe) -> Unit,
-    onNavigateToMostPopular: ()-> Unit
+    onNavigateToMostPopular: ()-> Unit,
+    onNavigateToBrand: (Brand)-> Unit
 ) {
 
     val uiState by viewModel.homeScreenState.collectAsState()
     val user by viewModel.user.collectAsState()
 
     val pagerState = rememberPagerState{ 3 }
+    val snackBarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit){
         viewModel.onEvent(HomeScreenEvents.OnFetchBrands)
@@ -80,48 +96,142 @@ fun HomeScreen(
         viewModel.onEvent(HomeScreenEvents.OnSelectCategory("All"))
     }
 
-    Column(
+    LaunchedEffect(uiState.addToWishListMessage){
+        if (uiState.addToWishListMessage != null){
+            snackBarHostState.showSnackbar(
+                message = uiState.addToWishListMessage!!,
+                actionLabel = "Dismiss"
+            )
+            viewModel.resetWishListMessage()
+        }
+    }
+
+    Scaffold(
         modifier = Modifier
             .fillMaxSize(),
-    ){
-        HomeScreenAppBar(
-            onSearchClick = {},
-            user = user,
-            onNotificationClick = {
-                viewModel.logout()
+        snackbarHost = {
+            SnackbarHost(snackBarHostState) { snackBarData ->
+                Snackbar(
+                    modifier = Modifier.padding(bottom = 60.dp),
+                   snackbarData =  snackBarData,
+                    backgroundColor = if (uiState.addToWishListError) MaterialTheme.colors.error else Color.Green,
+                    contentColor = MaterialTheme.colors.onPrimary
+                )
             }
-        )
-        Spacer(modifier = Modifier.height(20.dp))
-        BannersSection(
-            banners = listOf(
-                Res.drawable.banner3,
-                Res.drawable.banner2,
-                Res.drawable.banner1
-            ),
-            pagerState = pagerState,
-            onBannerClick = {}
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-        BrandsSection(
-            brandsState = uiState.brandsState,
-            onSeeAllClick = {},
-            onItemClick = {}
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        CategoriesSection(
-            categoriesState = uiState.categoriesState,
-            selectedCategory = uiState.selectedCategory,
-            onCategorySelected = {
-                viewModel.onEvent(HomeScreenEvents.OnSelectCategory(it))
-            },
-            onSeeAllClick = onNavigateToMostPopular
-        )
-        PopularShoesSection(
-            modifier = Modifier.fillMaxSize(),
-            popularShoesState = uiState.popularShoesState,
-            onItemClick = onProductClick,
-        )
+       },
+    ){
+        LazyVerticalGrid(
+            modifier = Modifier
+                .fillMaxSize(),
+            columns = GridCells.Fixed(2),
+            contentPadding = PaddingValues(
+                bottom = 50.dp
+            )
+        ){
+            item(
+                span = {
+                    GridItemSpan(2)
+                }
+            ){
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                ){
+                    HomeScreenAppBar(
+                        onSearchClick = {},
+                        user = user,
+                        onNotificationClick = {
+                            viewModel.logout()
+                        }
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
+                    BannersSection(
+                        banners = listOf(
+                            Res.drawable.banner3,
+                            Res.drawable.banner2,
+                            Res.drawable.banner1
+                        ),
+                        pagerState = pagerState,
+                        onBannerClick = {}
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    BrandsSection(
+                        brandsState = uiState.brandsState,
+                        onSeeAllClick = {},
+                        onItemClick = onNavigateToBrand
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    CategoriesSection(
+                        categoriesState = uiState.categoriesState,
+                        selectedCategory = uiState.selectedCategory,
+                        onCategorySelected = {
+                            viewModel.onEvent(HomeScreenEvents.OnSelectCategory(it))
+                        },
+                        onSeeAllClick = onNavigateToMostPopular
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+            }
+
+            when(uiState.popularShoesState){
+                is PopularShoesState.Error -> {
+                    item(
+                        span = {
+                            GridItemSpan(2)
+                        }
+                    ){
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 50.dp),
+                            contentAlignment = Alignment.Center
+                        ){
+                            Text(
+                                text = (uiState.popularShoesState as PopularShoesState.Error).errorMessage,
+                                style = MaterialTheme.typography.body2
+                            )
+                        }
+                    }
+                }
+                is PopularShoesState.Loading -> {
+                    item(
+                        span = {
+                            GridItemSpan(2)
+                        }
+                    ){
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 50.dp),
+                            contentAlignment = Alignment.Center
+                        ){
+                            CircularProgressIndicator()
+                        }
+                    }
+                }
+                is PopularShoesState.Success -> {
+                    val shoes = (uiState.popularShoesState as PopularShoesState.Success).shoes
+                    items(shoes.size){
+                        val shoe = shoes[it]
+                        ShoeItem(
+                            shoe = shoe,
+                            onShoeSelected = { onProductClick(shoe) },
+                            onWishListClicked = {
+                                viewModel.onEvent(HomeScreenEvents.OnAddItemToWishList(shoe.id))
+                            }
+                        )
+                    }
+                }
+                is PopularShoesState.Idle -> {
+
+                }
+            }
+
+        }
     }
+
+
+
 }
 
 @Composable
@@ -147,14 +257,14 @@ fun BrandsSection(
                     verticalAlignment = Alignment.CenterVertically
                 ){
                     Text(
-                        "Brands",
+                        stringResource(Res.string.top_brands),
                         style = MaterialTheme.typography.h6
                     )
                     TextButton(
                         onClick = onSeeAllClick
                     ){
                         Text(
-                            "See all",
+                            stringResource(Res.string.see_all),
                             style = MaterialTheme.typography.body2,
                             textDecoration = TextDecoration.Underline
                         )
@@ -212,7 +322,8 @@ fun PopularShoesSection(
             ShoesVerticalGrid(
                 modifier = modifier,
                 shoes = shoes,
-                onClick = onItemClick
+                onClick = onItemClick,
+                onWishListClicked = {}
             )
         }
         is PopularShoesState.Idle -> {
@@ -239,14 +350,14 @@ fun CategoriesSection(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                "Most popular",
+                stringResource(Res.string.most_popular),
                 style = MaterialTheme.typography.h6
             )
             TextButton(
                 onClick = onSeeAllClick
             ){
                 Text(
-                    "See all",
+                    stringResource(Res.string.see_all),
                     style = MaterialTheme.typography.body2,
                     textDecoration = TextDecoration.Underline
                 )

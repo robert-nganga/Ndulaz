@@ -112,7 +112,8 @@ fun ShoeListSection(
             ShoesVerticalGrid(
                 modifier = modifier,
                 shoes = shoeListState.shoes,
-                onClick = onShoeClick
+                onClick = onShoeClick,
+                onWishListClicked = {}
             )
         }
     }

@@ -7,7 +7,9 @@ import core.domain.InputValidation
 import features.profile.data.AuthRepositoryImpl
 import features.profile.domain.repositories.AuthRepository
 import features.shop.data.ShoesRepositoryImpl
+import features.shop.data.WishListRepositoryImpl
 import features.shop.domain.repository.ShoesRepository
+import features.shop.domain.repository.WishListRepository
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
@@ -18,5 +20,6 @@ val appModule = module {
     single { HttpClientFactory.createHttpClient(sessionHandler = get(), engine = get()) }
     single { AuthRepositoryImpl(httpClient = get(), sessionHandler = get()) }.bind<AuthRepository>()
     single { ShoesRepositoryImpl(httpClient = get()) }.bind<ShoesRepository>()
+    single { WishListRepositoryImpl(httpClient = get()) }.bind<WishListRepository>()
 
 }

@@ -75,10 +75,10 @@ fun MostPopularScreen(
                 }
             )
         }
-    ){
+    ){ paddingValues ->
         Column(
             modifier = Modifier
-                .padding(it)
+                .padding(paddingValues)
                 .fillMaxSize()
         ){
             Spacer(modifier = Modifier.height(10.dp))
@@ -157,7 +157,8 @@ fun ShoesListSection(
             ShoesVerticalGrid(
                 modifier = modifier,
                 shoes = popularShoesState.shoes,
-                onClick = onShoeClick
+                onClick = onShoeClick,
+                onWishListClicked = {}
             )
         }
     }

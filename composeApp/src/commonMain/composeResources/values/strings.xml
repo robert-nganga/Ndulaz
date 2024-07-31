@@ -18,4 +18,7 @@
     <string name="stock">Stock</string>
     <string name="units_left">Units left</string>
     <string name="out_of_stock">Out of stock</string>
+    <string name="see_all">See all</string>
+    <string name="top_brands">Top brands</string>
+    <string name="most_popular">Most popular</string>
 </resources>

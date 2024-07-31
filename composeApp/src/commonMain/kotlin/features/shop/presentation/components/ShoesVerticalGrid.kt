@@ -13,6 +13,7 @@ import features.shop.domain.models.Shoe
 fun ShoesVerticalGrid(
     shoes: List<Shoe>,
     onClick: (Shoe) -> Unit,
+    onWishListClicked: (Shoe) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
@@ -23,7 +24,8 @@ fun ShoesVerticalGrid(
         items(shoes.size){
             ShoeItem(
                 shoe = shoes[it],
-                onShoeSelected = { onClick(it) }
+                onShoeSelected = { onClick(it) },
+                onWishListClicked = onWishListClicked
             )
         }
     }

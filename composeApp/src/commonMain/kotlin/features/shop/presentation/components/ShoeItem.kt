@@ -39,6 +39,7 @@ import io.kamel.image.asyncPainterResource
 fun ShoeItem(
     shoe: Shoe,
     onShoeSelected: (Shoe) -> Unit,
+    onWishListClicked: (Shoe) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -77,7 +78,7 @@ fun ShoeItem(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(5.dp))
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -113,9 +114,8 @@ fun ShoeItem(
                         )
                     )
                 }
-
             }
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(5.dp))
             Text(
                 "Ksh ${shoe.price}",
                 style = TextStyle(
@@ -124,10 +124,12 @@ fun ShoeItem(
             )
         }
         WishListIcon(
-            isSelected = false,
+            isSelected = shoe.isInWishList,
             modifier = Modifier
                 .align(Alignment.TopEnd),
-            onClick = {}
+            onClick = {
+                onWishListClicked(shoe)
+            }
         )
     }
 }
@@ -142,7 +144,11 @@ fun WishListIcon(
         modifier = modifier
             .padding(16.dp)
             .clip(CircleShape)
-            .background(color = Color.Black.copy(alpha = 0.2f))
+            .background(
+                color = Color.Black.copy(
+                    alpha = if(isSelected) 0.8f else 0.2f
+                )
+            )
             .clickable {
                 onClick()
             }
@@ -153,7 +159,8 @@ fun WishListIcon(
             contentDescription = "",
             modifier = modifier
                 .padding(6.dp)
-                .size(25.dp)
+                .size(25.dp),
+            tint = if (isSelected) Color.White else Color.Black.copy(alpha = 0.5f)
         )
     }
 

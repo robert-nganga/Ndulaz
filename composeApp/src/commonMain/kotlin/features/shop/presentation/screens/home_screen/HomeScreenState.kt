@@ -8,6 +8,8 @@ data class HomeScreenState(
     val categoriesState: CategoriesState = CategoriesState.Loading,
     val brandsState: BrandsState = BrandsState.Loading,
     val selectedCategory: String = "",
+    val addToWishListMessage: String? = null,
+    val addToWishListError: Boolean = false
 )
 
 sealed interface PopularShoesState{
