@@ -45,8 +45,13 @@ class HomeScreenViewModel(
                 filterShoesByCategory(event.category)
             }
 
-            is HomeScreenEvents.OnAddItemToWishList -> {
-                addItemToWishList(event.shoeId)
+            is HomeScreenEvents.OnWishListIconClicked -> {
+                val shoe = event.shoe
+                if(event.shoe.isInWishList){
+                    removeItemFromWishList(shoe.id)
+                } else {
+                    addItemToWishList(shoe.id)
+                }
             }
         }
     }
@@ -55,12 +60,16 @@ class HomeScreenViewModel(
         _homeScreenState.update {
             it.copy(
                 addToWishListMessage = null,
-                addToWishListError = false
             )
         }
     }
 
     private fun addItemToWishList(shoeId: Int) = viewModelScope.launch {
+        _homeScreenState.update {
+            it.copy(
+                addToWishListError = false,
+            )
+        }
         when(val response = wishListRepository.addItemToWishList(shoeId)){
             is DataResult.Empty -> {}
             is DataResult.Error -> {
@@ -76,6 +85,34 @@ class HomeScreenViewModel(
                 _homeScreenState.update {
                     it.copy(
                         addToWishListMessage = "Item added to wish list"
+                    )
+                }
+                updateItemWishListStatus(shoeId)
+            }
+        }
+    }
+
+    private fun removeItemFromWishList(shoeId: Int) = viewModelScope.launch {
+        _homeScreenState.update {
+            it.copy(
+                addToWishListError = false,
+            )
+        }
+        when(val response = wishListRepository.removeItemFromWishList(shoeId)){
+            is DataResult.Empty -> {}
+            is DataResult.Error -> {
+                _homeScreenState.update {
+                    it.copy(
+                        addToWishListMessage = "Couldn't remove item from wish list",
+                        addToWishListError = true
+                    )
+                }
+            }
+            is DataResult.Loading -> {}
+            is DataResult.Success -> {
+                _homeScreenState.update {
+                    it.copy(
+                        addToWishListMessage = "Removed item from wish list"
                     )
                 }
                 updateItemWishListStatus(shoeId)

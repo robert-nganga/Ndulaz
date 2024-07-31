@@ -21,8 +21,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
+import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -36,6 +38,8 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBackIos
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material.icons.rounded.AddShoppingCart
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -131,53 +135,112 @@ fun ProductDetailsScreenContent(
     onEvent: (ProductDetailsEvent) -> Unit,
     onNavigateBack: () -> Unit
 ){
-    Column(
-        modifier = modifier
+    Box(
+        modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
     ){
-        ImagesSection(
-            images = uiState.product!!.images,
-            onNavigateBack = onNavigateBack,
-            selectedImage = uiState.selectedImage,
-            onImageSelected = {
-                onEvent(ProductDetailsEvent.OnImageSelected(it))
-            }
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        ProductInfoSection(
-            shoe = uiState.product
-        )
-        uiState.selectedVariation?.let {
-            Spacer(modifier = Modifier.height(16.dp))
-            VariationInfo(
-                variation = it
-            )
-        }
-        // Find an efficient way to achieve this
-        if (uiState.colors.size >1){
-            Spacer(modifier = Modifier.height(16.dp))
-            ColorSection(
-                colors = uiState.colors,
-                selectedColor = uiState.selectedColor,
-                onColorSelected = {
-                    onEvent(ProductDetailsEvent.OnColorSelected(it))
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ){
+            ImagesSection(
+                images = uiState.product!!.images,
+                selectedImage = uiState.selectedImage,
+                onImageSelected = {
+                    onEvent(ProductDetailsEvent.OnImageSelected(it))
                 }
             )
+            Spacer(modifier = Modifier.height(16.dp))
+            ProductInfoSection(
+                shoe = uiState.product
+            )
+            uiState.selectedVariation?.let {
+                Spacer(modifier = Modifier.height(16.dp))
+                VariationInfo(
+                    variation = it
+                )
+            }
+            // Find an efficient way to achieve this
+            if (uiState.colors.size >1){
+                Spacer(modifier = Modifier.height(16.dp))
+                ColorSection(
+                    colors = uiState.colors,
+                    selectedColor = uiState.selectedColor,
+                    onColorSelected = {
+                        onEvent(ProductDetailsEvent.OnColorSelected(it))
+                    }
+                )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            SizeSection(
+                shoeSizes = uiState.sizes,
+                selectedSize = uiState.selectedSize,
+                onSizeSelected = {
+                    onEvent(ProductDetailsEvent.OnSizeSelected(it))
+                }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            DescriptionSection(
+                description = uiState.product.description
+            )
+            Spacer(modifier = Modifier.height(16.dp))
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        SizeSection(
-            shoeSizes = uiState.sizes,
-            selectedSize = uiState.selectedSize,
-            onSizeSelected = {
-                onEvent(ProductDetailsEvent.OnSizeSelected(it))
+
+        ProductDetailsTopAppBar(
+            modifier = Modifier
+                .align(Alignment.TopCenter),
+            isShoeInWishList = uiState.product!!.isInWishList,
+            onNavigateBack = onNavigateBack,
+            onWishListIconClick = {
             }
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        DescriptionSection(
-            description = uiState.product.description
-        )
-        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun ProductDetailsTopAppBar(
+    modifier: Modifier = Modifier,
+    isShoeInWishList: Boolean,
+    onNavigateBack: () -> Unit,
+    onWishListIconClick: () -> Unit
+){
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(
+                horizontal = 16.dp
+            ),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ){
+        Card(
+            shape = RoundedCornerShape(10.dp),
+            onClick = onNavigateBack,
+            backgroundColor = MaterialTheme.colors.surface,
+            elevation = 5.dp
+        ){
+            Icon(
+                Icons.AutoMirrored.Outlined.ArrowBackIos,
+                contentDescription = "",
+                modifier = Modifier.padding(10.dp),
+                tint = MaterialTheme.colors.onSurface
+            )
+        }
+
+        Card(
+            shape = RoundedCornerShape(10.dp),
+            onClick = onWishListIconClick,
+            backgroundColor = MaterialTheme.colors.surface,
+            elevation = 5.dp
+        ){
+            Icon(
+                if (isShoeInWishList) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+                contentDescription = "",
+                modifier = Modifier.padding(10.dp),
+                tint = MaterialTheme.colors.onSurface
+            )
+        }
     }
 }
 
@@ -664,76 +727,61 @@ fun ImagesSection(
     modifier: Modifier = Modifier,
     selectedImage: String,
     images: List<String>,
-    onNavigateBack: () -> Unit,
     onImageSelected: (String) -> Unit
 ){
-    Box(
+    Column (
         modifier = modifier
-            .fillMaxWidth()
+            .fillMaxWidth(),
     ){
-        Column (
-            modifier = modifier
-                .fillMaxWidth(),
-        ){
-            KamelImage(
-                asyncPainterResource(selectedImage),
-                contentDescription = "",
-                contentScale = ContentScale.Crop,
-                onLoading = {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.Gray.copy(alpha = 0.2f)),
-                    )
-                },
-                modifier = Modifier
-                    .height(240.dp)
-                    .fillMaxWidth()
-                    .background(color = Color.Gray.copy(alpha = 0.4f))
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                images.forEach { image ->
-                    KamelImage(
-                        asyncPainterResource(image),
-                        contentDescription = "",
-                        contentScale = ContentScale.Crop,
-                        onLoading = {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(Color.Gray.copy(alpha = 0.2f)),
-                            )
-                        },
-                        modifier = Modifier
-                            .height(60.dp)
-                            .width(60.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(color = Color.Gray.copy(alpha = 0.55f))
-                            .border(
-                                width = 1.5.dp,
-                                color = if(selectedImage == image) Color.Blue else Color.Gray.copy(alpha = 0.3f),
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .clickable {
-                                onImageSelected(image)
-                            }
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                }
+        KamelImage(
+            asyncPainterResource(selectedImage),
+            contentDescription = "",
+            contentScale = ContentScale.Crop,
+            onLoading = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Gray.copy(alpha = 0.2f)),
+                )
+            },
+            modifier = Modifier
+                .height(240.dp)
+                .fillMaxWidth()
+                .background(color = Color.Gray.copy(alpha = 0.4f))
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            images.forEach { image ->
+                KamelImage(
+                    asyncPainterResource(image),
+                    contentDescription = "",
+                    contentScale = ContentScale.Crop,
+                    onLoading = {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.Gray.copy(alpha = 0.2f)),
+                        )
+                    },
+                    modifier = Modifier
+                        .height(60.dp)
+                        .width(60.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(color = Color.Gray.copy(alpha = 0.55f))
+                        .border(
+                            width = 1.5.dp,
+                            color = if(selectedImage == image) Color.Blue else Color.Gray.copy(alpha = 0.3f),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .clickable {
+                            onImageSelected(image)
+                        }
+                )
+                Spacer(modifier = Modifier.width(10.dp))
             }
-        }
-        IconButton(
-            onClick = onNavigateBack,
-            modifier = Modifier.align(Alignment.TopStart)
-        ){
-            Icon(
-                Icons.AutoMirrored.Outlined.ArrowBackIos  ,
-                contentDescription = "",
-            )
         }
     }
 

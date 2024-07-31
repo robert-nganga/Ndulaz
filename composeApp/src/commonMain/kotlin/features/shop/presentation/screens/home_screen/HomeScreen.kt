@@ -32,6 +32,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
@@ -93,14 +94,16 @@ fun HomeScreen(
     LaunchedEffect(Unit){
         viewModel.onEvent(HomeScreenEvents.OnFetchBrands)
         viewModel.onEvent(HomeScreenEvents.OnFetchCategories)
-        viewModel.onEvent(HomeScreenEvents.OnSelectCategory("All"))
+        if (uiState.selectedCategory == ""){
+            viewModel.onEvent(HomeScreenEvents.OnSelectCategory("All"))
+        }
     }
 
     LaunchedEffect(uiState.addToWishListMessage){
         if (uiState.addToWishListMessage != null){
             snackBarHostState.showSnackbar(
                 message = uiState.addToWishListMessage!!,
-                actionLabel = "Dismiss"
+                actionLabel = "Dismiss",
             )
             viewModel.resetWishListMessage()
         }
@@ -114,8 +117,8 @@ fun HomeScreen(
                 Snackbar(
                     modifier = Modifier.padding(bottom = 60.dp),
                     snackbarData =  snackBarData,
-                    backgroundColor = if (uiState.addToWishListError) MaterialTheme.colors.error else Color.Green,
-                    contentColor = MaterialTheme.colors.onPrimary
+                    backgroundColor = if (uiState.addToWishListError) MaterialTheme.colors.error else Color(0xFF188503),
+                    actionColor = MaterialTheme.colors.surface
                 )
             }
        },
@@ -224,7 +227,7 @@ fun HomeScreen(
                             shoe = shoe,
                             onShoeSelected = { onProductClick(shoe) },
                             onWishListClicked = {
-                                viewModel.onEvent(HomeScreenEvents.OnAddItemToWishList(shoe.id))
+                                viewModel.onEvent(HomeScreenEvents.OnWishListIconClicked(shoe))
                             }
                         )
                     }
