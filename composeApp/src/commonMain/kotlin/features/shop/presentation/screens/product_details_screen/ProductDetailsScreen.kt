@@ -26,9 +26,9 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Snackbar
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
@@ -45,7 +45,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -82,10 +81,14 @@ fun ProductDetailsScreen(
     val uiState by viewModel.productDetailsState.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(uiState.errorMessage){
+    LaunchedEffect(uiState.errorMessage, uiState.addToWishListMessage){
         if(uiState.errorMessage != null){
             snackBarHostState.showSnackbar(uiState.errorMessage!!)
             viewModel.onEvent(ProductDetailsEvent.OnResetError)
+        }
+        if(uiState.addToWishListMessage != null){
+            snackBarHostState.showSnackbar(uiState.addToWishListMessage!!)
+            viewModel.resetWishListMessage()
         }
     }
 
@@ -102,7 +105,15 @@ fun ProductDetailsScreen(
             Scaffold(
                 modifier = Modifier
                     .fillMaxSize(),
-                snackbarHost = { SnackbarHost(snackBarHostState) },
+                snackbarHost = {
+                    SnackbarHost(snackBarHostState) { snackBarData ->
+                        Snackbar(
+                            snackbarData =  snackBarData,
+                            backgroundColor = if (uiState.addToWishListError || uiState.errorMessage != null) MaterialTheme.colors.error else Color(0xFF188503),
+                            actionColor = MaterialTheme.colors.surface
+                        )
+                    }
+               },
                 bottomBar = {
                     ProductDetailsBottomBar(
                         selectedVariation = uiState.selectedVariation,
@@ -121,6 +132,9 @@ fun ProductDetailsScreen(
                     onNavigateBack = {
                         viewModel.resetState()
                         onNavigateBack()
+                    },
+                    onWishListIconClick = {
+                        viewModel.onEvent(ProductDetailsEvent.OnWishListIconClick)
                     }
                 )
             }
@@ -133,7 +147,8 @@ fun ProductDetailsScreenContent(
     uiState: ProductDetailsState,
     modifier: Modifier = Modifier,
     onEvent: (ProductDetailsEvent) -> Unit,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onWishListIconClick: () -> Unit
 ){
     Box(
         modifier = Modifier
@@ -189,11 +204,11 @@ fun ProductDetailsScreenContent(
 
         ProductDetailsTopAppBar(
             modifier = Modifier
+                .padding(top = 10.dp)
                 .align(Alignment.TopCenter),
             isShoeInWishList = uiState.product!!.isInWishList,
             onNavigateBack = onNavigateBack,
-            onWishListIconClick = {
-            }
+            onWishListIconClick = onWishListIconClick
         )
     }
 }

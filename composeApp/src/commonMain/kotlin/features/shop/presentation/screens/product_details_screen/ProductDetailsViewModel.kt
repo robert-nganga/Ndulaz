@@ -2,14 +2,18 @@ package features.shop.presentation.screens.product_details_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import core.data.utils.DataResult
 import features.shop.domain.models.Shoe
+import features.shop.domain.repository.WishListRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class ProductDetailsViewModel: ViewModel(){
+class ProductDetailsViewModel(
+    private val wishListRepository: WishListRepository
+): ViewModel(){
 
     private val _productDetailsState = MutableStateFlow(ProductDetailsState())
     val productDetailsState = _productDetailsState.asStateFlow()
@@ -69,6 +73,89 @@ class ProductDetailsViewModel: ViewModel(){
                         errorMessage = null
                     )
                 }
+            }
+
+            is ProductDetailsEvent.OnWishListIconClick -> {
+                _productDetailsState.value.product?.let {shoe ->
+                    if(shoe.isInWishList) removeItemFromWishList(shoe.id)
+                    else addItemToWishList(shoe.id)
+                }
+            }
+        }
+    }
+
+    fun resetWishListMessage() {
+        _productDetailsState.update {
+            it.copy(
+                addToWishListMessage = null,
+            )
+        }
+    }
+
+    private fun addItemToWishList(shoeId: Int) = viewModelScope.launch {
+        _productDetailsState.update {
+            it.copy(
+                addToWishListError = false,
+            )
+        }
+        when(val response = wishListRepository.addItemToWishList(shoeId)){
+            is DataResult.Empty -> {}
+            is DataResult.Error -> {
+                _productDetailsState.update {
+                    it.copy(
+                        addToWishListMessage = "Couldn't add item to wish list",
+                        addToWishListError = true
+                    )
+                }
+            }
+            is DataResult.Loading -> {}
+            is DataResult.Success -> {
+                _productDetailsState.update {
+                    it.copy(
+                        addToWishListMessage = "Item added to wish list"
+                    )
+                }
+                updateItemWishListStatus()
+            }
+        }
+    }
+
+    private fun removeItemFromWishList(shoeId: Int) = viewModelScope.launch {
+        _productDetailsState.update {
+            it.copy(
+                addToWishListError = false,
+            )
+        }
+        when(val response = wishListRepository.removeItemFromWishList(shoeId)){
+            is DataResult.Empty -> {}
+            is DataResult.Error -> {
+                _productDetailsState.update {
+                    it.copy(
+                        addToWishListMessage = "Couldn't remove item from wish list",
+                        addToWishListError = true
+                    )
+                }
+            }
+            is DataResult.Loading -> {}
+            is DataResult.Success -> {
+                _productDetailsState.update {
+                    it.copy(
+                        addToWishListMessage = "Removed item from wish list"
+                    )
+                }
+                updateItemWishListStatus()
+            }
+        }
+    }
+
+    private fun updateItemWishListStatus() {
+        _productDetailsState.value.product?.let {shoe ->
+            _productDetailsState.update {
+                it.copy(
+                    product = shoe.copy(
+                        isInWishList = !shoe.isInWishList
+                    )
+                )
             }
         }
     }
