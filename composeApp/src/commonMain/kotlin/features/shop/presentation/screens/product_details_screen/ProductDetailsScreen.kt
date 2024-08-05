@@ -510,7 +510,7 @@ fun ProductInfoSection(
         }
         shoe.brand?.let {
             Spacer(modifier = Modifier.height(16.dp))
-            BrandItem(
+            BrandSection(
                 brand = it
             )
         }
@@ -518,7 +518,7 @@ fun ProductInfoSection(
 }
 
 @Composable
-fun BrandItem(
+fun BrandSection(
     modifier: Modifier = Modifier,
     brand: Brand
 ){

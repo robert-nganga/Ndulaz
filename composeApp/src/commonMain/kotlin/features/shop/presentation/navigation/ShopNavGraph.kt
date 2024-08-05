@@ -7,12 +7,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import core.presentation.utils.getKoinViewModel
-import features.shop.domain.models.Brand
+import features.shop.presentation.screens.all_brands_screen.AllBrandsScreen
+import features.shop.presentation.screens.all_brands_screen.AllBrandsViewModel
 import features.shop.presentation.screens.brand_screen.BrandScreen
 import features.shop.presentation.screens.brand_screen.BrandScreenViewModel
 import features.shop.presentation.screens.home_screen.HomeScreen
@@ -23,12 +22,11 @@ import features.shop.presentation.screens.product_details_screen.ProductDetailsS
 import features.shop.presentation.screens.product_details_screen.ProductDetailsViewModel
 import features.shop.presentation.screens.wish_list_screen.WishListScreen
 import features.shop.presentation.screens.wish_list_screen.WishListViewModel
+import features.shop.presentation.utils.ALL_BRANDS_SCREEN
 import features.shop.presentation.utils.BRAND_SCREEN
 import features.shop.presentation.utils.MOST_POPULAR_SCREEN
 import features.shop.presentation.utils.PRODUCT_DETAILS_SCREEN
 import features.shop.presentation.utils.SHOP_GRAPH_ROUTE
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 
 fun NavGraphBuilder.shopNavGraph(
@@ -56,6 +54,11 @@ fun NavGraphBuilder.shopNavGraph(
                 onNavigateToBrand = {
                     brandViewModel.updateBrand(it)
                     navController.navigate(BRAND_SCREEN){
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToAllBrands = {
+                    navController.navigate(ALL_BRANDS_SCREEN){
                         launchSingleTop = true
                     }
                 }
@@ -126,7 +129,22 @@ fun NavGraphBuilder.shopNavGraph(
                     }
                 },
                 onNavigateBack = {
-                     navController.popBackStack()
+                     navController.navigateUp()
+                }
+            )
+        }
+        composable(ALL_BRANDS_SCREEN){
+            val allBrandsViewModel = getKoinViewModel<AllBrandsViewModel>()
+            AllBrandsScreen(
+                viewModel = allBrandsViewModel,
+                onNavigateBack = {
+                  navController.navigateUp()
+                },
+                onBrandClick = {
+                    brandViewModel.updateBrand(it)
+                    navController.navigate(BRAND_SCREEN){
+                        launchSingleTop = true
+                    }
                 }
             )
         }

@@ -81,7 +81,8 @@ fun HomeScreen(
     viewModel: HomeScreenViewModel,
     onProductClick: (Shoe) -> Unit,
     onNavigateToMostPopular: ()-> Unit,
-    onNavigateToBrand: (Brand)-> Unit
+    onNavigateToBrand: (Brand)-> Unit,
+    onNavigateToAllBrands: ()-> Unit,
 ) {
 
     val uiState by viewModel.homeScreenState.collectAsState()
@@ -165,7 +166,7 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.height(10.dp))
                     BrandsSection(
                         brandsState = uiState.brandsState,
-                        onSeeAllClick = {},
+                        onSeeAllClick = onNavigateToAllBrands,
                         onItemClick = onNavigateToBrand
                     )
                     Spacer(modifier = Modifier.height(16.dp))

@@ -103,7 +103,7 @@ fun BrandScreenContent(
                 .padding(horizontal = 16.dp)
                 .fillMaxWidth(),
             brand = brand,
-            onClick = {}
+            onBrandClick = {}
         )
         Spacer(modifier = Modifier.height(16.dp))
         ShoeListSection(

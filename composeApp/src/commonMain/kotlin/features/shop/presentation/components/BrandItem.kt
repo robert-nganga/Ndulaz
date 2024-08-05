@@ -26,11 +26,13 @@ import io.kamel.image.asyncPainterResource
 fun BrandItem(
     modifier: Modifier = Modifier,
     brand: Brand,
-    onClick: (() -> Unit)? = null,
+    onBrandClick: (Brand) -> Unit
 ){
     Card(
-        onClick = onClick!!,
-        modifier = modifier,
+        onClick = {
+          onBrandClick(brand)
+        },
+        modifier = modifier.padding(5.dp),
         backgroundColor = MaterialTheme.colors.surface,
         elevation = 0.dp,
         border = BorderStroke(
@@ -43,7 +45,7 @@ fun BrandItem(
     ) {
         Row(
             modifier = Modifier
-                .padding(28.dp)
+                .padding(24.dp)
         ){
             brand.logoUrl?.let {
                 KamelImage(
@@ -51,7 +53,7 @@ fun BrandItem(
                     contentDescription = null,
                     modifier = Modifier
                         .size(60.dp)
-                        .padding(end = 16.dp),
+                        .padding(end = 12.dp),
                     colorFilter = ColorFilter.tint(
                         color = MaterialTheme.colors.onBackground
                     )
