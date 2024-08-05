@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import core.data.utils.DataResult
 import features.profile.domain.utils.parseErrorMessageFromException
+import features.shop.domain.models.Brand
 import features.shop.domain.repository.ShoesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,12 +20,13 @@ class BrandScreenViewModel(
 
 
 
-    fun onEvent(event: BrandScreenEvent) {
-        when (event) {
-            is BrandScreenEvent.OnUpdateBrand -> {
-                filterByShoesBrand(event.brand)
-            }
+    fun updateBrand(brand: Brand){
+        _brandScreenState.update {
+            it.copy(
+                selectedBrand = brand
+            )
         }
+        filterByShoesBrand(brand.name)
     }
 
 

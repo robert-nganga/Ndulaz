@@ -20,6 +20,7 @@ class WishListViewModel(
 
     init {
         fetchMyWishList()
+        println("WishListViewModel init")
     }
 
     fun updateWishList(wishList: WishList){

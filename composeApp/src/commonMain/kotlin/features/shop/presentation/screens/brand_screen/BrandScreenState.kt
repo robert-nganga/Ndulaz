@@ -1,8 +1,10 @@
 package features.shop.presentation.screens.brand_screen
 
+import features.shop.domain.models.Brand
 import features.shop.domain.models.Shoe
 
 data class BrandScreenState(
+    val selectedBrand: Brand? = null,
     val brandShoeListState: BrandShoeListState = BrandShoeListState.Loading
 )
 

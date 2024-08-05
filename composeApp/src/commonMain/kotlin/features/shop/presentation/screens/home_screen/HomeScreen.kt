@@ -32,7 +32,6 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Snackbar
-import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
@@ -128,6 +127,7 @@ fun HomeScreen(
                 .fillMaxSize(),
             columns = GridCells.Fixed(2),
             contentPadding = PaddingValues(
+                top = 10.dp,
                 start = 11.dp,
                 end = 11.dp,
                 bottom = 55.dp

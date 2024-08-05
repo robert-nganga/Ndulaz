@@ -10,9 +10,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
 import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.material.icons.rounded.Tune
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -23,8 +21,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import features.shop.domain.models.Shoe
 import features.shop.presentation.components.ShoesVerticalGrid
-import features.shop.presentation.screens.brand_screen.BrandScreenEvent
-import features.shop.presentation.screens.brand_screen.ShoeListSection
 
 
 @Composable

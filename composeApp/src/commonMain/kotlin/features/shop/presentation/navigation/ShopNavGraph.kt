@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import core.presentation.utils.getKoinViewModel
+import features.shop.domain.models.Brand
 import features.shop.presentation.screens.brand_screen.BrandScreen
 import features.shop.presentation.screens.brand_screen.BrandScreenViewModel
 import features.shop.presentation.screens.home_screen.HomeScreen
@@ -26,11 +27,14 @@ import features.shop.presentation.utils.BRAND_SCREEN
 import features.shop.presentation.utils.MOST_POPULAR_SCREEN
 import features.shop.presentation.utils.PRODUCT_DETAILS_SCREEN
 import features.shop.presentation.utils.SHOP_GRAPH_ROUTE
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 
 fun NavGraphBuilder.shopNavGraph(
     navController: NavController,
-    productDetailsViewModel: ProductDetailsViewModel
+    productDetailsViewModel: ProductDetailsViewModel,
+    brandViewModel: BrandScreenViewModel
 ){
 
     navigation(startDestination = BottomNavItem.Home.route, route = SHOP_GRAPH_ROUTE){
@@ -50,7 +54,8 @@ fun NavGraphBuilder.shopNavGraph(
                     }
                 },
                 onNavigateToBrand = {
-                    navController.navigate("$BRAND_SCREEN/${it.name}"){
+                    brandViewModel.updateBrand(it)
+                    navController.navigate(BRAND_SCREEN){
                         launchSingleTop = true
                     }
                 }
@@ -111,13 +116,9 @@ fun NavGraphBuilder.shopNavGraph(
                 }
             )
         }
-        composable(
-            route = "$BRAND_SCREEN/{brandName}",
-            arguments = listOf(navArgument("brandName") { type = NavType.StringType })
-        ){ backStackEntry ->
-            val brandScreenViewModel = getKoinViewModel<BrandScreenViewModel>()
+        composable(BRAND_SCREEN){
             BrandScreen(
-                viewModel = brandScreenViewModel,
+                viewModel = brandViewModel,
                 onShoeClick = {
                     productDetailsViewModel.onProductSelected(it)
                     navController.navigate(PRODUCT_DETAILS_SCREEN){
@@ -126,8 +127,7 @@ fun NavGraphBuilder.shopNavGraph(
                 },
                 onNavigateBack = {
                      navController.popBackStack()
-                },
-                brandName = backStackEntry.arguments?.getString("brandName")
+                }
             )
         }
     }
