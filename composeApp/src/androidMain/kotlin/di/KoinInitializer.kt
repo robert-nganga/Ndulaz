@@ -10,7 +10,7 @@ actual class KoinInitializer(
     actual fun init(){
         startKoin {
             androidContext(context)
-            modules(appModule, viewModelModule, dataStoreModule, httpEngineModule)
+            modules(appModule, viewModelModule, dataStoreModule, httpEngineModule, databaseModule)
         }
     }
 }

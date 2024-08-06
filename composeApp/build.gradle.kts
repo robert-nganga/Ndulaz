@@ -13,6 +13,10 @@ plugins {
 }
 
 kotlin {
+    sourceSets.commonMain {
+        kotlin.srcDir("build/generated/ksp/metadata")
+    }
+
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
@@ -73,6 +77,10 @@ kotlin {
     }
 }
 
+task("testClasses"){
+
+}
+
 android {
     namespace = "org.robert.ndula"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
@@ -111,10 +119,16 @@ android {
 }
 dependencies {
     implementation(libs.androidx.animation.core.android)
-    add("kspAndroid", libs.room.compiler)
+    add("kspCommonMainMetadata", libs.room.compiler)
 }
 
 room {
     schemaDirectory("$projectDir/schemas")
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
+    if (name != "kspCommonMainKotlinMetadata" ) {
+        dependsOn("kspCommonMainKotlinMetadata")
+    }
 }
 
