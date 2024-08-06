@@ -34,7 +34,8 @@ class ProductDetailsViewModel(
                 }
                 _productDetailsState.update {
                     it.copy(
-                        errorMessage = errorMessage
+                        snackBarMessage = errorMessage,
+                        isError = errorMessage != null
                     )
                 }
             }
@@ -70,7 +71,7 @@ class ProductDetailsViewModel(
             ProductDetailsEvent.OnResetError -> {
                 _productDetailsState.update {
                     it.copy(
-                        errorMessage = null
+                        snackBarMessage = null
                     )
                 }
             }
@@ -84,18 +85,11 @@ class ProductDetailsViewModel(
         }
     }
 
-    fun resetWishListMessage() {
-        _productDetailsState.update {
-            it.copy(
-                addToWishListMessage = null,
-            )
-        }
-    }
 
     private fun addItemToWishList(shoeId: Int) = viewModelScope.launch {
         _productDetailsState.update {
             it.copy(
-                addToWishListError = false,
+                isError = false,
             )
         }
         when(val response = wishListRepository.addItemToWishList(shoeId)){
@@ -103,8 +97,8 @@ class ProductDetailsViewModel(
             is DataResult.Error -> {
                 _productDetailsState.update {
                     it.copy(
-                        addToWishListMessage = "Couldn't add item to wish list",
-                        addToWishListError = true
+                        snackBarMessage = "Couldn't add item to wish list",
+                        isError = true
                     )
                 }
             }
@@ -112,7 +106,7 @@ class ProductDetailsViewModel(
             is DataResult.Success -> {
                 _productDetailsState.update {
                     it.copy(
-                        addToWishListMessage = "Item added to wish list"
+                        snackBarMessage = "Item added to wish list"
                     )
                 }
                 updateItemWishListStatus()
@@ -123,7 +117,7 @@ class ProductDetailsViewModel(
     private fun removeItemFromWishList(shoeId: Int) = viewModelScope.launch {
         _productDetailsState.update {
             it.copy(
-                addToWishListError = false,
+                isError = false,
             )
         }
         when(val response = wishListRepository.removeItemFromWishList(shoeId)){
@@ -131,8 +125,8 @@ class ProductDetailsViewModel(
             is DataResult.Error -> {
                 _productDetailsState.update {
                     it.copy(
-                        addToWishListMessage = "Couldn't remove item from wish list",
-                        addToWishListError = true
+                        snackBarMessage = "Couldn't remove item from wish list",
+                        isError = true
                     )
                 }
             }
@@ -140,7 +134,7 @@ class ProductDetailsViewModel(
             is DataResult.Success -> {
                 _productDetailsState.update {
                     it.copy(
-                        addToWishListMessage = "Removed item from wish list"
+                        snackBarMessage = "Removed item from wish list"
                     )
                 }
                 updateItemWishListStatus()

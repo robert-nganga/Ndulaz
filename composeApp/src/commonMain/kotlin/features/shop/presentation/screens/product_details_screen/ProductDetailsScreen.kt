@@ -81,14 +81,10 @@ fun ProductDetailsScreen(
     val uiState by viewModel.productDetailsState.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(uiState.errorMessage, uiState.addToWishListMessage){
-        if(uiState.errorMessage != null){
-            snackBarHostState.showSnackbar(uiState.errorMessage!!)
+    LaunchedEffect(uiState.snackBarMessage){
+        uiState.snackBarMessage?.let { message ->
+            snackBarHostState.showSnackbar(message)
             viewModel.onEvent(ProductDetailsEvent.OnResetError)
-        }
-        if(uiState.addToWishListMessage != null){
-            snackBarHostState.showSnackbar(uiState.addToWishListMessage!!)
-            viewModel.resetWishListMessage()
         }
     }
 
@@ -109,8 +105,9 @@ fun ProductDetailsScreen(
                     SnackbarHost(snackBarHostState) { snackBarData ->
                         Snackbar(
                             snackbarData =  snackBarData,
-                            backgroundColor = if (uiState.addToWishListError || uiState.errorMessage != null) MaterialTheme.colors.error else Color(0xFF188503),
-                            actionColor = MaterialTheme.colors.surface
+                            backgroundColor = if (uiState.isError) MaterialTheme.colors.error else Color(0xFF188503),
+                            actionColor = MaterialTheme.colors.surface,
+                            contentColor = MaterialTheme.colors.surface
                         )
                     }
                },
