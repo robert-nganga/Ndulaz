@@ -1,5 +1,6 @@
 package features.shop.presentation.screens.product_details_screen
 
+import features.shop.domain.models.CartItem
 import features.shop.domain.models.Shoe
 import features.shop.domain.models.ShoeVariant
 
@@ -17,4 +18,19 @@ data class ProductDetailsState(
     val errorMessage: String? = null,
     val addToWishListMessage: String? = null,
     val addToWishListError: Boolean = false
-)
+){
+    fun toCartItem(): CartItem {
+        return CartItem(
+            shoeId = product?.id!!,
+            quantity = quantity,
+            color = selectedColor,
+            size = selectedSize,
+            price = selectedVariation?.price!!,
+            imageUrl = selectedImage,
+            name = product.name,
+            brand = product.brand?.name,
+            variationId = selectedVariation.id,
+            id = 0
+        )
+    }
+}

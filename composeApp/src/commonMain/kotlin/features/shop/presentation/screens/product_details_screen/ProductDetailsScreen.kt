@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -52,6 +53,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import features.shop.domain.models.Brand
@@ -398,16 +400,20 @@ fun ColorItem(
 fun QuantityButtons(
     modifier: Modifier = Modifier,
     onQuantityChanged: (Int)-> Unit,
-    quantity: Int
+    quantity: Int,
+    paddingValues: PaddingValues? = null,
+    boxSize: Dp = 35.dp
 ){
     Row(
         modifier = modifier
-            .padding(horizontal = 16.dp),
+            .padding(
+                paddingValues ?: PaddingValues(horizontal = 16.dp)
+            ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
-                .size(35.dp)
+                .size(boxSize)
                 .clip(CircleShape)
                 .background(
                     color = MaterialTheme.colors.primary.copy(alpha = 0.5f)
@@ -432,7 +438,7 @@ fun QuantityButtons(
         Spacer(modifier = Modifier.width(10.dp))
         Box(
             modifier = Modifier
-                .size(35.dp)
+                .size(boxSize)
                 .clip(CircleShape)
                 .background(
                     color = MaterialTheme.colors.primary,

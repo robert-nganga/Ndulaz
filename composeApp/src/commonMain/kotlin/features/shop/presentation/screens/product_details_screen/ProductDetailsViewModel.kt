@@ -3,7 +3,9 @@ package features.shop.presentation.screens.product_details_screen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import core.data.utils.DataResult
+import features.shop.domain.models.CartItem
 import features.shop.domain.models.Shoe
+import features.shop.domain.repository.CartRepository
 import features.shop.domain.repository.WishListRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,7 +14,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ProductDetailsViewModel(
-    private val wishListRepository: WishListRepository
+    private val wishListRepository: WishListRepository,
+    private val cartRepository: CartRepository
 ): ViewModel(){
 
     private val _productDetailsState = MutableStateFlow(ProductDetailsState())
@@ -38,6 +41,8 @@ class ProductDetailsViewModel(
                         isError = errorMessage != null
                     )
                 }
+                if(errorMessage != null) return
+                addItemToCart(_productDetailsState.value.toCartItem())
             }
             is ProductDetailsEvent.OnQuantityChange -> {
                 _productDetailsState.update {
@@ -80,6 +85,35 @@ class ProductDetailsViewModel(
                 _productDetailsState.value.product?.let {shoe ->
                     if(shoe.isInWishList) removeItemFromWishList(shoe.id)
                     else addItemToWishList(shoe.id)
+                }
+            }
+        }
+    }
+
+
+    private fun addItemToCart(cartItem: CartItem) = viewModelScope.launch {
+        _productDetailsState.update {
+            it.copy(
+                isError = false,
+            )
+        }
+        val response = cartRepository.upsertCartItem(cartItem)
+        when(response){
+            is DataResult.Empty -> {}
+            is DataResult.Error -> {
+                _productDetailsState.update {
+                    it.copy(
+                        snackBarMessage = response.message,
+                        isError = true
+                    )
+                }
+            }
+            is DataResult.Loading -> {}
+            is DataResult.Success -> {
+                _productDetailsState.update {
+                    it.copy(
+                        snackBarMessage = response.data
+                    )
                 }
             }
         }
