@@ -14,6 +14,8 @@ import features.shop.presentation.screens.all_brands_screen.AllBrandsScreen
 import features.shop.presentation.screens.all_brands_screen.AllBrandsViewModel
 import features.shop.presentation.screens.brand_screen.BrandScreen
 import features.shop.presentation.screens.brand_screen.BrandScreenViewModel
+import features.shop.presentation.screens.cart_screen.CartScreen
+import features.shop.presentation.screens.cart_screen.CartViewModel
 import features.shop.presentation.screens.home_screen.HomeScreen
 import features.shop.presentation.screens.home_screen.HomeScreenViewModel
 import features.shop.presentation.screens.most_popular_screen.MostPopularScreen
@@ -66,14 +68,10 @@ fun NavGraphBuilder.shopNavGraph(
         }
 
         composable(BottomNavItem.Cart.route){
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ){
-                Text(
-                    "Cart route"
-                )
-            }
+            val cartViewModel = getKoinViewModel<CartViewModel>()
+            CartScreen(
+                viewModel = cartViewModel,
+            )
         }
 
         composable(BottomNavItem.WishList.route){

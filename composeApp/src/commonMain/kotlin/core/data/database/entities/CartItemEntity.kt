@@ -13,7 +13,7 @@ data class CartItemEntity(
     @ColumnInfo(name = "quantity") val quantity: Int,
     @ColumnInfo(name = "image_url") val imageUrl: String,
     @ColumnInfo(name = "shoe_id") val shoeId: Int,
-    @ColumnInfo(name = "brand") val brand: String,
+    @ColumnInfo(name = "brand") val brand: String?,
     @ColumnInfo(name = "size") val size: Int,
     @ColumnInfo(name = "Color") val color: String,
     @ColumnInfo(name = "variation_id") val variationId: Int

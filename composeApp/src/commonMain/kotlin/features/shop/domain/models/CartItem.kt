@@ -7,7 +7,7 @@ data class CartItem(
     val quantity: Int,
     val imageUrl: String,
     val shoeId: Int,
-    val brand: String,
+    val brand: String?,
     val size: Int,
     val color: String,
     val variationId: Int
