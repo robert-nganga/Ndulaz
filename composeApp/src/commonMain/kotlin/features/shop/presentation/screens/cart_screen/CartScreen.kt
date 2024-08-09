@@ -32,7 +32,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import features.shop.domain.models.CartItem
 import features.shop.presentation.components.CartItemInfo
-import org.koin.compose.koinInject
 
 @Composable
 fun CartScreen(

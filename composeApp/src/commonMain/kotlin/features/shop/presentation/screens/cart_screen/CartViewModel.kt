@@ -1,6 +1,5 @@
 package features.shop.presentation.screens.cart_screen
 
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import features.shop.domain.models.CartItem
@@ -8,7 +7,6 @@ import features.shop.domain.repository.CartRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -28,9 +26,12 @@ class CartViewModel(
         )
 
     val totalPrice = cartItems
-        .map { items ->
-            items.sumOf { it.price * it.quantity }
-        }
+        .map { items -> items.sumOf { it.price * it.quantity } }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = 0.0
+        )
 
     init {
         println("CartViewModel init")

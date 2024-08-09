@@ -2,6 +2,8 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.material.Badge
+import androidx.compose.material.BadgedBox
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
@@ -9,8 +11,11 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination
@@ -42,6 +47,8 @@ fun MainScreen(
 
     val cartViewModel = getKoinViewModel<CartViewModel>()
 
+    val cartItems by cartViewModel.cartItems.collectAsState()
+
     val showBottomBar = when(navBackStackEntry?.destination?.route){
         BottomNavItem.Home.route -> true
         BottomNavItem.Cart.route -> true
@@ -60,7 +67,8 @@ fun MainScreen(
             if (showBottomBar){
                 BottomNavigationBar(
                     navController = navController,
-                    navBackStackEntry = navController.currentBackStackEntryAsState().value
+                    navBackStackEntry = navController.currentBackStackEntryAsState().value,
+                    cartItemsCount = cartItems.size
                 )
             }
         }
@@ -80,6 +88,7 @@ fun MainScreen(
 fun BottomNavigationBar(
     navController: NavHostController,
     navBackStackEntry: NavBackStackEntry?,
+    cartItemsCount: Int,
     modifier: Modifier = Modifier
 ){
 
@@ -101,7 +110,8 @@ fun BottomNavigationBar(
             AddItem(
                 screen = screen,
                 navController = navController,
-                currentDestination = currentRoute
+                currentDestination = currentRoute,
+                badgeCount = if (screen.route == BottomNavItem.Cart.route) cartItemsCount else null
             )
         }
     }
@@ -112,12 +122,37 @@ fun BottomNavigationBar(
 fun RowScope.AddItem(
     screen: BottomNavItem,
     navController: NavHostController,
-    currentDestination: NavDestination?
+    currentDestination: NavDestination?,
+    badgeCount: Int? = null
 ){
     val isSelected = currentDestination?.route == screen.route
 
     BottomNavigationItem(
         icon = {
+            BadgedBox(
+                badge = {
+                    if(badgeCount != null && badgeCount > 0){
+                        Badge(
+                            modifier = Modifier.align(Alignment.Center),
+                            backgroundColor = MaterialTheme.colors.primary,
+                            contentColor = MaterialTheme.colors.onPrimary
+                        ){
+                            Text(
+                                text = "$badgeCount",
+                                style = TextStyle(
+                                    color = MaterialTheme.colors.onPrimary
+                                )
+                            )
+                        }
+                    }
+                }
+            ){
+                Icon(
+                    imageVector = if (isSelected) screen.focusedIcon else screen.unFocusedIcon,
+                    contentDescription = "Navigation Icon",
+                    modifier = Modifier.size(26.dp),
+                )
+            }
             Icon(
                 imageVector = if (isSelected) screen.focusedIcon else screen.unFocusedIcon,
                 contentDescription = "Navigation Icon",
