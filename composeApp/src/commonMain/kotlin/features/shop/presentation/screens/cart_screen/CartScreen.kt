@@ -3,6 +3,7 @@ package features.shop.presentation.screens.cart_screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,19 +28,19 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import features.shop.domain.models.CartItem
-import features.shop.presentation.components.CartItem
+import features.shop.presentation.components.CartItemInfo
+import org.koin.compose.koinInject
 
 @Composable
 fun CartScreen(
     viewModel: CartViewModel
 ){
 
-    val uiState by viewModel.cartItems.collectAsState(emptyList())
+    val cartItems by viewModel.cartItems.collectAsState(emptyList())
+    val totalPrice by viewModel.totalPrice.collectAsState(0.0)
 
     Scaffold(
         modifier = Modifier
@@ -71,15 +72,19 @@ fun CartScreen(
                 }
             )
         },
-        backgroundColor = MaterialTheme.colors.background.copy(
-            alpha = 0.1f
+        backgroundColor = MaterialTheme.colors.onBackground.copy(
+            alpha = 0.035f
         )
     ){
         CartScreenContent(
             modifier = Modifier
                 .padding(it)
                 .fillMaxSize(),
-            cartItems = uiState
+            cartItems = cartItems,
+            totalPrice = totalPrice,
+            onItemQuantityChange = {item, quantity ->
+                viewModel.updateItemQuantity(item, quantity)
+            }
         )
     }
 }
@@ -88,6 +93,8 @@ fun CartScreen(
 fun CartScreenContent(
     modifier: Modifier = Modifier,
     cartItems: List<CartItem>,
+    onItemQuantityChange: (CartItem, Int) -> Unit,
+    totalPrice: Double,
 ){
     Box(
         modifier = modifier
@@ -96,12 +103,16 @@ fun CartScreenContent(
         LazyColumn(
             modifier = Modifier
                 .padding(16.dp)
-                .fillMaxSize()
+                .fillMaxSize(),
+            contentPadding = PaddingValues(
+                bottom = 110.dp
+            )
         ){
             items(cartItems){ cartItem ->
-                CartItem(
+                CartItemInfo(
                     modifier = Modifier,
-                    cartItem = cartItem
+                    cartItem = cartItem,
+                    onItemQuantityChanged = onItemQuantityChange
                 )
             }
         }
@@ -111,7 +122,7 @@ fun CartScreenContent(
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 50.dp),
             onCheckOutClick = {},
-            totalPrice = "Ksh 1500.00"
+            totalPrice = "Ksh $totalPrice"
         )
     }
 

@@ -24,6 +24,7 @@ import features.profile.presentation.utils.AUTH_GRAPH_ROUTE
 import features.shop.presentation.navigation.BottomNavItem
 import features.shop.presentation.navigation.shopNavGraph
 import features.shop.presentation.screens.brand_screen.BrandScreenViewModel
+import features.shop.presentation.screens.cart_screen.CartViewModel
 import features.shop.presentation.screens.product_details_screen.ProductDetailsViewModel
 import features.shop.presentation.utils.PRODUCT_DETAILS_SCREEN
 import features.shop.presentation.utils.SHOP_GRAPH_ROUTE
@@ -38,6 +39,8 @@ fun MainScreen(
     val productDetailsViewModel = getKoinViewModel<ProductDetailsViewModel>()
     val brandViewModel = getKoinViewModel<BrandScreenViewModel>()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
+
+    val cartViewModel = getKoinViewModel<CartViewModel>()
 
     val showBottomBar = when(navBackStackEntry?.destination?.route){
         BottomNavItem.Home.route -> true
@@ -68,7 +71,7 @@ fun MainScreen(
             startDestination = if (isLoggedIn) SHOP_GRAPH_ROUTE else AUTH_GRAPH_ROUTE
         ){
             authNavGraph(navController, authViewModel)
-            shopNavGraph(navController, productDetailsViewModel, brandViewModel)
+            shopNavGraph(navController, productDetailsViewModel, brandViewModel, cartViewModel)
         }
     }
 }

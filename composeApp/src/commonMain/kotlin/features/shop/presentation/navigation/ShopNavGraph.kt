@@ -34,7 +34,8 @@ import features.shop.presentation.utils.SHOP_GRAPH_ROUTE
 fun NavGraphBuilder.shopNavGraph(
     navController: NavController,
     productDetailsViewModel: ProductDetailsViewModel,
-    brandViewModel: BrandScreenViewModel
+    brandViewModel: BrandScreenViewModel,
+    cartViewModel: CartViewModel
 ){
 
     navigation(startDestination = BottomNavItem.Home.route, route = SHOP_GRAPH_ROUTE){
@@ -68,7 +69,8 @@ fun NavGraphBuilder.shopNavGraph(
         }
 
         composable(BottomNavItem.Cart.route){
-            val cartViewModel = getKoinViewModel<CartViewModel>()
+            //val cartViewModel = getKoinViewModel<CartViewModel>()
+            println("cart screen")
             CartScreen(
                 viewModel = cartViewModel,
             )

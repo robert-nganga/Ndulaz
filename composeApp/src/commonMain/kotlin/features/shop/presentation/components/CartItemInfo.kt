@@ -32,9 +32,10 @@ import io.kamel.image.asyncPainterResource
 
 
 @Composable
-fun CartItem(
+fun CartItemInfo(
     modifier: Modifier = Modifier,
-    cartItem: CartItem
+    cartItem: CartItem,
+    onItemQuantityChanged: (CartItem, Int) -> Unit
 ){
     Card(
         modifier = modifier
@@ -89,7 +90,9 @@ fun CartItem(
                 ) {
                     QuantityButtons(
                         quantity = cartItem.quantity,
-                        onQuantityChanged = {},
+                        onQuantityChanged = {
+                            onItemQuantityChanged(cartItem, it)
+                        },
                         paddingValues = PaddingValues(0.dp),
                         boxSize = 28.dp
                     )
