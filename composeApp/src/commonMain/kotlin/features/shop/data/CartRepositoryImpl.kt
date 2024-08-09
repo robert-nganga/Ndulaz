@@ -18,9 +18,6 @@ class CartRepositoryImpl(
     private val cartDao = database.cartDao()
     override fun getAllCartItems(): Flow<List<CartItem>> = cartDao
         .getAllCartItems()
-        .onEach {
-            println("Repository: $it")
-        }
         .catch {
             it.printStackTrace()
             emit(emptyList())

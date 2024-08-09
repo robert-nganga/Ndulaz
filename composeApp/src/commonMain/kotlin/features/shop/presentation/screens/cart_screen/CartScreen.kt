@@ -32,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import features.shop.domain.models.CartItem
 import features.shop.presentation.components.CartItemInfo
+import features.shop.presentation.components.SwipeToDeleteContainer
 
 @Composable
 fun CartScreen(
@@ -81,8 +82,11 @@ fun CartScreen(
                 .fillMaxSize(),
             cartItems = cartItems,
             totalPrice = totalPrice,
-            onItemQuantityChange = {item, quantity ->
+            onItemQuantityChange = { item, quantity ->
                 viewModel.updateItemQuantity(item, quantity)
+            },
+            onDeleteItem = {
+                viewModel.deleteItem(it.id)
             }
         )
     }
@@ -93,6 +97,7 @@ fun CartScreenContent(
     modifier: Modifier = Modifier,
     cartItems: List<CartItem>,
     onItemQuantityChange: (CartItem, Int) -> Unit,
+    onDeleteItem: (CartItem) -> Unit,
     totalPrice: Double,
 ){
     Box(
@@ -101,18 +106,28 @@ fun CartScreenContent(
     ) {
         LazyColumn(
             modifier = Modifier
-                .padding(16.dp)
                 .fillMaxSize(),
             contentPadding = PaddingValues(
+                top = 16.dp,
+                start = 16.dp,
+                end = 16.dp,
                 bottom = 110.dp
             )
         ){
-            items(cartItems){ cartItem ->
-                CartItemInfo(
-                    modifier = Modifier,
-                    cartItem = cartItem,
-                    onItemQuantityChanged = onItemQuantityChange
-                )
+            items(
+                items = cartItems,
+                key = {it.id}
+            ){ item ->
+                SwipeToDeleteContainer(
+                    item = item,
+                    onDelete = onDeleteItem
+                ){
+                    CartItemInfo(
+                        modifier = Modifier,
+                        cartItem = item,
+                        onItemQuantityChanged = onItemQuantityChange
+                    )
+                }
             }
         }
         CheckOutSection(

@@ -16,9 +16,6 @@ class CartViewModel(
 
     val cartItems = cartRepository
         .getAllCartItems()
-        .onEach {
-            println("Viewmodel: $it")
-        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -45,4 +42,9 @@ class CartViewModel(
     fun clearCart() = viewModelScope.launch {
         cartRepository.deleteAllCartItems()
     }
+
+    fun deleteItem(id: Int) = viewModelScope.launch {
+        cartRepository.deleteCartItem(id)
+    }
+
 }
