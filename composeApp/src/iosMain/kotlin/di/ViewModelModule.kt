@@ -7,6 +7,7 @@ import features.shop.presentation.screens.cart_screen.CartViewModel
 import features.shop.presentation.screens.home_screen.HomeScreenViewModel
 import features.shop.presentation.screens.most_popular_screen.MostPopularScreenViewModel
 import features.shop.presentation.screens.product_details_screen.ProductDetailsViewModel
+import features.shop.presentation.screens.search_screen.SearchViewModel
 import features.shop.presentation.screens.wish_list_screen.WishListViewModel
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
@@ -20,4 +21,5 @@ actual val viewModelModule = module {
     singleOf(::WishListViewModel)
     singleOf(::AllBrandsViewModel)
     singleOf(::CartViewModel)
+    singleOf(::SearchViewModel)
 }

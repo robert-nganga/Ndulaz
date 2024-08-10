@@ -59,6 +59,7 @@ import features.shop.domain.models.Shoe
 import features.shop.presentation.components.CategoryItem
 import features.shop.presentation.components.HomeScreenBrandItem
 import features.shop.presentation.components.NewShoeItem
+import features.shop.presentation.components.ShoeItem
 import features.shop.presentation.components.ShoesVerticalGrid
 import features.shop.presentation.utils.getFirstName
 import features.shop.presentation.utils.getGreetings
@@ -83,6 +84,7 @@ fun HomeScreen(
     onNavigateToMostPopular: ()-> Unit,
     onNavigateToBrand: (Brand)-> Unit,
     onNavigateToAllBrands: ()-> Unit,
+    onNavigateToSearch: ()-> Unit
 ) {
 
     val uiState by viewModel.homeScreenState.collectAsState()
@@ -147,7 +149,7 @@ fun HomeScreen(
                         ),
                 ){
                     HomeScreenAppBar(
-                        onSearchClick = {},
+                        onSearchClick = onNavigateToSearch,
                         user = user,
                         onNotificationClick = {
                             viewModel.logout()
@@ -224,7 +226,7 @@ fun HomeScreen(
                        count =  shoes.size
                     ){
                         val shoe = shoes[it]
-                        NewShoeItem(
+                        ShoeItem(
                             shoe = shoe,
                             onShoeSelected = { onProductClick(shoe) },
                             onWishListClicked = {

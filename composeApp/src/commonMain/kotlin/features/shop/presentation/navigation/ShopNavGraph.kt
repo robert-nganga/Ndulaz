@@ -22,12 +22,15 @@ import features.shop.presentation.screens.most_popular_screen.MostPopularScreen
 import features.shop.presentation.screens.most_popular_screen.MostPopularScreenViewModel
 import features.shop.presentation.screens.product_details_screen.ProductDetailsScreen
 import features.shop.presentation.screens.product_details_screen.ProductDetailsViewModel
+import features.shop.presentation.screens.search_screen.SearchScreen
+import features.shop.presentation.screens.search_screen.SearchViewModel
 import features.shop.presentation.screens.wish_list_screen.WishListScreen
 import features.shop.presentation.screens.wish_list_screen.WishListViewModel
 import features.shop.presentation.utils.ALL_BRANDS_SCREEN
 import features.shop.presentation.utils.BRAND_SCREEN
 import features.shop.presentation.utils.MOST_POPULAR_SCREEN
 import features.shop.presentation.utils.PRODUCT_DETAILS_SCREEN
+import features.shop.presentation.utils.SEARCH_SCREEN
 import features.shop.presentation.utils.SHOP_GRAPH_ROUTE
 
 
@@ -35,7 +38,8 @@ fun NavGraphBuilder.shopNavGraph(
     navController: NavController,
     productDetailsViewModel: ProductDetailsViewModel,
     brandViewModel: BrandScreenViewModel,
-    cartViewModel: CartViewModel
+    cartViewModel: CartViewModel,
+    searchViewModel: SearchViewModel
 ){
 
     navigation(startDestination = BottomNavItem.Home.route, route = SHOP_GRAPH_ROUTE){
@@ -64,13 +68,16 @@ fun NavGraphBuilder.shopNavGraph(
                     navController.navigate(ALL_BRANDS_SCREEN){
                         launchSingleTop = true
                     }
+                },
+                onNavigateToSearch = {
+                    navController.navigate(SEARCH_SCREEN){
+                        launchSingleTop = true
+                    }
                 }
             )
         }
 
         composable(BottomNavItem.Cart.route){
-            //val cartViewModel = getKoinViewModel<CartViewModel>()
-            println("cart screen")
             CartScreen(
                 viewModel = cartViewModel,
             )
@@ -81,6 +88,15 @@ fun NavGraphBuilder.shopNavGraph(
             WishListScreen(
                 viewModel = wishListViewModel,
                onShoeClick = {}
+            )
+        }
+
+        composable(SEARCH_SCREEN){
+            SearchScreen(
+                viewModel = searchViewModel,
+                onNavigateBack = {
+                    navController.navigateUp()
+                }
             )
         }
 
