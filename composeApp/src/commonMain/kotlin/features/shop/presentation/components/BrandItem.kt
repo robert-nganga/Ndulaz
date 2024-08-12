@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import features.shop.domain.models.Brand
 import io.kamel.image.KamelImage
@@ -26,7 +27,9 @@ import io.kamel.image.asyncPainterResource
 fun BrandItem(
     modifier: Modifier = Modifier,
     brand: Brand,
-    onBrandClick: (Brand) -> Unit
+    onBrandClick: (Brand) -> Unit,
+    imageSize: Dp = 60.dp,
+    horizontalPadding: Dp = 26.dp
 ){
     Card(
         onClick = {
@@ -45,14 +48,17 @@ fun BrandItem(
     ) {
         Row(
             modifier = Modifier
-                .padding(24.dp)
+                .padding(
+                    horizontal = horizontalPadding,
+                    vertical = 24.dp
+                )
         ){
             brand.logoUrl?.let {
                 KamelImage(
                     resource = asyncPainterResource(brand.logoUrl),
                     contentDescription = null,
                     modifier = Modifier
-                        .size(60.dp)
+                        .size(imageSize)
                         .padding(end = 12.dp),
                     colorFilter = ColorFilter.tint(
                         color = MaterialTheme.colors.onBackground

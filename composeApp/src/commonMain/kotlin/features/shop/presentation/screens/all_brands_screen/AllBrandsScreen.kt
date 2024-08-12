@@ -94,7 +94,9 @@ fun AllBrandsScreen(
                     items(brands.size) { index ->
                         BrandItem(
                             brand = brands[index],
-                            onBrandClick = onBrandClick
+                            onBrandClick = onBrandClick,
+                            imageSize = 50.dp,
+                            horizontalPadding = 12.dp
                         )
                     }
                 }

@@ -20,7 +20,7 @@ fun SuggestionsVerticalGrid(
 ){
     LazyVerticalStaggeredGrid(
         modifier = modifier,
-        columns = StaggeredGridCells.Fixed(2)
+        columns = StaggeredGridCells.Adaptive(150.dp)
     ){
         items(
             suggestions.size
