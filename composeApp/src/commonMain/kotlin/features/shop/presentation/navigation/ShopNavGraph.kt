@@ -96,6 +96,12 @@ fun NavGraphBuilder.shopNavGraph(
                 viewModel = searchViewModel,
                 onNavigateBack = {
                     navController.navigateUp()
+                },
+                onShoeClick = {
+                    productDetailsViewModel.onProductSelected(it)
+                    navController.navigate(PRODUCT_DETAILS_SCREEN) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }

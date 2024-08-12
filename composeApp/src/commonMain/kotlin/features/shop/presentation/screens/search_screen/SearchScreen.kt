@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import features.shop.domain.models.Shoe
 import features.shop.presentation.components.ShoesVerticalGrid
 import features.shop.presentation.components.SuggestionsVerticalGrid
 
@@ -39,7 +40,8 @@ import features.shop.presentation.components.SuggestionsVerticalGrid
 @Composable
 fun SearchScreen(
     viewModel: SearchViewModel,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onShoeClick: (Shoe) -> Unit
 ){
     val uiState by viewModel.searchState.collectAsState()
 
@@ -69,7 +71,7 @@ fun SearchScreen(
             )
         },
         backgroundColor = MaterialTheme.colors.onBackground.copy(
-            alpha = 0.05f
+            alpha = 0.04f
         )
     ){
         SearchScreenContent(
@@ -77,6 +79,9 @@ fun SearchScreen(
                 .fillMaxSize()
                 .padding(it),
             state = uiState,
+            onShoeClick = onShoeClick,
+            onWishListClicked = {
+            }
         )
     }
 }
@@ -84,7 +89,9 @@ fun SearchScreen(
 @Composable
 fun SearchScreenContent(
     modifier: Modifier = Modifier,
-    state: SearchScreenState
+    state: SearchScreenState,
+    onShoeClick: (Shoe) -> Unit,
+    onWishListClicked: (Shoe) -> Unit,
 ){
     Column(
         modifier = modifier
@@ -105,10 +112,8 @@ fun SearchScreenContent(
                     modifier = Modifier
                         .fillMaxSize(),
                     shoes = shoes,
-                    onClick = {
-
-                    },
-                    onWishListClicked = {}
+                    onClick = onShoeClick,
+                    onWishListClicked = onWishListClicked
                 )
             }
             is SearchScreenState.Error -> {
@@ -127,7 +132,7 @@ fun SearchScreenContent(
                     modifier = Modifier
                         .fillMaxSize(),
                     suggestions = suggestions,
-                    onSuggestionSelected = {}
+                    onSuggestionSelected = onShoeClick
                 )
             }
         }
@@ -155,6 +160,8 @@ fun SearchScreenAppBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(horizontal = 10.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
                 onClick = onNavigateBack
@@ -180,19 +187,27 @@ fun SearchScreenAppBar(
             placeholder = {
                 Text(text = "Search Shoe")
             },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = 16.dp
+                ),
             singleLine = true,
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = MaterialTheme.colors.primary.copy(alpha = 0.5f),
                 unfocusedBorderColor = Color.Transparent,
                 backgroundColor = MaterialTheme.colors.primary.copy(alpha = 0.08f)
             ),
-            shape = RoundedCornerShape(16.dp)
+            shape = RoundedCornerShape(16.dp),
         )
         if (isSearchSuccessful){
             Spacer(modifier = Modifier.height(10.dp))
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = 16.dp
+                    )
             ){
                 Text(
                     "Results for \"$query\"",

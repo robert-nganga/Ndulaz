@@ -111,7 +111,7 @@ fun CartScreenContent(
                 top = 16.dp,
                 start = 16.dp,
                 end = 16.dp,
-                bottom = 110.dp
+                bottom = 125.dp
             )
         ){
             items(

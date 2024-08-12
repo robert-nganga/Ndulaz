@@ -1,6 +1,7 @@
 package features.shop.presentation.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
@@ -20,14 +21,17 @@ fun SuggestionsVerticalGrid(
 ){
     LazyVerticalStaggeredGrid(
         modifier = modifier,
-        columns = StaggeredGridCells.Adaptive(150.dp)
+        columns = StaggeredGridCells.Adaptive(100.dp),
+        contentPadding = PaddingValues(
+            top = 16.dp
+        )
     ){
         items(
             suggestions.size
         ){index ->
             KamelImage(
                 modifier = Modifier
-                    .padding(2.5.dp)
+                    .padding(1.dp)
                     .clickable {
                        onSuggestionSelected(suggestions[index])
                     },
