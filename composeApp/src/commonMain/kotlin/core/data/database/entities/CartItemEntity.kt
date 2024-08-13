@@ -2,10 +2,14 @@ package core.data.database.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 
-@Entity("cart")
+@Entity(
+    tableName = "cart",
+    indices = [Index(value = ["shoe_id", "variation_id"], unique = true)]
+    )
 data class CartItemEntity(
     @PrimaryKey(autoGenerate = true) val id: Int,
     @ColumnInfo(name = "item_name") val name: String,

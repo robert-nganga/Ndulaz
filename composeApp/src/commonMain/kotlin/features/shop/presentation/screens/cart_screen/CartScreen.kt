@@ -37,7 +37,7 @@ import features.shop.presentation.components.SwipeToDeleteContainer
 @Composable
 fun CartScreen(
     viewModel: CartViewModel,
-    onNavigateToCheckout: () -> Unit
+    onNavigateToCheckout: (List<CartItem>) -> Unit
 ){
 
     val cartItems by viewModel.cartItems.collectAsState(emptyList())
@@ -89,7 +89,9 @@ fun CartScreen(
             onDeleteItem = {
                 viewModel.deleteItem(it.id)
             },
-            onCheckout = onNavigateToCheckout
+            onCheckout = {
+                onNavigateToCheckout(cartItems)
+            }
         )
     }
 }

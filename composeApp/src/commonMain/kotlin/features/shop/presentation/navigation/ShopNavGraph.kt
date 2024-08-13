@@ -32,6 +32,7 @@ import features.shop.presentation.utils.ALL_BRANDS_SCREEN
 import features.shop.presentation.utils.BRAND_SCREEN
 import features.shop.presentation.utils.CHECK_OUT_SCREEN
 import features.shop.presentation.utils.MOST_POPULAR_SCREEN
+import features.shop.presentation.utils.NavigationUtils
 import features.shop.presentation.utils.PRODUCT_DETAILS_SCREEN
 import features.shop.presentation.utils.SEARCH_SCREEN
 import features.shop.presentation.utils.SHOP_GRAPH_ROUTE
@@ -83,7 +84,8 @@ fun NavGraphBuilder.shopNavGraph(
         composable(BottomNavItem.Cart.route){
             CartScreen(
                 viewModel = cartViewModel,
-                onNavigateToCheckout = {
+                onNavigateToCheckout = { items ->
+                    NavigationUtils.cartItems = items
                     navController.navigate(CHECK_OUT_SCREEN){
                         launchSingleTop = true
                     }

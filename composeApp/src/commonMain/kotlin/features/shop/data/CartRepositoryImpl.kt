@@ -9,7 +9,6 @@ import features.shop.domain.repository.CartRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 
 class CartRepositoryImpl(
     private val database: NdulaDatabase

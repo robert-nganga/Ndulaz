@@ -1,5 +1,6 @@
 package features.shop.presentation.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -75,6 +76,21 @@ fun CheckOutItem(
                     )
                 }
                 Spacer(modifier = Modifier.height(10.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ){
+                    VariationInfo(
+                        title = "Qty",
+                        value = cartItem.quantity.toString()
+                    )
+                    Text(
+                        "Ksh ${cartItem.price * cartItem.quantity}",
+                        style = MaterialTheme.typography.body1.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                    )
+                }
             }
         }
     }

@@ -2,6 +2,7 @@ package features.shop.presentation.screens.check_out_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import features.shop.domain.models.CartItem
 import features.shop.domain.repository.CartRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -32,6 +33,15 @@ class CheckOutViewModel(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
+
+
+    fun updateTotalPrice(price: Double){
+        _checkOutScreenState.update { screenState ->
+            screenState.copy(
+                totalPrice = price
+            )
+        }
+    }
 
 
 

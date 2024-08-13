@@ -1,7 +1,6 @@
 package features.shop.presentation.screens.check_out_screen
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Button
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
@@ -31,6 +29,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
 import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,18 +45,22 @@ import features.shop.domain.models.CartItem
 import features.shop.domain.models.PaymentMethod
 import features.shop.domain.models.ShippingAddress
 import features.shop.presentation.components.CheckOutItem
-import ndula.composeapp.generated.resources.Res
-import ndula.composeapp.generated.resources.banner1
-import ndula.composeapp.generated.resources.paypal
+import features.shop.presentation.utils.NavigationUtils
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun CheckOutScreen(
     viewModel: CheckOutViewModel,
+    cartItems: List<CartItem> = NavigationUtils.cartItems,
     onNavigateBack: () -> Unit,
 ){
     val state by viewModel.checkOutScreenState.collectAsState()
-    val cartItems by viewModel.cartItems.collectAsState()
+
+    LaunchedEffect(Unit){
+        viewModel.updateTotalPrice(
+            price = cartItems.sumOf { it.price * it.quantity },
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -223,14 +226,20 @@ fun PriceDetailsSection(
                 isTotal = true
             )
             Spacer(modifier = Modifier.height(24.dp))
-            Divider(modifier = Modifier.fillMaxWidth())
+            Divider(
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colors.primary.copy(alpha = 0.2f)
+            )
             Spacer(modifier = Modifier.height(16.dp))
             PaymentMethodSection(
                 paymentMethod = selectedPaymentMethod,
                 onChangePaymentMethod = onPaymentMethodChange
             )
             Spacer(modifier = Modifier.height(28.dp))
-            Divider(modifier = Modifier.fillMaxWidth())
+            Divider(
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colors.primary.copy(alpha = 0.2f)
+            )
             Spacer(modifier = Modifier.height(10.dp))
             ShippingAddressSection(
                 address = selectedAddress,
