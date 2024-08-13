@@ -92,7 +92,9 @@ fun DeleteBackground(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(bottom = 5.dp)
+            .padding(
+                bottom = 6.dp
+            )
             .clip(RoundedCornerShape(16.dp))
             .background(color),
         contentAlignment = Alignment.CenterEnd

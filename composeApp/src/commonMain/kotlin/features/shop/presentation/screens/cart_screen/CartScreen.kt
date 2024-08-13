@@ -36,7 +36,8 @@ import features.shop.presentation.components.SwipeToDeleteContainer
 
 @Composable
 fun CartScreen(
-    viewModel: CartViewModel
+    viewModel: CartViewModel,
+    onNavigateToCheckout: () -> Unit
 ){
 
     val cartItems by viewModel.cartItems.collectAsState(emptyList())
@@ -75,10 +76,10 @@ fun CartScreen(
         backgroundColor = MaterialTheme.colors.onBackground.copy(
             alpha = 0.035f
         )
-    ){
+    ){ paddingValues ->
         CartScreenContent(
             modifier = Modifier
-                .padding(it)
+                .padding(paddingValues)
                 .fillMaxSize(),
             cartItems = cartItems,
             totalPrice = totalPrice,
@@ -87,7 +88,8 @@ fun CartScreen(
             },
             onDeleteItem = {
                 viewModel.deleteItem(it.id)
-            }
+            },
+            onCheckout = onNavigateToCheckout
         )
     }
 }
@@ -99,6 +101,7 @@ fun CartScreenContent(
     onItemQuantityChange: (CartItem, Int) -> Unit,
     onDeleteItem: (CartItem) -> Unit,
     totalPrice: Double,
+    onCheckout: () -> Unit
 ){
     Box(
         modifier = modifier
@@ -135,8 +138,9 @@ fun CartScreenContent(
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 50.dp),
-            onCheckOutClick = {},
-            totalPrice = "Ksh $totalPrice"
+            onCheckOutClick = onCheckout,
+            totalPrice = "Ksh $totalPrice",
+            isCheckoutEnabled = cartItems.isNotEmpty()
         )
     }
 
@@ -146,6 +150,7 @@ fun CartScreenContent(
 fun CheckOutSection(
     modifier: Modifier = Modifier,
     onCheckOutClick: ()-> Unit,
+    isCheckoutEnabled: Boolean,
     totalPrice: String
 ){
     Box(
@@ -176,7 +181,8 @@ fun CheckOutSection(
             Spacer(modifier = Modifier.weight(1.0f))
             Button(
                 onClick = onCheckOutClick,
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(16.dp),
+                enabled = isCheckoutEnabled
             ){
                 Row(
                     modifier = Modifier.padding(10.dp),

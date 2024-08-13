@@ -16,6 +16,8 @@ import features.shop.presentation.screens.brand_screen.BrandScreen
 import features.shop.presentation.screens.brand_screen.BrandScreenViewModel
 import features.shop.presentation.screens.cart_screen.CartScreen
 import features.shop.presentation.screens.cart_screen.CartViewModel
+import features.shop.presentation.screens.check_out_screen.CheckOutScreen
+import features.shop.presentation.screens.check_out_screen.CheckOutViewModel
 import features.shop.presentation.screens.home_screen.HomeScreen
 import features.shop.presentation.screens.home_screen.HomeScreenViewModel
 import features.shop.presentation.screens.most_popular_screen.MostPopularScreen
@@ -28,6 +30,7 @@ import features.shop.presentation.screens.wish_list_screen.WishListScreen
 import features.shop.presentation.screens.wish_list_screen.WishListViewModel
 import features.shop.presentation.utils.ALL_BRANDS_SCREEN
 import features.shop.presentation.utils.BRAND_SCREEN
+import features.shop.presentation.utils.CHECK_OUT_SCREEN
 import features.shop.presentation.utils.MOST_POPULAR_SCREEN
 import features.shop.presentation.utils.PRODUCT_DETAILS_SCREEN
 import features.shop.presentation.utils.SEARCH_SCREEN
@@ -80,6 +83,11 @@ fun NavGraphBuilder.shopNavGraph(
         composable(BottomNavItem.Cart.route){
             CartScreen(
                 viewModel = cartViewModel,
+                onNavigateToCheckout = {
+                    navController.navigate(CHECK_OUT_SCREEN){
+                        launchSingleTop = true
+                    }
+                }
             )
         }
 
@@ -123,6 +131,16 @@ fun NavGraphBuilder.shopNavGraph(
                 onNavigateBack = {
                     navController.navigateUp()
                 }
+            )
+        }
+
+        composable(CHECK_OUT_SCREEN){
+            val checkOutViewModel = getKoinViewModel<CheckOutViewModel>()
+            CheckOutScreen(
+                onNavigateBack = {
+                    navController.navigateUp()
+                },
+                viewModel = checkOutViewModel
             )
         }
 
