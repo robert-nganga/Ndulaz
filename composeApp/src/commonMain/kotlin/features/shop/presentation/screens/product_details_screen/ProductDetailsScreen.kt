@@ -45,7 +45,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,13 +59,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.skydoves.flexible.core.FlexibleSheetSize
+import com.skydoves.flexible.core.rememberFlexibleBottomSheetState
 import features.shop.domain.models.Brand
 import features.shop.domain.models.Shoe
 import features.shop.domain.models.ShoeVariant
+import features.shop.presentation.components.AddToCartBottomSheet
 import features.shop.presentation.components.ExpandableText
 import features.shop.presentation.utils.getColor
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
+import kotlinx.coroutines.launch
 import ndula.composeapp.generated.resources.Res
 import ndula.composeapp.generated.resources.add_to_cart
 import ndula.composeapp.generated.resources.description
@@ -77,11 +84,20 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun ProductDetailsScreen(
     viewModel: ProductDetailsViewModel,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onNavigateToCart: () -> Unit
 ){
-
     val uiState by viewModel.productDetailsState.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
+
+    var showAddToCartSheet by remember{ mutableStateOf(false) }
+    val sheetState = rememberFlexibleBottomSheetState(
+        isModal = true,
+        skipIntermediatelyExpanded = false,
+        skipSlightlyExpanded = true
+    )
+
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(uiState.snackBarMessage){
         uiState.snackBarMessage?.let { message ->
@@ -116,16 +132,54 @@ fun ProductDetailsScreen(
                 bottomBar = {
                     ProductDetailsBottomBar(
                         selectedVariation = uiState.selectedVariation,
-                        onAddToCart = { viewModel.onEvent(ProductDetailsEvent.OnAddToCart) },
+                        onAddToCart = {
+                            viewModel.onEvent(ProductDetailsEvent.OnAddToCart)
+                            showAddToCartSheet = true
+                        },
                         quantity = uiState.quantity,
                         onQuantityChanged = {
                             viewModel.onEvent(ProductDetailsEvent.OnQuantityChange(it))
                         }
                     )
                 }
-            ){
+            ){ paddingValues ->
+                if (showAddToCartSheet){
+                    AddToCartBottomSheet(
+                        sheetState = sheetState,
+                        addToCartState = uiState.addToCartState,
+                        onAddToCart = {
+                           viewModel.onEvent(ProductDetailsEvent.OnSaveCartItem(it))
+                        },
+                        onNavigateBack = {
+                            scope.launch {
+                                sheetState.hide()
+                            }.invokeOnCompletion {
+                                showAddToCartSheet = false
+                                onNavigateBack()
+                                viewModel.resetState()
+                            }
+                        },
+                        onDismiss = {
+                            scope.launch {
+                                sheetState.hide()
+                            }.invokeOnCompletion {
+                                showAddToCartSheet = false
+                            }
+                        },
+                        onNavigateToCart = {
+                            scope.launch {
+                                sheetState.hide()
+                            }.invokeOnCompletion {
+                                showAddToCartSheet = false
+                                onNavigateToCart()
+                                viewModel.resetState()
+                            }
+                        },
+                    )
+                }
+
                 ProductDetailsScreenContent(
-                    modifier = Modifier.padding(it),
+                    modifier = Modifier.padding(paddingValues),
                     uiState = uiState,
                     onEvent = viewModel::onEvent,
                     onNavigateBack = {

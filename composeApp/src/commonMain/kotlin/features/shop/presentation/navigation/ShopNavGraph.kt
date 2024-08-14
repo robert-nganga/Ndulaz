@@ -132,6 +132,12 @@ fun NavGraphBuilder.shopNavGraph(
                 viewModel = productDetailsViewModel,
                 onNavigateBack = {
                     navController.navigateUp()
+                },
+                onNavigateToCart = {
+                    navController.navigate(BottomNavItem.Cart.route){
+                        popUpTo(PRODUCT_DETAILS_SCREEN){ inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
             )
         }

@@ -42,7 +42,11 @@ class ProductDetailsViewModel(
                     )
                 }
                 if(errorMessage != null) return
-                addItemToCart(_productDetailsState.value.toCartItem())
+                _productDetailsState.update{
+                    it.copy(
+                        addToCartState = AddToCartState.Idle(_productDetailsState.value.toCartItem())
+                    )
+                }
             }
             is ProductDetailsEvent.OnQuantityChange -> {
                 _productDetailsState.update {
@@ -87,6 +91,36 @@ class ProductDetailsViewModel(
                     else addItemToWishList(shoe.id)
                 }
             }
+
+            is ProductDetailsEvent.OnSaveCartItem -> {
+                saveCartItem(event.item)
+            }
+        }
+    }
+
+    private fun saveCartItem(item: CartItem) = viewModelScope.launch {
+        _productDetailsState.update {
+            it.copy(
+                addToCartState = AddToCartState.Loading
+            )
+        }
+        when(val response = cartRepository.upsertCartItem(item)){
+            is DataResult.Empty -> {}
+            is DataResult.Error -> {
+                _productDetailsState.update {
+                    it.copy(
+                        addToCartState = AddToCartState.Error(response.message)
+                    )
+                }
+            }
+            is DataResult.Loading -> {}
+            is DataResult.Success -> {
+                _productDetailsState.update {
+                    it.copy(
+                        addToCartState = AddToCartState.Success(response.data)
+                    )
+                }
+            }
         }
     }
 
@@ -97,8 +131,7 @@ class ProductDetailsViewModel(
                 isError = false,
             )
         }
-        val response = cartRepository.upsertCartItem(cartItem)
-        when(response){
+        when(val response = cartRepository.upsertCartItem(cartItem)){
             is DataResult.Empty -> {}
             is DataResult.Error -> {
                 _productDetailsState.update {

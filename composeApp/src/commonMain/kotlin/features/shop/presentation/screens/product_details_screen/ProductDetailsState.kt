@@ -17,7 +17,8 @@ data class ProductDetailsState(
     val isError: Boolean = false,
     val errorMessage: String? = null,
     val addToWishListMessage: String? = null,
-    val addToWishListError: Boolean = false
+    val addToWishListError: Boolean = false,
+    val addToCartState: AddToCartState = AddToCartState.Loading
 ){
     fun toCartItem(): CartItem {
         return CartItem(
@@ -33,4 +34,11 @@ data class ProductDetailsState(
             id = 0
         )
     }
+}
+
+sealed interface AddToCartState{
+    data class Idle(val item: CartItem): AddToCartState
+    data object Loading: AddToCartState
+    data class Success(val message: String): AddToCartState
+    data class Error(val message: String): AddToCartState
 }

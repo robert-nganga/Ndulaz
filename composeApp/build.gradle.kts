@@ -73,6 +73,7 @@ kotlin {
             implementation(libs.androidx.datastore.preferences.core)
             implementation(libs.androidx.datastore.preferences)
             implementation(libs.ktor.client.logging)
+            implementation(libs.flexible.bottomsheet.material)
         }
     }
 }

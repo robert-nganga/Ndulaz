@@ -39,7 +39,6 @@ fun CartScreen(
     viewModel: CartViewModel,
     onNavigateToCheckout: (List<CartItem>) -> Unit
 ){
-
     val cartItems by viewModel.cartItems.collectAsState(emptyList())
     val totalPrice by viewModel.totalPrice.collectAsState(0.0)
 
