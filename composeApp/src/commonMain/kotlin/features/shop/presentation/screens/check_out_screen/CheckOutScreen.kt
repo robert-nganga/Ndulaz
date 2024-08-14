@@ -34,18 +34,24 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.skydoves.flexible.core.FlexibleSheetSize
+import com.skydoves.flexible.core.rememberFlexibleBottomSheetState
 import features.shop.domain.models.CartItem
 import features.shop.domain.models.PaymentMethod
 import features.shop.domain.models.ShippingAddress
 import features.shop.presentation.components.CheckOutItem
+import features.shop.presentation.components.PaymentMethodsBottomSheet
 import features.shop.presentation.utils.NavigationUtils
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -55,6 +61,14 @@ fun CheckOutScreen(
     onNavigateBack: () -> Unit,
 ){
     val state by viewModel.checkOutScreenState.collectAsState()
+
+    var showPaymentMethodSheet by remember{ mutableStateOf(false) }
+    val sheetState = rememberFlexibleBottomSheetState(
+        isModal = true,
+        skipIntermediatelyExpanded = false,
+        skipSlightlyExpanded = true
+    )
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit){
         viewModel.updateTotalPrice(
@@ -88,6 +102,23 @@ fun CheckOutScreen(
             )
         }
     ){ paddingValues ->
+        if (showPaymentMethodSheet){
+            PaymentMethodsBottomSheet(
+                paymentMethods = state.paymentMethods,
+                selectedPaymentMethod = state.selectedPaymentMethod,
+                onDismiss = {
+                    scope.launch {
+                        sheetState.hide()
+                    }.invokeOnCompletion {
+                        showPaymentMethodSheet = false
+                    }
+                },
+                onPaymentMethodSelected = {
+                    viewModel.updateSelectedMethod(it)
+                },
+                sheetState = sheetState
+            )
+        }
         CheckOutScreenContent(
             modifier = Modifier
                 .padding(paddingValues)
@@ -97,7 +128,9 @@ fun CheckOutScreen(
             selectedPaymentMethod = state.selectedPaymentMethod,
             selectedAddress = state.selectedAddress,
             onAddressChange = {},
-            onPaymentMethodChange = {},
+            onPaymentMethodChange = {
+                showPaymentMethodSheet = true
+            },
             onPromoEntered = {}
         )
     }
@@ -341,7 +374,9 @@ fun PaymentMethodSection(
                 contentDescription = "Payment method icon",
                 modifier = Modifier
                     .width(40.dp)
-                    .height(40.dp)
+                    .height(40.dp),
+                colorFilter = if (paymentMethod.name == "Card" || paymentMethod.name == "Cash On Delivery")
+                    ColorFilter.tint(MaterialTheme.colors.onSurface) else null
             )
             Spacer(modifier = Modifier.width(10.dp))
             Text(

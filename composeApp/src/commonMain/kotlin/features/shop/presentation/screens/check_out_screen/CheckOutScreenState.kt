@@ -3,6 +3,9 @@ package features.shop.presentation.screens.check_out_screen
 import features.shop.domain.models.PaymentMethod
 import features.shop.domain.models.ShippingAddress
 import ndula.composeapp.generated.resources.Res
+import ndula.composeapp.generated.resources.card
+import ndula.composeapp.generated.resources.cash
+import ndula.composeapp.generated.resources.mpesa
 import ndula.composeapp.generated.resources.paypal
 
 data class CheckOutScreenState(
@@ -18,5 +21,25 @@ data class CheckOutScreenState(
         lat = 0.0,
         lng = 0.0,
         phone = "0712345678"
+    ),
+    val paymentMethods: List<PaymentMethod> = methods,
+)
+
+val methods = listOf(
+    PaymentMethod(
+        name = "Paypal",
+        image = Res.drawable.paypal
+    ),
+    PaymentMethod(
+        name = "Mpesa",
+        image = Res.drawable.mpesa
+    ),
+    PaymentMethod(
+        name = "Card",
+        image = Res.drawable.card
+    ),
+    PaymentMethod(
+        name = "Cash On Delivery",
+        image = Res.drawable.cash
     )
 )
