@@ -10,6 +10,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import core.presentation.utils.getKoinViewModel
+import features.shop.presentation.screens.add_location_screen.AddLocationScreen
+import features.shop.presentation.screens.add_location_screen.AddLocationViewModel
 import features.shop.presentation.screens.all_brands_screen.AllBrandsScreen
 import features.shop.presentation.screens.all_brands_screen.AllBrandsViewModel
 import features.shop.presentation.screens.brand_screen.BrandScreen
@@ -28,6 +30,7 @@ import features.shop.presentation.screens.search_screen.SearchScreen
 import features.shop.presentation.screens.search_screen.SearchViewModel
 import features.shop.presentation.screens.wish_list_screen.WishListScreen
 import features.shop.presentation.screens.wish_list_screen.WishListViewModel
+import features.shop.presentation.utils.ADD_LOCATION_SCREEN
 import features.shop.presentation.utils.ALL_BRANDS_SCREEN
 import features.shop.presentation.utils.BRAND_SCREEN
 import features.shop.presentation.utils.CHECK_OUT_SCREEN
@@ -193,6 +196,15 @@ fun NavGraphBuilder.shopNavGraph(
                     navController.navigate(BRAND_SCREEN){
                         launchSingleTop = true
                     }
+                }
+            )
+        }
+        composable(ADD_LOCATION_SCREEN){
+            val addLocationViewModel = getKoinViewModel<AddLocationViewModel>()
+            AddLocationScreen(
+                viewModel = addLocationViewModel,
+                onNavigateBack = {
+                    navController.navigateUp()
                 }
             )
         }

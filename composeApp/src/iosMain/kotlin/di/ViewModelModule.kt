@@ -1,6 +1,7 @@
 package di
 
 import features.profile.presentation.screens.AuthViewModel
+import features.shop.presentation.screens.add_location_screen.AddLocationViewModel
 import features.shop.presentation.screens.all_brands_screen.AllBrandsViewModel
 import features.shop.presentation.screens.brand_screen.BrandScreenViewModel
 import features.shop.presentation.screens.cart_screen.CartViewModel
@@ -24,4 +25,5 @@ actual val viewModelModule = module {
     singleOf(::CartViewModel)
     singleOf(::SearchViewModel)
     singleOf(::CheckOutViewModel)
+    singleOf(::AddLocationViewModel)
 }

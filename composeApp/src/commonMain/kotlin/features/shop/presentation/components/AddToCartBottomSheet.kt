@@ -178,7 +178,7 @@ fun AddToCartErrorItem(
                 onClick = onNavigateBack,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(end = 8.dp),
+                    .padding(end = 4.dp),
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = MaterialTheme.colors.primary.copy(
@@ -191,7 +191,7 @@ fun AddToCartErrorItem(
                     style = MaterialTheme.typography.body1.copy(
                         letterSpacing = 0.sp
                     ),
-                    modifier = Modifier.padding(8.dp)
+                    modifier = Modifier.padding(6.dp)
                 )
             }
             Button(
@@ -206,7 +206,7 @@ fun AddToCartErrorItem(
                     style = MaterialTheme.typography.body1.copy(
                         letterSpacing = 0.sp
                     ),
-                    modifier = Modifier.padding(8.dp)
+                    modifier = Modifier.padding(6.dp)
                 )
             }
         }
@@ -267,7 +267,7 @@ fun AddToCartSuccessItem(
                 onClick = onNavigateBack,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(end = 8.dp),
+                    .padding(end = 6.dp),
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = MaterialTheme.colors.primary.copy(
@@ -280,7 +280,7 @@ fun AddToCartSuccessItem(
                     style = MaterialTheme.typography.body1.copy(
                         letterSpacing = 0.sp
                     ),
-                    modifier = Modifier.padding(8.dp)
+                    modifier = Modifier.padding(6.dp)
                 )
             }
             Button(
@@ -295,7 +295,7 @@ fun AddToCartSuccessItem(
                     style = MaterialTheme.typography.body1.copy(
                         letterSpacing = 0.sp
                     ),
-                    modifier = Modifier.padding(8.dp)
+                    modifier = Modifier.padding(6.dp)
                 )
             }
         }
