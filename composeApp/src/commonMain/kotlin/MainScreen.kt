@@ -28,8 +28,10 @@ import features.profile.presentation.screens.AuthViewModel
 import features.profile.presentation.utils.AUTH_GRAPH_ROUTE
 import features.shop.presentation.navigation.BottomNavItem
 import features.shop.presentation.navigation.shopNavGraph
+import features.shop.presentation.screens.add_location_screen.AddLocationViewModel
 import features.shop.presentation.screens.brand_screen.BrandScreenViewModel
 import features.shop.presentation.screens.cart_screen.CartViewModel
+import features.shop.presentation.screens.check_out_screen.CheckOutViewModel
 import features.shop.presentation.screens.product_details_screen.ProductDetailsViewModel
 import features.shop.presentation.screens.search_screen.SearchViewModel
 import features.shop.presentation.utils.PRODUCT_DETAILS_SCREEN
@@ -47,6 +49,8 @@ fun MainScreen(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val cartViewModel = getKoinViewModel<CartViewModel>()
     val searchViewModel = getKoinViewModel<SearchViewModel>()
+    val checkOutViewModel = getKoinViewModel<CheckOutViewModel>()
+    val addLocationViewModel = getKoinViewModel<AddLocationViewModel>()
 
     val cartItems by cartViewModel.cartItems.collectAsState()
 
@@ -80,7 +84,7 @@ fun MainScreen(
             startDestination = if (isLoggedIn) SHOP_GRAPH_ROUTE else AUTH_GRAPH_ROUTE
         ){
             authNavGraph(navController, authViewModel)
-            shopNavGraph(navController, productDetailsViewModel, brandViewModel, cartViewModel, searchViewModel)
+            shopNavGraph(navController, productDetailsViewModel, brandViewModel, cartViewModel, searchViewModel, checkOutViewModel, addLocationViewModel)
         }
     }
 }

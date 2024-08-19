@@ -20,10 +20,10 @@ class InputValidation {
         }
     }
 
-    fun validateName(name: String): String?{
-        return when{
+    fun validateField(name: String, title: String = "Name"): String? {
+        return when {
             name.isEmpty()-> {
-                "Name must not be empty"
+                "$title must not be empty"
             }
             else -> null
         }
