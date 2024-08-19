@@ -41,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.skydoves.flexible.core.rememberFlexibleBottomSheetState
@@ -49,6 +50,7 @@ import features.shop.domain.models.PaymentMethod
 import features.shop.domain.models.ShippingAddress
 import features.shop.presentation.components.CheckOutItem
 import features.shop.presentation.components.PaymentMethodsBottomSheet
+import features.shop.presentation.components.ShippingAddressBottomSheet
 import features.shop.presentation.utils.NavigationUtils
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
@@ -58,11 +60,19 @@ fun CheckOutScreen(
     viewModel: CheckOutViewModel,
     cartItems: List<CartItem> = NavigationUtils.cartItems,
     onNavigateBack: () -> Unit,
+    onNavigateToAddLocation: () -> Unit
 ){
     val state by viewModel.checkOutScreenState.collectAsState()
+    val savedAddresses by viewModel.savedShippingAddresses.collectAsState()
 
+    var showShippingAddressSheet by remember{ mutableStateOf(false) }
+    val addressSheetState = rememberFlexibleBottomSheetState(
+        isModal = true,
+        skipIntermediatelyExpanded = false,
+        skipSlightlyExpanded = true
+    )
     var showPaymentMethodSheet by remember{ mutableStateOf(false) }
-    val sheetState = rememberFlexibleBottomSheetState(
+    val paymentSheetState = rememberFlexibleBottomSheetState(
         isModal = true,
         skipIntermediatelyExpanded = false,
         skipSlightlyExpanded = true
@@ -85,7 +95,10 @@ fun CheckOutScreen(
                 backgroundColor = Color.Transparent,
                 navigationIcon = {
                     IconButton(
-                        onClick = onNavigateBack
+                        onClick = {
+                            onNavigateBack()
+                            viewModel.resetState()
+                        }
                     ){
                         Icon(
                             Icons.AutoMirrored.Default.ArrowBackIos,
@@ -101,21 +114,59 @@ fun CheckOutScreen(
             )
         }
     ){ paddingValues ->
+        if (showShippingAddressSheet) {
+            ShippingAddressBottomSheet(
+                selectedShippingAddress = state.selectedAddress,
+                shippingAddresses = savedAddresses,
+                sheetState = addressSheetState,
+                onDismiss = {
+                    scope.launch {
+                        addressSheetState.hide()
+                    }.invokeOnCompletion {
+                        showShippingAddressSheet = false
+                    }
+                },
+                onShippingAddressSelected = {
+                    viewModel.updateSelectedShippingAddress(it)
+                    scope.launch {
+                        addressSheetState.hide()
+                    }.invokeOnCompletion {
+                        showShippingAddressSheet = false
+                    }
+                },
+                onAddShippingAddress = {
+                    scope.launch {
+                        addressSheetState.hide()
+                    }.invokeOnCompletion {
+                        onNavigateToAddLocation()
+                    }
+                },
+                onEditClick = {
+
+                }
+            )
+        }
+
         if (showPaymentMethodSheet){
             PaymentMethodsBottomSheet(
                 paymentMethods = state.paymentMethods,
                 selectedPaymentMethod = state.selectedPaymentMethod,
                 onDismiss = {
                     scope.launch {
-                        sheetState.hide()
+                        paymentSheetState.hide()
                     }.invokeOnCompletion {
                         showPaymentMethodSheet = false
                     }
                 },
                 onPaymentMethodSelected = {
                     viewModel.updateSelectedMethod(it)
+                    scope.launch {
+                        paymentSheetState.hide()
+                    }.invokeOnCompletion {
+                        showPaymentMethodSheet = false
+                    }
                 },
-                sheetState = sheetState
+                sheetState = paymentSheetState
             )
         }
         CheckOutScreenContent(
@@ -126,7 +177,9 @@ fun CheckOutScreen(
             state = state,
             selectedPaymentMethod = state.selectedPaymentMethod,
             selectedAddress = state.selectedAddress,
-            onAddressChange = {},
+            onAddressChange = {
+                showShippingAddressSheet = true
+            },
             onPaymentMethodChange = {
                 showPaymentMethodSheet = true
             },
@@ -172,7 +225,7 @@ fun CheckOutScreenContent(
     cartItems: List<CartItem>,
     state: CheckOutScreenState,
     selectedPaymentMethod: PaymentMethod,
-    selectedAddress: ShippingAddress,
+    selectedAddress: ShippingAddress?,
     onAddressChange: () -> Unit,
     onPaymentMethodChange: () -> Unit,
     onPromoEntered: (String) -> Unit,
@@ -217,7 +270,7 @@ fun PriceDetailsSection(
     tax: Double,
     shippingCost: Double,
     selectedPaymentMethod: PaymentMethod,
-    selectedAddress: ShippingAddress,
+    selectedAddress: ShippingAddress?,
     onAddressChange: () -> Unit,
     onPaymentMethodChange: () -> Unit,
 ){
@@ -284,7 +337,7 @@ fun PriceDetailsSection(
 @Composable
 fun ShippingAddressSection(
     modifier: Modifier = Modifier,
-    address: ShippingAddress,
+    address: ShippingAddress?,
     onAddressChange: () -> Unit
 ){
     Column(
@@ -313,20 +366,45 @@ fun ShippingAddressSection(
             }
         }
         Spacer(modifier = Modifier.height(10.dp))
-        Text(
-            address.name,
-            style = MaterialTheme.typography.body1.copy(
-                fontWeight = FontWeight.Bold
+        address?.let {
+            Text(
+                address.name,
+                style = MaterialTheme.typography.body1.copy(
+                    fontWeight = FontWeight.Bold
+                ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-        Row {
-            Icon(
-                Icons.Outlined.Phone,
-                contentDescription = ""
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                address.formattedAddress,
+                style = MaterialTheme.typography.body2.copy(
+                    color = MaterialTheme.colors.onSurface.copy(
+                        alpha = 0.5f
+                    )
+                ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
-            Spacer(modifier = Modifier.width(10.dp))
-            Text(address.phone)
+            Spacer(modifier = Modifier.height(10.dp))
+            Row {
+                Icon(
+                    Icons.Outlined.Phone,
+                    contentDescription = ""
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(address.phoneNumber)
+            }
+        } ?: run {
+            Text(
+                "Please add a shipping address",
+                style = MaterialTheme.typography.body1.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colors.onSurface.copy(
+                        alpha = 0.5f
+                    )
+                )
+            )
         }
     }
 }

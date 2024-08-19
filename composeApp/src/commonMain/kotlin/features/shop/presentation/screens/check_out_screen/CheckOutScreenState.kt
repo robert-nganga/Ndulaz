@@ -16,12 +16,7 @@ data class CheckOutScreenState(
         name = "Paypal",
         image = Res.drawable.paypal
     ),
-    val selectedAddress: ShippingAddress = ShippingAddress(
-        name = "Kahawa Wendani",
-        lat = 0.0,
-        lng = 0.0,
-        phone = "0712345678"
-    ),
+    val selectedAddress: ShippingAddress? = null,
     val paymentMethods: List<PaymentMethod> = methods,
 )
 

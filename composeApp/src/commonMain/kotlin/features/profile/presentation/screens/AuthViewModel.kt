@@ -132,7 +132,7 @@ class AuthViewModel(
     private fun isSignUpFormValid(): Boolean {
         val emailValidation = inputValidation.validateEmail(_signUpScreenState.value.email)
         val passwordValidation = inputValidation.validatePassword(_signUpScreenState.value.password)
-        val nameValidation = inputValidation.validateName(_signUpScreenState.value.name)
+        val nameValidation = inputValidation.validateField(_signUpScreenState.value.name)
         _signUpScreenState.update {
             it.copy(
                 emailError = emailValidation,

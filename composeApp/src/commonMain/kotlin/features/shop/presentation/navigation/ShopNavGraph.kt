@@ -46,7 +46,9 @@ fun NavGraphBuilder.shopNavGraph(
     productDetailsViewModel: ProductDetailsViewModel,
     brandViewModel: BrandScreenViewModel,
     cartViewModel: CartViewModel,
-    searchViewModel: SearchViewModel
+    searchViewModel: SearchViewModel,
+    checkOutViewModel: CheckOutViewModel,
+    addLocationViewModel: AddLocationViewModel
 ){
 
     navigation(startDestination = BottomNavItem.Home.route, route = SHOP_GRAPH_ROUTE){
@@ -146,12 +148,16 @@ fun NavGraphBuilder.shopNavGraph(
         }
 
         composable(CHECK_OUT_SCREEN){
-            val checkOutViewModel = getKoinViewModel<CheckOutViewModel>()
             CheckOutScreen(
                 onNavigateBack = {
                     navController.navigateUp()
                 },
-                viewModel = checkOutViewModel
+                viewModel = checkOutViewModel,
+                onNavigateToAddLocation = {
+                    navController.navigate(ADD_LOCATION_SCREEN){
+                        launchSingleTop = true
+                    }
+                }
             )
         }
 
@@ -200,7 +206,6 @@ fun NavGraphBuilder.shopNavGraph(
             )
         }
         composable(ADD_LOCATION_SCREEN){
-            val addLocationViewModel = getKoinViewModel<AddLocationViewModel>()
             AddLocationScreen(
                 viewModel = addLocationViewModel,
                 onNavigateBack = {
