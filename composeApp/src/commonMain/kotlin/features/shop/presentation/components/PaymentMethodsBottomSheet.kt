@@ -26,7 +26,6 @@ import features.shop.domain.models.PaymentMethod
 fun PaymentMethodsBottomSheet(
     modifier: Modifier = Modifier,
     paymentMethods: List<PaymentMethod>,
-    selectedPaymentMethod: PaymentMethod,
     onPaymentMethodSelected: (PaymentMethod) -> Unit,
     sheetState: FlexibleSheetState,
     onDismiss: () -> Unit
@@ -47,27 +46,13 @@ fun PaymentMethodsBottomSheet(
                     horizontal = 16.dp
                 )
         ){
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ){
-                Text(
-                    "Select Payment Method",
-                    style = MaterialTheme.typography.h6.copy(
-                        fontWeight = FontWeight.Bold
-                    ),
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                "Select payment method",
+                style = MaterialTheme.typography.h6.copy(
+                    fontWeight = FontWeight.Bold
                 )
-                Spacer(modifier = Modifier.weight(1f))
-                IconButton(
-                    onClick = onDismiss
-                ){
-                    Icon(
-                        Icons.Default.Close,
-                        contentDescription = "Dismiss"
-                    )
-                }
-            }
+            )
             Spacer(modifier = Modifier.height(16.dp))
             paymentMethods.forEach { paymentMethod ->
                 PaymentMethodItem(
@@ -75,9 +60,8 @@ fun PaymentMethodsBottomSheet(
                     onClick = {
                         onPaymentMethodSelected(paymentMethod)
                     },
-                    isSelected = paymentMethod == selectedPaymentMethod
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(10.dp))
             }
         }
     }

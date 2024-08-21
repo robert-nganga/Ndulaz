@@ -1,7 +1,6 @@
 package features.shop.presentation.screens.add_location_screen
 
 import features.shop.domain.models.PlaceDetail
-import features.shop.domain.models.ShippingAddress
 
 sealed interface AddLocationScreenEvents {
     data class OnPhoneNumberChange(val phoneNumber: String): AddLocationScreenEvents
@@ -10,5 +9,7 @@ sealed interface AddLocationScreenEvents {
     data class OnBuildingNameChange(val buildingName: String): AddLocationScreenEvents
     data class OnPlaceSelected(val place: PlaceDetail): AddLocationScreenEvents
     data class OnQueryChange(val query: String): AddLocationScreenEvents
+    data class OnDeleteShippingAddress(val id: Int): AddLocationScreenEvents
+    data class OnUpdateAddress(val id: Int): AddLocationScreenEvents
     data object OnSaveAddress : AddLocationScreenEvents
 }

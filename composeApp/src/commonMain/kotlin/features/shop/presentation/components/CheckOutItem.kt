@@ -19,6 +19,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import features.shop.domain.models.CartItem
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
@@ -38,7 +39,10 @@ fun CheckOutItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp)
+                .padding(
+                    horizontal = 18.dp,
+                    vertical = 10.dp
+                )
         ){
             KamelImage(
                 resource = asyncPainterResource(cartItem.imageUrl),
@@ -75,7 +79,7 @@ fun CheckOutItem(
                         value = cartItem.size.toString()
                     )
                 }
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(5.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -87,7 +91,8 @@ fun CheckOutItem(
                     Text(
                         "Ksh ${cartItem.price * cartItem.quantity}",
                         style = MaterialTheme.typography.body1.copy(
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 0.sp
                         ),
                     )
                 }

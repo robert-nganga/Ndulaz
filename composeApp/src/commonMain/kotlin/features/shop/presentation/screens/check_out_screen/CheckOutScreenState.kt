@@ -34,7 +34,7 @@ val methods = listOf(
         image = Res.drawable.card
     ),
     PaymentMethod(
-        name = "Cash On Delivery",
+        name = "Cash",
         image = Res.drawable.cash
     )
 )

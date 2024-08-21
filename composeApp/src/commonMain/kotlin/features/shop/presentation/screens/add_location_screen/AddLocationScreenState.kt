@@ -14,7 +14,8 @@ data class AddLocationScreenState(
     val doorNumberError: String? = null,
     val isLoading: Boolean = false,
     val isAddressSaved: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val isAddressDeleted: Boolean = false
 )
 
 sealed interface PlaceSuggestionsState {

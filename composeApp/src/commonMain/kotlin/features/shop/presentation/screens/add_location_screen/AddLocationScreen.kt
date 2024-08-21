@@ -35,6 +35,7 @@ import androidx.compose.material.icons.outlined.Apartment
 import androidx.compose.material.icons.outlined.EditLocation
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.rounded.Clear
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -50,11 +51,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import core.presentation.components.ProgressDialog
 import features.shop.domain.models.PlaceDetail
+import features.shop.domain.models.ShippingAddress
+import features.shop.presentation.components.ConfirmDialog
+import features.shop.presentation.utils.NavigationUtils
 
 @Composable
 fun AddLocationScreen(
     viewModel: AddLocationViewModel,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    shippingAddress: ShippingAddress? = NavigationUtils.shippingAddress
 ){
 
     val uiState by viewModel.addLocationScreenState.collectAsState()
@@ -67,9 +72,23 @@ fun AddLocationScreen(
     }
     val snackBarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(uiState.isAddressSaved, uiState.errorMessage){
+    var showConfirmDeleteDialog by remember {
+        mutableStateOf(false)
+    }
 
+    LaunchedEffect(Unit){
+        shippingAddress?.let {
+            viewModel.updateShippingAddress(it)
+        }
+    }
+
+    LaunchedEffect(uiState.isAddressSaved, uiState.errorMessage, uiState.isAddressDeleted){
         if (uiState.isAddressSaved){
+            onNavigateBack()
+            viewModel.resetAddLocationState()
+        }
+
+        if (uiState.isAddressDeleted){
             onNavigateBack()
             viewModel.resetAddLocationState()
         }
@@ -80,6 +99,7 @@ fun AddLocationScreen(
             )
             viewModel.resetErrorMessage()
         }
+
     }
 
     Scaffold(
@@ -106,6 +126,24 @@ fun AddLocationScreen(
             )
         }
 
+        if (showConfirmDeleteDialog){
+            ConfirmDialog(
+                title = "Confirm delete",
+                message = "Are you sure you want to delete this address?",
+                onConfirm = {
+                    shippingAddress?.let {
+                        viewModel.onEvent(AddLocationScreenEvents.OnDeleteShippingAddress(it.id))
+                    }
+                    showConfirmDeleteDialog = false
+                },
+                onDismiss = {
+                    showConfirmDeleteDialog = false
+                },
+                confirmButtonText = "Delete",
+                dismissButtonText = "Cancel"
+            )
+        }
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -122,13 +160,21 @@ fun AddLocationScreen(
                 onNavigateBack = {
                     onNavigateBack()
                     viewModel.resetAddLocationState()
-                }
+                },
+                onDeleteAddress = {
+                    showConfirmDeleteDialog = true
+                },
+                isEditMode = shippingAddress != null
             )
             AddLocationScreenBottomBar(
                 modifier = Modifier
                     .align(Alignment.BottomCenter),
                 onSaveAddress = {
-                    viewModel.onEvent(AddLocationScreenEvents.OnSaveAddress)
+                    if(shippingAddress != null){
+                        viewModel.onEvent(AddLocationScreenEvents.OnUpdateAddress(shippingAddress.id))
+                    } else {
+                        viewModel.onEvent(AddLocationScreenEvents.OnSaveAddress)
+                    }
                 }
             )
             if(isSearchLocationVisible){
@@ -141,7 +187,7 @@ fun AddLocationScreen(
                     state = suggestionsState,
                     query = query,
                     onQueryChange = {
-                        println("Search location with query:: $it")
+                        // println("Search location with query:: $it")
                         viewModel.onEvent(AddLocationScreenEvents.OnQueryChange(it))
                     },
                     onPlaceSelected = {
@@ -342,6 +388,8 @@ fun AddLocationScreenContent(
     onEvent: (AddLocationScreenEvents) -> Unit,
     onSearchLocation: () -> Unit,
     onNavigateBack: () -> Unit,
+    onDeleteAddress: () -> Unit,
+    isEditMode: Boolean = false,
     modifier: Modifier
 ){
     Column(
@@ -367,6 +415,18 @@ fun AddLocationScreenContent(
                         Icons.AutoMirrored.Default.ArrowBackIos,
                         contentDescription = ""
                     )
+                }
+            },
+            actions = {
+                if (isEditMode){
+                    IconButton(
+                        onClick = onDeleteAddress
+                    ){
+                        Icon(
+                            Icons.Rounded.Delete,
+                            contentDescription = ""
+                        )
+                    }
                 }
             }
         )

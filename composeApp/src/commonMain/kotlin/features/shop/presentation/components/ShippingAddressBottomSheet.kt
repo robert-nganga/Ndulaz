@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.skydoves.flexible.bottomsheet.material.FlexibleBottomSheet
 import com.skydoves.flexible.core.FlexibleSheetState
@@ -134,17 +135,24 @@ fun ShippingAddressSection(
             onClick = onClick,
         )
         Spacer(modifier = Modifier.width(10.dp))
-        Column {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+        ) {
             Text(
                 shippingAddress.name,
                 style = MaterialTheme.typography.body1.copy(
                     fontWeight = FontWeight.Bold
-                )
+                ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             Spacer(modifier = Modifier.height(5.dp))
             Text(
                 shippingAddress.formattedAddress,
-                style = MaterialTheme.typography.body2
+                style = MaterialTheme.typography.body2,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             Spacer(modifier = Modifier.height(5.dp))
             Row(
@@ -163,7 +171,7 @@ fun ShippingAddressSection(
         }
         Spacer(modifier = Modifier.width(10.dp))
         IconButton(
-            onClick = {}
+            onClick = onEditClick
         ){
             Icon(
                 Icons.Outlined.EditLocation,

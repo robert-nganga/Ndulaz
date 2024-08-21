@@ -60,7 +60,7 @@ fun CheckOutScreen(
     viewModel: CheckOutViewModel,
     cartItems: List<CartItem> = NavigationUtils.cartItems,
     onNavigateBack: () -> Unit,
-    onNavigateToAddLocation: () -> Unit
+    onNavigateToAddLocation: (ShippingAddress?) -> Unit
 ){
     val state by viewModel.checkOutScreenState.collectAsState()
     val savedAddresses by viewModel.savedShippingAddresses.collectAsState()
@@ -138,11 +138,15 @@ fun CheckOutScreen(
                     scope.launch {
                         addressSheetState.hide()
                     }.invokeOnCompletion {
-                        onNavigateToAddLocation()
+                        onNavigateToAddLocation(null)
                     }
                 },
-                onEditClick = {
-
+                onEditClick = { address->
+                    scope.launch {
+                        addressSheetState.hide()
+                    }.invokeOnCompletion {
+                        onNavigateToAddLocation(address)
+                    }
                 }
             )
         }
@@ -150,7 +154,6 @@ fun CheckOutScreen(
         if (showPaymentMethodSheet){
             PaymentMethodsBottomSheet(
                 paymentMethods = state.paymentMethods,
-                selectedPaymentMethod = state.selectedPaymentMethod,
                 onDismiss = {
                     scope.launch {
                         paymentSheetState.hide()
@@ -452,7 +455,7 @@ fun PaymentMethodSection(
                 modifier = Modifier
                     .width(40.dp)
                     .height(40.dp),
-                colorFilter = if (paymentMethod.name == "Card" || paymentMethod.name == "Cash On Delivery")
+                colorFilter = if (paymentMethod.name == "Card" || paymentMethod.name == "Cash")
                     ColorFilter.tint(MaterialTheme.colors.onSurface) else null
             )
             Spacer(modifier = Modifier.width(10.dp))
@@ -496,7 +499,7 @@ fun PriceItem(
                     alpha = if (isTotal) 1f else 0.5f
                 ),
                 fontWeight = if (isTotal) FontWeight.Bold else FontWeight.Medium,
-                fontSize = if (isTotal) 20.sp else 16.sp
+                fontSize = if (isTotal) 18.sp else 16.sp
             )
         )
     }

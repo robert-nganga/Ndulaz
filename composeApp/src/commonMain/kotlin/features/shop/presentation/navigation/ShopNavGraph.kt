@@ -153,7 +153,8 @@ fun NavGraphBuilder.shopNavGraph(
                     navController.navigateUp()
                 },
                 viewModel = checkOutViewModel,
-                onNavigateToAddLocation = {
+                onNavigateToAddLocation = { shippingAddress->
+                    NavigationUtils.shippingAddress = shippingAddress
                     navController.navigate(ADD_LOCATION_SCREEN){
                         launchSingleTop = true
                     }

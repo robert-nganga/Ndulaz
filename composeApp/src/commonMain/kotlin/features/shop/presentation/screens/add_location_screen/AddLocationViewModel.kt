@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import core.data.utils.DataResult
 import core.domain.InputValidation
+import features.shop.domain.models.PlaceDetail
 import features.shop.domain.models.ShippingAddress
 import features.shop.domain.repository.LocationRepository
 import features.shop.domain.repository.ShippingAddressRepository
@@ -90,6 +91,64 @@ class AddLocationViewModel(
                     saveAddress(createShippingAddress())
                 }
             }
+
+            is AddLocationScreenEvents.OnDeleteShippingAddress -> {
+                deleteAddress(event.id)
+            }
+
+            is AddLocationScreenEvents.OnUpdateAddress -> {
+                if (_addLocationScreenState.value.selectedPlace == null){
+                    _addLocationScreenState.update {
+                        it.copy(
+                            errorMessage = "Location not selected"
+                        )
+                    }
+                    return
+                }
+                if (isLocationDetailsValid()){
+                    saveAddress(createShippingAddress(event.id))
+                }
+            }
+        }
+    }
+
+    private fun deleteAddress(id: Int) = viewModelScope.launch {
+        val result = shippingAddressRepository.deleteAddress(id)
+        when(result){
+            is DataResult.Empty -> {}
+            is DataResult.Error -> {
+                _addLocationScreenState.update {
+                    it.copy(
+                        errorMessage = "Error deleting address"
+                    )
+                }
+            }
+            is DataResult.Loading -> {}
+            is DataResult.Success -> {
+                _addLocationScreenState.update {
+                    it.copy (
+                        isAddressDeleted = true
+                    )
+                }
+            }
+        }
+    }
+
+    fun updateShippingAddress(address: ShippingAddress){
+        _addLocationScreenState.update {
+            it.copy(
+                buildingName = address.buildingName,
+                doorNumber = address.doorNumber,
+                floorNumber = address.floorNumber,
+                phoneNumber = address.phoneNumber,
+                selectedPlace = PlaceDetail(
+                    name = address.name,
+                    formattedAddress = address.formattedAddress,
+                    placeId = address.placeId,
+                    lat = address.lat,
+                    lng = address.lng
+                )
+            )
         }
     }
 
@@ -114,9 +173,9 @@ class AddLocationViewModel(
         _query.value = ""
     }
 
-    private fun createShippingAddress(): ShippingAddress {
+    private fun createShippingAddress(id: Int = 0): ShippingAddress {
         return ShippingAddress(
-            id = 0,
+            id = id,
             placeId = _addLocationScreenState.value.selectedPlace!!.placeId,
             formattedAddress = _addLocationScreenState.value.selectedPlace!!.formattedAddress,
             name = _addLocationScreenState.value.selectedPlace!!.name,
