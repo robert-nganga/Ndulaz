@@ -23,6 +23,7 @@ ktor = "2.3.11"
 coroutines = "1.8.1"
 navigationCompose = "2.7.0-alpha07"
 animationCoreAndroid = "1.6.8"
+permissionsCompose = "0.18.0"
 room = "2.7.0-alpha05"
 ksp = "2.0.0-1.0.21"
 sqlite = "2.5.0-SNAPSHOT"
@@ -30,6 +31,7 @@ koin = "3.6.0-Beta4"
 koinCompose = "3.6.0-Beta4"
 koinComposeMultiplatform = "1.2.0-alpha3"
 flexibleBottomsheetMaterial = "0.1.4"
+compass = "1.2.0"
 
 [libraries]
 flexible-bottomsheet-material = { module = "com.github.skydoves:flexible-bottomsheet-material", version.ref = "flexibleBottomsheetMaterial" }
@@ -59,6 +61,7 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-animation-core-android = { group = "androidx.compose.animation", name = "animation-core-android", version.ref = "animationCoreAndroid" }
+permissions-compose = { module = "dev.icerock.moko:permissions-compose", version.ref = "permissionsCompose" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-runtime-android = { module = "androidx.room:room-runtime-android", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
@@ -68,6 +71,11 @@ koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", versi
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koinComposeMultiplatform" }
 kamel-image = { module = "media.kamel:kamel-image", version.ref = "kamelImage" }
+compass-geocoder = { module = "dev.jordond.compass:geocoder", version.ref = "compass" }
+compass-geocoder-mobile = { module = "dev.jordond.compass:geocoder-mobile", version.ref = "compass" }
+compass-geolocation = { module = "dev.jordond.compass:geolocation", version.ref = "compass" }
+compass-geolocation-mobile = { module = "dev.jordond.compass:geolocation-mobile", version.ref = "compass" }
+compass-permissions-mobile = { module = "dev.jordond.compass:permissions-mobile", version.ref = "compass" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

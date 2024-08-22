@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import core.data.utils.DataResult
 import core.domain.InputValidation
+import features.shop.domain.models.LatLng
 import features.shop.domain.models.PlaceDetail
 import features.shop.domain.models.ShippingAddress
 import features.shop.domain.repository.LocationRepository
@@ -189,18 +190,14 @@ class AddLocationViewModel(
     }
     private fun isLocationDetailsValid(): Boolean {
         val phoneErrorMsg = inputValidation.validateField(_addLocationScreenState.value.phoneNumber, title = "Phone number")
-        val doorNumberErrorMsg = inputValidation.validateField(_addLocationScreenState.value.doorNumber, title = "Door number")
-        val floorNumberErrorMsg = inputValidation.validateField(_addLocationScreenState.value.floorNumber, title = "Floor number")
 
         _addLocationScreenState.update {
             it.copy(
                 phoneNumberError = phoneErrorMsg,
-                doorNumberError = doorNumberErrorMsg,
-                floorNumberError = floorNumberErrorMsg
             )
         }
 
-        return phoneErrorMsg == null && doorNumberErrorMsg == null && floorNumberErrorMsg == null
+        return phoneErrorMsg == null
     }
 
     private fun saveAddress(address: ShippingAddress) = viewModelScope.launch {
@@ -247,6 +244,34 @@ class AddLocationViewModel(
             } else {
                 _suggestionsState.update {
                     PlaceSuggestionsState.Idle
+                }
+            }
+        }
+    }
+
+    fun getPlaceDetailsFromCoordinates(latLng: LatLng) = viewModelScope.launch {
+        _addLocationScreenState.update {
+            it.copy(
+                isLoading = true
+            )
+        }
+        when(val result = locationRepository.getPlaceDetailsFromCoordinates(latLng)){
+            is DataResult.Empty -> {}
+            is DataResult.Error -> {
+                _addLocationScreenState.update {
+                    it.copy(
+                        errorMessage = "Error fetching location details",
+                        isLoading = false
+                    )
+                }
+            }
+            is DataResult.Loading -> {}
+            is DataResult.Success -> {
+                _addLocationScreenState.update {
+                    it.copy(
+                        isLoading = false,
+                        selectedPlace = result.data
+                    )
                 }
             }
         }

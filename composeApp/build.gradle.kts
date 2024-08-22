@@ -74,6 +74,10 @@ kotlin {
             implementation(libs.androidx.datastore.preferences)
             implementation(libs.ktor.client.logging)
             implementation(libs.flexible.bottomsheet.material)
+            implementation(libs.permissions.compose)
+            implementation(libs.compass.geolocation)
+            implementation(libs.compass.geolocation.mobile)
+            implementation(libs.compass.permissions.mobile)
         }
     }
 }

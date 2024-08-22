@@ -34,6 +34,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
 import androidx.compose.material.icons.outlined.Apartment
 import androidx.compose.material.icons.outlined.EditLocation
 import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.MyLocation
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.Composable
@@ -42,6 +43,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,10 +52,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import core.presentation.components.ProgressDialog
+import dev.jordond.compass.geolocation.Geolocator
+import dev.jordond.compass.geolocation.GeolocatorResult
+import dev.jordond.compass.geolocation.mobile
+import features.shop.domain.models.LatLng
 import features.shop.domain.models.PlaceDetail
 import features.shop.domain.models.ShippingAddress
 import features.shop.presentation.components.ConfirmDialog
 import features.shop.presentation.utils.NavigationUtils
+import kotlinx.coroutines.launch
 
 @Composable
 fun AddLocationScreen(
@@ -75,6 +82,9 @@ fun AddLocationScreen(
     var showConfirmDeleteDialog by remember {
         mutableStateOf(false)
     }
+
+    val geolocator: Geolocator = Geolocator.mobile()
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit){
         shippingAddress?.let {
@@ -198,6 +208,33 @@ fun AddLocationScreen(
                     onNavigateBack = {
                         isSearchLocationVisible = false
                         viewModel.resetSuggestionState()
+                    },
+                    onCurrentLocationClicked = {
+                        scope.launch {
+                            when(val result = geolocator.current()){
+                                is GeolocatorResult.Error -> {
+                                    println("Location error")
+                                }
+                                is GeolocatorResult.Success -> {
+                                    println("Location ${result.data}")
+                                    val latLng = LatLng(
+                                        lat = result.data.coordinates.latitude,
+                                        lng = result.data.coordinates.longitude
+                                    )
+                                    viewModel.getPlaceDetailsFromCoordinates(latLng)
+                                    isSearchLocationVisible = false
+                                }
+                                is GeolocatorResult.PermissionError -> {
+                                    println("Location permission error")
+                                }
+                                is GeolocatorResult.PermissionDenied -> {
+                                    println("Location permission denied")
+                                }
+                                is GeolocatorResult.GeolocationFailed -> {
+                                    println("Location geolocation failed")
+                                }
+                            }
+                        }
                     }
                 )
             }
@@ -213,7 +250,8 @@ fun SearchLocationContent(
     query: String,
     onQueryChange: (String) -> Unit,
     onPlaceSelected: (PlaceDetail) -> Unit,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onCurrentLocationClicked: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -244,7 +282,7 @@ fun SearchLocationContent(
                 shape = RoundedCornerShape(24.dp),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     backgroundColor = MaterialTheme.colors.onSurface.copy(
-                        alpha = 0.2f
+                        alpha = 0.12f
                     ),
                     focusedBorderColor = Color.Transparent,
                     unfocusedBorderColor = Color.Transparent
@@ -254,7 +292,37 @@ fun SearchLocationContent(
                 }
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        if (query.isEmpty()){
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = 32.dp,
+                        end = 16.dp
+                    )
+                    .clickable {
+                         onCurrentLocationClicked()
+                    },
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Spacer(modifier = Modifier.width(16.dp))
+                Icon(
+                    Icons.Outlined.MyLocation,
+                    contentDescription = "",
+                    tint = Color.Blue
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    "Current location",
+                    style = MaterialTheme.typography.body1,
+                    modifier = Modifier
+                        .padding(
+                            vertical = 16.dp
+                        )
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(10.dp))
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -650,7 +718,9 @@ fun PlaceItem(
            )
        }
        Spacer(modifier = Modifier.width(16.dp))
-       Column{
+       Column(
+           modifier = Modifier.weight(1f)
+       ){
            Text(
                place.name,
                style = MaterialTheme.typography.body1,
@@ -665,11 +735,11 @@ fun PlaceItem(
                        alpha = 0.5f
                    )
                ),
-               maxLines = 1,
+               maxLines = 2,
                overflow = TextOverflow.Ellipsis
            )
        }
-       Spacer(modifier = Modifier.weight(1f))
+       Spacer(modifier = Modifier.width(10.dp))
        IconButton(
            onClick = onEdit
        ) {

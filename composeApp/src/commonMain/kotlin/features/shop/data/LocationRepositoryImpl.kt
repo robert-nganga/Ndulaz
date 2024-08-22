@@ -12,6 +12,8 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 
 class LocationRepositoryImpl(
     private val httpClient: HttpClient
@@ -24,8 +26,9 @@ class LocationRepositoryImpl(
     }
 
     override suspend fun getPlaceDetailsFromCoordinates(coordinates: LatLng): DataResult<PlaceDetail> = dataResultSafeApiCall{
-        val response = httpClient.post("$BASE_URL/location"){
-            setBody(coordinates)
+        val response = httpClient.post("$BASE_URL/location/reverseGeocoding"){
+            contentType(ContentType.Application.Json)
+            setBody<LatLng>(coordinates)
         }
         response.body<PlaceDetail>()
     }
