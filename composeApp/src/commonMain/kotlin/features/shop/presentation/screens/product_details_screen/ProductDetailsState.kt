@@ -18,6 +18,7 @@ data class ProductDetailsState(
     val errorMessage: String? = null,
     val addToWishListMessage: String? = null,
     val addToWishListError: Boolean = false,
+    val showAddToCartSheet: Boolean = false,
     val addToCartState: AddToCartState = AddToCartState.Loading
 ){
     fun toCartItem(): CartItem {

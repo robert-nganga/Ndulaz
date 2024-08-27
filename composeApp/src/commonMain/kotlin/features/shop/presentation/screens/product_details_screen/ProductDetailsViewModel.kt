@@ -44,6 +44,7 @@ class ProductDetailsViewModel(
                 if(errorMessage != null) return
                 _productDetailsState.update{
                     it.copy(
+                        showAddToCartSheet = true,
                         addToCartState = AddToCartState.Idle(_productDetailsState.value.toCartItem())
                     )
                 }
@@ -98,6 +99,13 @@ class ProductDetailsViewModel(
         }
     }
 
+    fun updateAddToCartSheetVisibility(isVisible: Boolean){
+        _productDetailsState.update {
+            it.copy(
+                showAddToCartSheet = isVisible
+            )
+        }
+    }
     private fun saveCartItem(item: CartItem) = viewModelScope.launch {
         _productDetailsState.update {
             it.copy(

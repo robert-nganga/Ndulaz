@@ -90,7 +90,6 @@ fun ProductDetailsScreen(
     val uiState by viewModel.productDetailsState.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
 
-    var showAddToCartSheet by remember{ mutableStateOf(false) }
     val sheetState = rememberFlexibleBottomSheetState(
         isModal = true,
         skipIntermediatelyExpanded = false,
@@ -125,7 +124,7 @@ fun ProductDetailsScreen(
                             snackbarData =  snackBarData,
                             backgroundColor = if (uiState.isError) MaterialTheme.colors.error else Color(0xFF188503),
                             actionColor = MaterialTheme.colors.surface,
-                            contentColor = MaterialTheme.colors.surface
+                            contentColor = MaterialTheme.colors.onError
                         )
                     }
                },
@@ -134,7 +133,6 @@ fun ProductDetailsScreen(
                         selectedVariation = uiState.selectedVariation,
                         onAddToCart = {
                             viewModel.onEvent(ProductDetailsEvent.OnAddToCart)
-                            showAddToCartSheet = true
                         },
                         quantity = uiState.quantity,
                         onQuantityChanged = {
@@ -143,7 +141,7 @@ fun ProductDetailsScreen(
                     )
                 }
             ){ paddingValues ->
-                if (showAddToCartSheet){
+                if (uiState.showAddToCartSheet){
                     AddToCartBottomSheet(
                         sheetState = sheetState,
                         addToCartState = uiState.addToCartState,
@@ -154,7 +152,7 @@ fun ProductDetailsScreen(
                             scope.launch {
                                 sheetState.hide()
                             }.invokeOnCompletion {
-                                showAddToCartSheet = false
+                                viewModel.updateAddToCartSheetVisibility(false)
                                 onNavigateBack()
                                 viewModel.resetState()
                             }
@@ -163,14 +161,14 @@ fun ProductDetailsScreen(
                             scope.launch {
                                 sheetState.hide()
                             }.invokeOnCompletion {
-                                showAddToCartSheet = false
+                                viewModel.updateAddToCartSheetVisibility(false)
                             }
                         },
                         onNavigateToCart = {
                             scope.launch {
                                 sheetState.hide()
                             }.invokeOnCompletion {
-                                showAddToCartSheet = false
+                                viewModel.updateAddToCartSheetVisibility(false)
                                 onNavigateToCart()
                                 viewModel.resetState()
                             }
@@ -340,7 +338,7 @@ fun ProductDetailsBottomBar(
                     .fillMaxWidth()
                     .padding(
                         horizontal = 16.dp,
-                        vertical = 16.dp
+                        vertical = 10.dp
                     ),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -349,7 +347,7 @@ fun ProductDetailsBottomBar(
                     quantity = quantity,
                     onQuantityChanged = onQuantityChanged
                 )
-                Spacer(modifier = Modifier.width(20.dp))
+                Spacer(modifier = Modifier.width(10.dp))
                 Button(
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(18.dp),
@@ -366,7 +364,7 @@ fun ProductDetailsBottomBar(
                         Text(
                             stringResource(Res.string.add_to_cart),
                             modifier = Modifier.padding(
-                                horizontal = 16.dp,
+                                horizontal = 10.dp,
                                 vertical = 10.dp
                             ),
                             style = MaterialTheme.typography.body1.copy(
