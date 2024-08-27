@@ -20,6 +20,9 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
@@ -45,6 +48,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.skydoves.flexible.core.rememberFlexibleBottomSheetState
+import core.presentation.components.ProgressDialog
 import features.shop.domain.models.CartItem
 import features.shop.domain.models.PaymentMethod
 import features.shop.domain.models.ShippingAddress
@@ -79,6 +83,7 @@ fun CheckOutScreen(
         skipSlightlyExpanded = true
     )
     val scope = rememberCoroutineScope()
+    val snackBarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit){
         viewModel.updateTotalPrice(
@@ -86,7 +91,27 @@ fun CheckOutScreen(
         )
     }
 
+    LaunchedEffect(state.errorMessage){
+        state.errorMessage?.let { msg ->
+            snackBarHostState.showSnackbar(
+                message = msg,
+                actionLabel = "Dismiss"
+            )
+            viewModel.resetErrorMessage()
+        }
+    }
+
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(snackBarHostState) { snackBarData ->
+                Snackbar(
+                    snackbarData =  snackBarData,
+                    backgroundColor = MaterialTheme.colors.error,
+                    actionColor = MaterialTheme.colors.surface,
+                    contentColor = MaterialTheme.colors.onError
+                )
+            }
+        },
         topBar = {
             TopAppBar(
                 title = {
@@ -117,6 +142,13 @@ fun CheckOutScreen(
             )
         }
     ){ paddingValues ->
+
+        if (state.isLoading){
+            ProgressDialog(
+                text = "Please wait"
+            )
+        }
+
         if (showShippingAddressSheet) {
             ShippingAddressBottomSheet(
                 selectedShippingAddress = state.selectedAddress,
@@ -245,8 +277,10 @@ fun CheckOutScreenContent(
                 it.id
             }
         ){ item ->
+            val msg = state.outOfStockItems.find { it.shoeId == item.shoeId && it.variationId == item.variationId }?.message
             CheckOutItem(
-                cartItem = item
+                cartItem = item,
+                outOfStockMessage = msg
             )
         }
         item("promo_section") {

@@ -29,6 +29,7 @@ import io.kamel.image.asyncPainterResource
 fun CheckOutItem(
     modifier: Modifier = Modifier,
     cartItem: CartItem,
+    outOfStockMessage: String? = null
 ){
     Card(
         modifier = modifier
@@ -36,67 +37,81 @@ fun CheckOutItem(
         elevation = 0.dp,
         shape = RoundedCornerShape(18.dp)
     ){
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    horizontal = 18.dp,
-                    vertical = 10.dp
-                )
-        ){
-            KamelImage(
-                resource = asyncPainterResource(cartItem.imageUrl),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
+        Column {
+            Spacer(modifier = Modifier.height(10.dp))
+            Row(
                 modifier = Modifier
-                    .size(80.dp)
-            )
-            Spacer(modifier = Modifier.width(10.dp))
-            Column {
-                cartItem.brand?.let {brand ->
-                    BrandLabel(
-                        brandName = brand
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = 18.dp,
                     )
-                    Spacer(modifier = Modifier.width(6.dp))
-                }
-                Text(
-                    cartItem.name,
-                    style = MaterialTheme.typography.body1.copy(
-                        fontWeight = FontWeight.Bold
-                    ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+            ){
+                KamelImage(
+                    resource = asyncPainterResource(cartItem.imageUrl),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(80.dp)
                 )
                 Spacer(modifier = Modifier.width(10.dp))
-                Row {
-                    VariationInfo(
-                        title = "Color",
-                        value = cartItem.color
+                Column {
+                    cartItem.brand?.let {brand ->
+                        BrandLabel(
+                            brandName = brand
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                    }
+                    Text(
+                        cartItem.name,
+                        style = MaterialTheme.typography.body1.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                     Spacer(modifier = Modifier.width(10.dp))
-                    VariationInfo(
-                        title = "Size",
-                        value = cartItem.size.toString()
-                    )
-                }
-                Spacer(modifier = Modifier.height(5.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ){
-                    VariationInfo(
-                        title = "Qty",
-                        value = cartItem.quantity.toString()
-                    )
-                    Text(
-                        "Ksh ${cartItem.price * cartItem.quantity}",
-                        style = MaterialTheme.typography.body1.copy(
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 0.sp
-                        ),
-                    )
+                    Row {
+                        VariationInfo(
+                            title = "Color",
+                            value = cartItem.color
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        VariationInfo(
+                            title = "Size",
+                            value = cartItem.size.toString()
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ){
+                        VariationInfo(
+                            title = "Qty",
+                            value = cartItem.quantity.toString()
+                        )
+                        Text(
+                            "Ksh ${cartItem.price * cartItem.quantity}",
+                            style = MaterialTheme.typography.body1.copy(
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = 0.sp
+                            ),
+                        )
+                    }
                 }
             }
+            if (outOfStockMessage != null){
+                Text(
+                    outOfStockMessage,
+                    style = MaterialTheme.typography.body2.copy(
+                        color = MaterialTheme.colors.error
+                    ),
+                    modifier = Modifier.padding(
+                        horizontal = 18.dp
+                    )
+                )
+            }
+            Spacer(modifier = Modifier.height(10.dp))
         }
     }
 }

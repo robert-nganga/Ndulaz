@@ -1,6 +1,7 @@
 package features.shop.presentation.screens.check_out_screen
 
 import com.robert.request.OrderRequest
+import features.shop.domain.models.OutOfStockError
 import features.shop.domain.models.PaymentMethod
 import features.shop.domain.models.ShippingAddress
 import features.shop.domain.request.OrderItemRequest
@@ -21,7 +22,9 @@ data class CheckOutScreenState(
     ),
     val selectedAddress: ShippingAddress? = null,
     val paymentMethods: List<PaymentMethod> = methods,
-    val isLoading: Boolean = false
+    val outOfStockItems: List<OutOfStockError> = emptyList(),
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null
 ){
     fun createOrderRequest(items: List<OrderItemRequest>): OrderRequest {
         return OrderRequest(
