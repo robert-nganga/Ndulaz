@@ -109,7 +109,9 @@ fun AddToCartBottomSheet(
                 }
                 is AddToCartState.Loading -> {
                     Spacer(modifier = Modifier.height(50.dp))
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
                 }
                 is AddToCartState.Success -> {
                     //val message = addToCartState.message
