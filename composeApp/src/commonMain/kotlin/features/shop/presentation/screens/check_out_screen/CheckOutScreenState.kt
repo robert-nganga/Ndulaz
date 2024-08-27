@@ -1,7 +1,10 @@
 package features.shop.presentation.screens.check_out_screen
 
+import com.robert.request.OrderRequest
 import features.shop.domain.models.PaymentMethod
 import features.shop.domain.models.ShippingAddress
+import features.shop.domain.request.OrderItemRequest
+import features.shop.domain.request.OrderStatus
 import ndula.composeapp.generated.resources.Res
 import ndula.composeapp.generated.resources.card
 import ndula.composeapp.generated.resources.cash
@@ -18,7 +21,17 @@ data class CheckOutScreenState(
     ),
     val selectedAddress: ShippingAddress? = null,
     val paymentMethods: List<PaymentMethod> = methods,
-)
+    val isLoading: Boolean = false
+){
+    fun createOrderRequest(items: List<OrderItemRequest>): OrderRequest {
+        return OrderRequest(
+            items = items,
+            totalAmount = totalPrice + tax + shipping,
+            status = OrderStatus.PROCESSING,
+            shippingAddress = selectedAddress!!
+        )
+    }
+}
 
 val methods = listOf(
     PaymentMethod(

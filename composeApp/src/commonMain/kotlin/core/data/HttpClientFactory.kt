@@ -2,6 +2,7 @@ package core.data
 
 import core.data.preferences.SessionHandler
 import core.domain.ErrorResponse
+import core.domain.exceptions.BadRequestException
 import core.domain.exceptions.ConflictException
 import core.domain.exceptions.ForbiddenException
 import core.domain.exceptions.UnauthorizedException
@@ -70,6 +71,10 @@ object HttpClientFactory {
 
                     if (exceptionResponse.status == HttpStatusCode.Forbidden){
                         throw ForbiddenException(exceptionResponse.errorMessage())
+                    }
+
+                    if (exceptionResponse.status == HttpStatusCode.BadRequest){
+                        throw BadRequestException(exceptionResponse.errorMessage())
                     }
                 }
             }

@@ -1,6 +1,7 @@
 package core.data.utils
 
 
+import core.domain.exceptions.BadRequestException
 import core.domain.exceptions.ConflictException
 import core.domain.exceptions.ForbiddenException
 import core.domain.exceptions.UnauthorizedException
@@ -22,7 +23,7 @@ suspend fun <T : Any> dataResultSafeApiCall(
         }
 
         is ConnectTimeoutException -> {
-            DataResult.Error("Network error", exc = exception, networkError = true)
+            DataResult.Error("Connection timed out, please try again later", exc = exception, networkError = true)
         }
 
         is UnauthorizedException -> {
@@ -35,6 +36,10 @@ suspend fun <T : Any> dataResultSafeApiCall(
 
         is ConflictException -> {
             DataResult.Error(exception.message ?: "Conflict", exc = exception)
+        }
+
+        is BadRequestException -> {
+            DataResult.Error(exception.message ?: "Bad request", exc = exception)
         }
 
         else -> {

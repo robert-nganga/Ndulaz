@@ -48,6 +48,7 @@ import com.skydoves.flexible.core.rememberFlexibleBottomSheetState
 import features.shop.domain.models.CartItem
 import features.shop.domain.models.PaymentMethod
 import features.shop.domain.models.ShippingAddress
+import features.shop.domain.models.toOrderItemRequest
 import features.shop.presentation.components.CheckOutItem
 import features.shop.presentation.components.PaymentMethodsBottomSheet
 import features.shop.presentation.components.ShippingAddressBottomSheet
@@ -110,7 +111,9 @@ fun CheckOutScreen(
         },
         bottomBar = {
             CheckOutScreenBottomBar(
-                onCheckout = {}
+                onCheckout = {
+                    viewModel.createOrder(cartItems.map { it.toOrderItemRequest() })
+                }
             )
         }
     ){ paddingValues ->

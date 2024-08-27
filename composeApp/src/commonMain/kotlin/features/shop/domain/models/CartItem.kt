@@ -1,5 +1,9 @@
 package features.shop.domain.models
 
+import features.shop.domain.request.OrderItemRequest
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class CartItem(
     val id: Int,
     val name: String,
@@ -11,4 +15,11 @@ data class CartItem(
     val size: Int,
     val color: String,
     val variationId: Int
+)
+
+fun CartItem.toOrderItemRequest() = OrderItemRequest(
+    shoeId = shoeId,
+    variantId = variationId,
+    quantity = quantity,
+    price = price
 )
