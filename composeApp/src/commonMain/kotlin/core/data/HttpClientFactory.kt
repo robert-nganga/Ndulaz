@@ -85,7 +85,6 @@ object HttpClientFactory {
         return try {
             body<ErrorResponse>().message
         } catch (e: Exception) {
-            e.printStackTrace()
             null
         }
     }
