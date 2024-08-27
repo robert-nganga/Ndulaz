@@ -120,7 +120,7 @@ fun HomeScreen(
                     modifier = Modifier.padding(bottom = 60.dp),
                     snackbarData =  snackBarData,
                     backgroundColor = if (uiState.addToWishListError) MaterialTheme.colors.error else Color(0xFF188503),
-                    actionColor = MaterialTheme.colors.surface
+                    actionColor = MaterialTheme.colors.onError
                 )
             }
        },
