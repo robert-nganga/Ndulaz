@@ -2,10 +2,10 @@ package features.shop.presentation.screens.home_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import core.data.preferences.SessionHandler
 import core.data.utils.DataResult
 import features.profile.domain.utils.parseErrorMessageFromException
 import features.shop.domain.repository.ShoesRepository
+import features.shop.domain.repository.UserRepository
 import features.shop.domain.repository.WishListRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class HomeScreenViewModel(
-    private val sessionHandler: SessionHandler,
+    private val userRepository: UserRepository,
     private val shoesRepository: ShoesRepository,
     private val wishListRepository: WishListRepository
 ):ViewModel() {
@@ -24,7 +24,7 @@ class HomeScreenViewModel(
     private val _homeScreenState = MutableStateFlow(HomeScreenState())
     val homeScreenState = _homeScreenState.asStateFlow()
 
-    val user = sessionHandler.getUser()
+    val user = userRepository.getCurrentUser()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),
@@ -223,10 +223,6 @@ class HomeScreenViewModel(
                 }
             }
         }
-    }
-
-    fun logout() = viewModelScope.launch {
-        sessionHandler.clearSession()
     }
 
 }

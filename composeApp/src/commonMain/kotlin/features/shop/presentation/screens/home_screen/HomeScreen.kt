@@ -152,7 +152,7 @@ fun HomeScreen(
                         onSearchClick = onNavigateToSearch,
                         user = user,
                         onNotificationClick = {
-                            viewModel.logout()
+
                         }
                     )
                     Spacer(modifier = Modifier.height(20.dp))

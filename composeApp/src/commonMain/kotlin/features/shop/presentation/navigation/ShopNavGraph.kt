@@ -22,6 +22,7 @@ import features.shop.presentation.screens.most_popular_screen.MostPopularScreenV
 import features.shop.presentation.screens.product_details_screen.ProductDetailsScreen
 import features.shop.presentation.screens.product_details_screen.ProductDetailsViewModel
 import features.shop.presentation.screens.profile_screen.ProfileScreen
+import features.shop.presentation.screens.profile_screen.ProfileViewModel
 import features.shop.presentation.screens.search_screen.SearchScreen
 import features.shop.presentation.screens.search_screen.SearchViewModel
 import features.shop.presentation.screens.wish_list_screen.WishListScreen
@@ -44,12 +45,13 @@ fun NavGraphBuilder.shopNavGraph(
     cartViewModel: CartViewModel,
     searchViewModel: SearchViewModel,
     checkOutViewModel: CheckOutViewModel,
-    addLocationViewModel: AddLocationViewModel
+    addLocationViewModel: AddLocationViewModel,
+    profileViewModel: ProfileViewModel,
+    homeScreenViewModel: HomeScreenViewModel
 ){
 
     navigation(startDestination = BottomNavItem.Home.route, route = SHOP_GRAPH_ROUTE){
         composable(BottomNavItem.Home.route){
-            val homeScreenViewModel = getKoinViewModel<HomeScreenViewModel>()
             HomeScreen(
                 viewModel = homeScreenViewModel,
                 onProductClick = {
@@ -118,7 +120,9 @@ fun NavGraphBuilder.shopNavGraph(
         }
 
         composable(BottomNavItem.Profile.route){
-            ProfileScreen()
+            ProfileScreen(
+                viewModel = profileViewModel
+            )
         }
 
         composable(PRODUCT_DETAILS_SCREEN){

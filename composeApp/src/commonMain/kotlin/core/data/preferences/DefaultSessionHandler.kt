@@ -9,6 +9,7 @@ import features.profile.domain.models.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.single
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
