@@ -24,7 +24,8 @@ data class CheckOutScreenState(
     val paymentMethods: List<PaymentMethod> = methods,
     val outOfStockItems: List<OutOfStockError> = emptyList(),
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val isCheckOutSuccessful: Boolean = false
 ){
     fun createOrderRequest(items: List<OrderItemRequest>): OrderRequest {
         return OrderRequest(

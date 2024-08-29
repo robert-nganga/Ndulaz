@@ -89,7 +89,8 @@ class CheckOutViewModel(
                 println(response.data)
                 _checkOutScreenState.update {
                     it.copy(
-                        isLoading = false
+                        isLoading = false,
+                        isCheckOutSuccessful = true
                     )
                 }
             }

@@ -65,6 +65,7 @@ fun CheckOutScreen(
     viewModel: CheckOutViewModel,
     cartItems: List<CartItem> = NavigationUtils.cartItems,
     onNavigateBack: () -> Unit,
+    onNavigateToPaymentSuccess: () -> Unit,
     onNavigateToAddLocation: (ShippingAddress?) -> Unit
 ){
     val state by viewModel.checkOutScreenState.collectAsState()
@@ -91,13 +92,18 @@ fun CheckOutScreen(
         )
     }
 
-    LaunchedEffect(state.errorMessage){
+    LaunchedEffect(state.errorMessage, state.isCheckOutSuccessful){
         state.errorMessage?.let { msg ->
             snackBarHostState.showSnackbar(
                 message = msg,
                 actionLabel = "Dismiss"
             )
             viewModel.resetErrorMessage()
+        }
+
+        if (state.isCheckOutSuccessful){
+            onNavigateToPaymentSuccess()
+            viewModel.resetState()
         }
     }
 

@@ -59,6 +59,7 @@ import features.shop.domain.models.LatLng
 import features.shop.domain.models.PlaceDetail
 import features.shop.domain.models.ShippingAddress
 import features.shop.presentation.components.ConfirmDialog
+import features.shop.presentation.components.CustomOutlinedTextField
 import features.shop.presentation.utils.NavigationUtils
 import kotlinx.coroutines.launch
 
@@ -607,47 +608,6 @@ fun AddLocationScreenContent(
     }
 }
 
-@Composable
-fun CustomOutlinedTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    label: String,
-    error: String? = null,
-    trailingIcon: @Composable (() -> Unit)? = null
-){
-    Column(
-        modifier = modifier
-    ) {
-        OutlinedTextField(
-            value = value,
-            onValueChange = onValueChange,
-            modifier = Modifier
-                .fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            label = {
-                Text(label)
-            },
-            trailingIcon = trailingIcon,
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = MaterialTheme.colors.onSurface,
-                unfocusedBorderColor = MaterialTheme.colors.onSurface.copy(
-                    alpha = 0.5f
-                ),
-            ),
-            isError = error != null
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        if (error != null){
-            Text(
-                error,
-                style = MaterialTheme.typography.body2.copy(
-                    color = MaterialTheme.colors.error
-                )
-            )
-        }
-    }
-}
 
 @Composable
 fun AddressSection(
