@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import features.profile.domain.models.User
+import features.shop.presentation.components.CircularProfilePhoto
 import ndula.composeapp.generated.resources.Res
 import ndula.composeapp.generated.resources.sample_profile
 import org.jetbrains.compose.resources.painterResource
@@ -152,40 +153,10 @@ fun ProfileDetailsSection(
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        Box(
-            modifier = Modifier
-        ){
-            Image(
-                painter = painterResource(Res.drawable.sample_profile),
-                contentDescription = "Profile picture",
-                modifier = Modifier
-                    .size(160.dp)
-                    .clip(CircleShape)
-            )
-            Box(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .background(
-                        color = MaterialTheme.colors.surface
-                    )
-                    .padding(3.dp)
-                    .size(38.dp)
-                    .clip(CircleShape)
-                    .background(
-                        color = Color(0xff0377fc)
-                    )
-                    .clickable { onEditProfile(user) }
-                    .align(Alignment.BottomEnd)
-            ){
-                Icon(
-                    Icons.Default.Edit,
-                    contentDescription = "Edit profile",
-                    tint = Color.White,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                )
-            }
-        }
+        CircularProfilePhoto(
+            photoUrl = user.image,
+            onButtonClick = { onEditProfile(user) },
+        )
         Spacer(modifier = Modifier.height(10.dp))
         Text(
             user.name,

@@ -19,6 +19,7 @@ import features.shop.presentation.screens.home_screen.HomeScreen
 import features.shop.presentation.screens.home_screen.HomeScreenViewModel
 import features.shop.presentation.screens.most_popular_screen.MostPopularScreen
 import features.shop.presentation.screens.most_popular_screen.MostPopularScreenViewModel
+import features.shop.presentation.screens.payment_success_screen.PaymentSuccessScreen
 import features.shop.presentation.screens.product_details_screen.ProductDetailsScreen
 import features.shop.presentation.screens.product_details_screen.ProductDetailsViewModel
 import features.shop.presentation.screens.profile_screen.ProfileScreen
@@ -33,6 +34,7 @@ import features.shop.presentation.utils.BRAND_SCREEN
 import features.shop.presentation.utils.CHECK_OUT_SCREEN
 import features.shop.presentation.utils.MOST_POPULAR_SCREEN
 import features.shop.presentation.utils.NavigationUtils
+import features.shop.presentation.utils.PAYMENT_SUCCESS_SCREEN
 import features.shop.presentation.utils.PRODUCT_DETAILS_SCREEN
 import features.shop.presentation.utils.SEARCH_SCREEN
 import features.shop.presentation.utils.SHOP_GRAPH_ROUTE
@@ -151,6 +153,12 @@ fun NavGraphBuilder.shopNavGraph(
                     navController.navigate(ADD_LOCATION_SCREEN){
                         launchSingleTop = true
                     }
+                },
+                onNavigateToPaymentSuccess = {
+                    navController.navigate(PAYMENT_SUCCESS_SCREEN){
+                        popUpTo(CHECK_OUT_SCREEN){ inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -205,6 +213,14 @@ fun NavGraphBuilder.shopNavGraph(
                 onNavigateBack = {
                     navController.navigateUp()
                 }
+            )
+        }
+        composable(PAYMENT_SUCCESS_SCREEN){
+            PaymentSuccessScreen(
+                onNavigateBack = {
+                    navController.navigateUp()
+                },
+                onNavigateToOrderScreen = {}
             )
         }
     }
