@@ -16,5 +16,15 @@ data class Order(
 
 
 enum class OrderStatus {
-    PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED
+    PROCESSING, INDELIVERY, COMPLETED, CANCELLED, PENDINGPAYMENT
+}
+
+fun OrderStatus.toLocalizedString(): String{
+    return when(this){
+        OrderStatus.PROCESSING -> "Processing"
+        OrderStatus.INDELIVERY -> "In Delivery"
+        OrderStatus.COMPLETED -> "Completed"
+        OrderStatus.CANCELLED -> "Cancelled"
+        OrderStatus.PENDINGPAYMENT -> "Pending Payment"
+    }
 }

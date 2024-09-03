@@ -6,8 +6,10 @@ import features.shop.presentation.screens.all_brands_screen.AllBrandsViewModel
 import features.shop.presentation.screens.brand_screen.BrandScreenViewModel
 import features.shop.presentation.screens.cart_screen.CartViewModel
 import features.shop.presentation.screens.check_out_screen.CheckOutViewModel
+import features.shop.presentation.screens.edit_profile_screen.EditProfileViewModel
 import features.shop.presentation.screens.home_screen.HomeScreenViewModel
 import features.shop.presentation.screens.most_popular_screen.MostPopularScreenViewModel
+import features.shop.presentation.screens.orders_screen.OrdersViewModel
 import features.shop.presentation.screens.product_details_screen.ProductDetailsViewModel
 import features.shop.presentation.screens.profile_screen.ProfileViewModel
 import features.shop.presentation.screens.search_screen.SearchViewModel
@@ -28,4 +30,6 @@ actual val viewModelModule = module {
     singleOf(::CheckOutViewModel)
     singleOf(::AddLocationViewModel)
     singleOf(::ProfileViewModel)
+    singleOf(::EditProfileViewModel)
+    singleOf(::OrdersViewModel)
 }

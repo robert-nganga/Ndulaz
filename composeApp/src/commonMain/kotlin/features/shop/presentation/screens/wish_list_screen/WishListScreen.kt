@@ -31,9 +31,10 @@ fun WishListScreen(
     val uiState by viewModel.wishListState.collectAsState()
 
     LaunchedEffect(Unit){
-        if(uiState is WishListScreenState.Failure){
-            viewModel.fetchMyWishList()
-        }
+//        if(uiState is WishListScreenState.Failure){
+//            viewModel.fetchMyWishList()
+//        }
+        viewModel.fetchMyWishList()
     }
 
     Scaffold(

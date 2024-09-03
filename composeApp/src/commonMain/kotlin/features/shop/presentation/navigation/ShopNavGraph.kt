@@ -15,10 +15,14 @@ import features.shop.presentation.screens.cart_screen.CartScreen
 import features.shop.presentation.screens.cart_screen.CartViewModel
 import features.shop.presentation.screens.check_out_screen.CheckOutScreen
 import features.shop.presentation.screens.check_out_screen.CheckOutViewModel
+import features.shop.presentation.screens.edit_profile_screen.EditProfileScreen
+import features.shop.presentation.screens.edit_profile_screen.EditProfileViewModel
 import features.shop.presentation.screens.home_screen.HomeScreen
 import features.shop.presentation.screens.home_screen.HomeScreenViewModel
 import features.shop.presentation.screens.most_popular_screen.MostPopularScreen
 import features.shop.presentation.screens.most_popular_screen.MostPopularScreenViewModel
+import features.shop.presentation.screens.orders_screen.OrdersScreen
+import features.shop.presentation.screens.orders_screen.OrdersViewModel
 import features.shop.presentation.screens.payment_success_screen.PaymentSuccessScreen
 import features.shop.presentation.screens.product_details_screen.ProductDetailsScreen
 import features.shop.presentation.screens.product_details_screen.ProductDetailsViewModel
@@ -32,8 +36,10 @@ import features.shop.presentation.utils.ADD_LOCATION_SCREEN
 import features.shop.presentation.utils.ALL_BRANDS_SCREEN
 import features.shop.presentation.utils.BRAND_SCREEN
 import features.shop.presentation.utils.CHECK_OUT_SCREEN
+import features.shop.presentation.utils.EDIT_PROFILE_SCREEN
 import features.shop.presentation.utils.MOST_POPULAR_SCREEN
 import features.shop.presentation.utils.NavigationUtils
+import features.shop.presentation.utils.ORDERS_SCREEN
 import features.shop.presentation.utils.PAYMENT_SUCCESS_SCREEN
 import features.shop.presentation.utils.PRODUCT_DETAILS_SCREEN
 import features.shop.presentation.utils.SEARCH_SCREEN
@@ -49,7 +55,9 @@ fun NavGraphBuilder.shopNavGraph(
     checkOutViewModel: CheckOutViewModel,
     addLocationViewModel: AddLocationViewModel,
     profileViewModel: ProfileViewModel,
-    homeScreenViewModel: HomeScreenViewModel
+    homeScreenViewModel: HomeScreenViewModel,
+    wishListViewModel: WishListViewModel,
+    ordersViewModel: OrdersViewModel
 ){
 
     navigation(startDestination = BottomNavItem.Home.route, route = SHOP_GRAPH_ROUTE){
@@ -99,7 +107,6 @@ fun NavGraphBuilder.shopNavGraph(
         }
 
         composable(BottomNavItem.WishList.route){
-            val wishListViewModel = getKoinViewModel<WishListViewModel>()
             WishListScreen(
                 viewModel = wishListViewModel,
                onShoeClick = {}
@@ -123,7 +130,18 @@ fun NavGraphBuilder.shopNavGraph(
 
         composable(BottomNavItem.Profile.route){
             ProfileScreen(
-                viewModel = profileViewModel
+                viewModel = profileViewModel,
+                onNavigateToEditProfile = {
+                    NavigationUtils.currentUser = it
+                    navController.navigate(EDIT_PROFILE_SCREEN){
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToOrdersScreen = {
+                    navController.navigate(ORDERS_SCREEN){
+                        launchSingleTop = true
+                    }
+                }
             )
         }
 
@@ -220,7 +238,30 @@ fun NavGraphBuilder.shopNavGraph(
                 onNavigateBack = {
                     navController.navigateUp()
                 },
-                onNavigateToOrderScreen = {}
+                onNavigateToOrderScreen = {
+                    navController.navigate(ORDERS_SCREEN){
+                        popUpTo(PAYMENT_SUCCESS_SCREEN){ inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+        composable(EDIT_PROFILE_SCREEN){
+            val editProfileViewModel = getKoinViewModel<EditProfileViewModel>()
+            EditProfileScreen(
+                onNavigateBack = {
+                    navController.navigateUp()
+                },
+                viewModel = editProfileViewModel,
+                currentUser = NavigationUtils.currentUser
+            )
+        }
+        composable(ORDERS_SCREEN){
+            OrdersScreen(
+                onNavigateBack = {
+                    navController.navigateUp()
+                },
+                viewModel = ordersViewModel
             )
         }
     }
