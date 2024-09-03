@@ -29,4 +29,14 @@ class OrderRepositoryImpl(
         val response = httpClient.get("$BASE_URL/orders/all")
         response.body<List<Order>>()
     }
+
+    override suspend fun getActiveOrders(): DataResult<List<Order>> = dataResultSafeApiCall {
+        val response = httpClient.get("$BASE_URL/orders/active")
+        response.body<List<Order>>()
+    }
+
+    override suspend fun getCompletedOrders(): DataResult<List<Order>> = dataResultSafeApiCall {
+        val response = httpClient.get("$BASE_URL/orders/completed")
+        response.body<List<Order>>()
+    }
 }

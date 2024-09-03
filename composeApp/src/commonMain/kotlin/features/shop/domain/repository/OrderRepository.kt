@@ -7,5 +7,7 @@ import features.shop.domain.models.Order
 interface OrderRepository {
     suspend fun createOrder(order: OrderRequest): DataResult<Order>
     suspend fun getOrdersForCurrentUser(): DataResult<List<Order>>
+    suspend fun getActiveOrders(): DataResult<List<Order>>
+    suspend fun getCompletedOrders(): DataResult<List<Order>>
 
 }
