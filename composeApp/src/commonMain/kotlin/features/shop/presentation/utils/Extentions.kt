@@ -5,7 +5,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
-fun  String.getColor(): Color {
+fun  String.parseColorFromString(): Color {
     return when(this){
         "Black" -> Color.Black
         "White" -> Color.White

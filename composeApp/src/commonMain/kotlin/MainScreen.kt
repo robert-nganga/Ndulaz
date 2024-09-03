@@ -33,9 +33,11 @@ import features.shop.presentation.screens.brand_screen.BrandScreenViewModel
 import features.shop.presentation.screens.cart_screen.CartViewModel
 import features.shop.presentation.screens.check_out_screen.CheckOutViewModel
 import features.shop.presentation.screens.home_screen.HomeScreenViewModel
+import features.shop.presentation.screens.orders_screen.OrdersViewModel
 import features.shop.presentation.screens.product_details_screen.ProductDetailsViewModel
 import features.shop.presentation.screens.profile_screen.ProfileViewModel
 import features.shop.presentation.screens.search_screen.SearchViewModel
+import features.shop.presentation.screens.wish_list_screen.WishListViewModel
 import features.shop.presentation.utils.PRODUCT_DETAILS_SCREEN
 import features.shop.presentation.utils.SHOP_GRAPH_ROUTE
 
@@ -55,6 +57,8 @@ fun MainScreen(
     val addLocationViewModel = getKoinViewModel<AddLocationViewModel>()
     val profileViewModel = getKoinViewModel<ProfileViewModel>()
     val homeScreenViewModel = getKoinViewModel<HomeScreenViewModel>()
+    val wishListViewModel = getKoinViewModel<WishListViewModel>()
+    val ordersViewModel = getKoinViewModel<OrdersViewModel>()
 
     val cartItems by cartViewModel.cartItems.collectAsState()
 
@@ -97,7 +101,9 @@ fun MainScreen(
                 checkOutViewModel,
                 addLocationViewModel,
                 profileViewModel,
-                homeScreenViewModel
+                homeScreenViewModel,
+                wishListViewModel,
+                ordersViewModel
             )
         }
     }

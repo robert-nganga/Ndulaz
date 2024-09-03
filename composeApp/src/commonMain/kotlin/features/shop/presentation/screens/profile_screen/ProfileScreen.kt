@@ -43,7 +43,9 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun ProfileScreen(
-    viewModel: ProfileViewModel
+    viewModel: ProfileViewModel,
+    onNavigateToEditProfile: (User)-> Unit,
+    onNavigateToOrdersScreen: () -> Unit
 ){
     val currentUser by viewModel.currentUser.collectAsState()
 
@@ -55,8 +57,7 @@ fun ProfileScreen(
         currentUser?.let { user ->
             ProfileDetailsSection(
                 user = user,
-                onEditProfile = {
-                }
+                onEditProfile = onNavigateToEditProfile
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
@@ -69,7 +70,7 @@ fun ProfileScreen(
         MenuItem(
             icon = Icons.Outlined.ShoppingBag,
             title = "My Orders",
-            onClick = {}
+            onClick = onNavigateToOrdersScreen
         )
         Spacer(modifier = Modifier.height(10.dp))
         MenuItem(

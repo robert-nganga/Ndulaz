@@ -9,9 +9,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.BottomAppBar
+import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -23,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
 import androidx.compose.material.icons.filled.Camera
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -47,6 +49,11 @@ fun EditProfileScreen(
 
     val state by viewModel.editProfileState.collectAsState()
 
+    LaunchedEffect(Unit){
+        viewModel.onNameChange(currentUser.name)
+        viewModel.onEmailChange(currentUser.email)
+    }
+
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
@@ -58,6 +65,7 @@ fun EditProfileScreen(
                 elevation = 0.dp,
                 backgroundColor = Color.Transparent,
                 navigationIcon = {
+                    Spacer(modifier = Modifier.width(6.dp))
                     IconButton(
                         onClick = onNavigateBack
                     ){
@@ -68,12 +76,38 @@ fun EditProfileScreen(
                     }
                 }
             )
+        },
+        bottomBar = {
+            BottomAppBar (
+                modifier = Modifier
+                    .padding(
+                        horizontal = 16.dp,
+                        vertical = 10.dp
+                    ),
+                elevation = 0.dp,
+                backgroundColor = MaterialTheme.colors.background
+            ){
+                Button(
+                    onClick = {},
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                ){
+                    Text(
+                        "Save",
+                        style = MaterialTheme.typography.button,
+                        modifier = Modifier.padding(10.dp)
+                    )
+                }
+            }
         }
     ){ paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues),
+                .padding(paddingValues)
+                .padding(
+                    horizontal = 16.dp
+                ),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             CircularProfilePhoto(
@@ -96,11 +130,13 @@ fun EditProfileScreen(
             Spacer(modifier = Modifier.height(16.dp))
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ){
                 FlagSection(
                     countryCode = "+254",
                 )
+                Spacer(modifier = Modifier.width(16.dp))
                 CustomOutlinedTextField(
                     value = state.phone,
                     onValueChange = viewModel::onPhoneNumberChange,
@@ -136,15 +172,15 @@ fun FlagSection(
                 painter = painterResource(Res.drawable.kenyaflag),
                 contentDescription = "",
                 modifier = Modifier
-                    .padding(vertical = 10.dp)
-                    .height(40.dp)
-                    .width(60.dp),
+                    .padding(12.5.dp)
+                    .height(30.dp)
+                    .width(40.dp),
                 contentScale = ContentScale.Fit
             )
-            Spacer(modifier = Modifier.width(6.dp))
             Text(
                 text = countryCode,
             )
+            Spacer(modifier = Modifier.width(10.dp))
         }
     }
 }

@@ -45,10 +45,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -59,14 +57,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.skydoves.flexible.core.FlexibleSheetSize
 import com.skydoves.flexible.core.rememberFlexibleBottomSheetState
 import features.shop.domain.models.Brand
 import features.shop.domain.models.Shoe
 import features.shop.domain.models.ShoeVariant
 import features.shop.presentation.components.AddToCartBottomSheet
 import features.shop.presentation.components.ExpandableText
-import features.shop.presentation.utils.getColor
+import features.shop.presentation.utils.parseColorFromString
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import kotlinx.coroutines.launch
@@ -427,7 +424,7 @@ fun ColorItem(
             .size(40.dp)
             .clip(CircleShape)
             .background(
-                color = color.getColor()
+                color = color.parseColorFromString()
             )
             .border(
                 width = 1.5.dp,
