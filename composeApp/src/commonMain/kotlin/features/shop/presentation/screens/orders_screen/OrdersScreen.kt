@@ -34,14 +34,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import features.shop.domain.models.Order
 import features.shop.domain.models.toLocalizedString
+import features.shop.presentation.components.CompletedOrderItemDetails
 import features.shop.presentation.components.OrderItemDetails
+import kotlin.random.Random
 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OrdersScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToOrderDetails: (Order, Int) -> Unit,
     viewModel: OrdersViewModel
 ){
     val tabs = listOf(
@@ -138,14 +142,18 @@ fun OrdersScreen(
                         ActiveOrdersSection(
                             modifier = Modifier
                                 .fillMaxSize(),
-                            activeOrdersState = activeOrdersState
+                            activeOrdersState = activeOrdersState,
+                            onTrackOrderClick = { order, itemId ->
+                                onNavigateToOrderDetails(order, itemId)
+                            }
                         )
                     }
                     1 -> {
                         CompletedOrdersSection(
                             modifier = Modifier
                                 .fillMaxSize(),
-                            completedOrdersState = completedOrdersState
+                            completedOrdersState = completedOrdersState,
+                            onLeaveReviewClicked = {}
                         )
                     }
                 }
@@ -159,6 +167,7 @@ fun OrdersScreen(
 fun CompletedOrdersSection(
     modifier: Modifier = Modifier,
     completedOrdersState: CompletedOrdersState,
+    onLeaveReviewClicked: ()-> Unit
 ){
     when(completedOrdersState){
         is CompletedOrdersState.Empty -> {}
@@ -183,13 +192,18 @@ fun CompletedOrdersSection(
             val orderItems = orders.map {it.items}.flatten()
             LazyColumn(
                 modifier = modifier
+                    .padding(
+                        horizontal = 16.dp,
+                        vertical = 11.dp
+                    )
             ){
                 items(orderItems){ item ->
                     val order = orders.find { it.id == item.orderId }!!
-                    OrderItemDetails(
+                    CompletedOrderItemDetails(
                         orderItem = item,
                         buttonText = "Leave Review",
-                        onButtonClick = {},
+                        onButtonClick = onLeaveReviewClicked,
+                        hasReview = Random.nextBoolean(),
                         status = order.status.toLocalizedString()
                     )
                 }
@@ -202,6 +216,7 @@ fun CompletedOrdersSection(
 fun ActiveOrdersSection(
     modifier: Modifier = Modifier,
     activeOrdersState: ActiveOrdersState,
+    onTrackOrderClick: (Order, Int) -> Unit
 ){
     when(activeOrdersState){
         is ActiveOrdersState.Empty -> {}
@@ -236,7 +251,9 @@ fun ActiveOrdersSection(
                     OrderItemDetails(
                         orderItem = item,
                         buttonText = "Track Order",
-                        onButtonClick = {},
+                        onButtonClick = {
+                            onTrackOrderClick(order, item.id)
+                        },
                         status = order.status.toLocalizedString()
                     )
                 }

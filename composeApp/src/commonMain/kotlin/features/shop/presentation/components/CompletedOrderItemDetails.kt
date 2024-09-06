@@ -1,6 +1,7 @@
 package features.shop.presentation.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,8 +16,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Card
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,11 +41,12 @@ import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 
 @Composable
-fun OrderItemDetails(
+fun CompletedOrderItemDetails(
     modifier: Modifier = Modifier,
     orderItem: OrderItem,
     status: String,
     buttonText: String,
+    hasReview: Boolean = false,
     onButtonClick: () -> Unit,
 ){
     val variant by remember {
@@ -156,14 +161,15 @@ fun OrderItemDetails(
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(6.dp))
-                        .background(color = MaterialTheme.colors.onSurface.copy(alpha = 0.15f))
+                        .background(color = Color(0xff37ab4a).copy(alpha = 0.1f))
                         .padding(8.dp)
                 ){
                     Text(
                         status,
                         style = TextStyle(
                             fontSize = 10.sp,
-                            letterSpacing = 0.2.sp
+                            letterSpacing = 0.2.sp,
+                            color = Color(0xff37ab4a)
                         )
                     )
                 }
@@ -181,24 +187,68 @@ fun OrderItemDetails(
                             letterSpacing = 0.sp
                         )
                     )
-                    Button(
-                        onClick = onButtonClick,
-                        shape = RoundedCornerShape(16.dp)
-                    ){
-                        Text(
-                            buttonText,
-                            style = MaterialTheme.typography.body2.copy(
-                                fontWeight = FontWeight.Bold,
-                                letterSpacing = 0.sp
-                            ),
-                            modifier = Modifier.padding(
-                                vertical = 2.dp,
-                                horizontal = 3.dp
-                            )
+                    if(hasReview) {
+                        ReviewSection(
+                            rating = 4.5f,
                         )
+                    }else{
+                        Button(
+                            onClick = onButtonClick,
+                            shape = RoundedCornerShape(10.dp)
+                        ){
+                            Text(
+                                buttonText,
+                                style = MaterialTheme.typography.body2.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    letterSpacing = 0.sp
+                                ),
+                                modifier = Modifier.padding(
+                                    vertical = 2.dp,
+                                    horizontal = 3.dp
+                                )
+                            )
+                        }
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun ReviewSection(
+    modifier: Modifier = Modifier,
+    rating: Float,
+){
+    Box(
+        modifier = Modifier
+            .padding(end = 10.dp)
+            .border(
+                width = 1.0.dp,
+                color = MaterialTheme.colors.onSurface.copy(
+                    alpha = 0.25f
+                ),
+                shape = RoundedCornerShape(10.dp)
+            )
+    ){
+        Row(
+            modifier = modifier
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ){
+            Icon(
+                Icons.Default.Star,
+                contentDescription = "",
+                tint = Color(0xFFFF9529),
+                modifier = Modifier.size(18.dp)
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(
+                "$rating/5",
+                style = MaterialTheme.typography.body2.copy(
+                    letterSpacing = 0.sp,
+                )
+            )
         }
     }
 }
