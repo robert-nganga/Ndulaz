@@ -9,5 +9,6 @@ data class OrderItem(
     val shoe: Shoe,
     val variantId: Int,
     val quantity: Int,
-    val price: Double
+    val price: Double,
+    val rating: Double?
 )

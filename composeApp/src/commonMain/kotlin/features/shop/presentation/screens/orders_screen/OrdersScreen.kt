@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import features.shop.domain.models.Order
+import features.shop.domain.models.OrderItem
 import features.shop.domain.models.toLocalizedString
 import features.shop.presentation.components.CompletedOrderItemDetails
 import features.shop.presentation.components.OrderItemDetails
@@ -46,6 +47,7 @@ import kotlin.random.Random
 fun OrdersScreen(
     onNavigateBack: () -> Unit,
     onNavigateToOrderDetails: (Order, Int) -> Unit,
+    onNavigateToReview:(OrderItem) -> Unit,
     viewModel: OrdersViewModel
 ){
     val tabs = listOf(
@@ -63,6 +65,7 @@ fun OrdersScreen(
 
     val activeOrdersState by viewModel.activeOrdersState.collectAsState()
     val completedOrdersState by viewModel.completedOrdersState.collectAsState()
+
 
     LaunchedEffect(selectedTabIndex){
         pagerState.animateScrollToPage(selectedTabIndex)
@@ -108,6 +111,7 @@ fun OrdersScreen(
             alpha = 0.08f
         )
     ){ paddingValues ->
+
         Column (
             modifier = Modifier
                 .fillMaxSize()
@@ -153,7 +157,9 @@ fun OrdersScreen(
                             modifier = Modifier
                                 .fillMaxSize(),
                             completedOrdersState = completedOrdersState,
-                            onLeaveReviewClicked = {}
+                            onLeaveReviewClicked = {
+                                onNavigateToReview(it)
+                            }
                         )
                     }
                 }
@@ -167,7 +173,7 @@ fun OrdersScreen(
 fun CompletedOrdersSection(
     modifier: Modifier = Modifier,
     completedOrdersState: CompletedOrdersState,
-    onLeaveReviewClicked: ()-> Unit
+    onLeaveReviewClicked: (OrderItem)-> Unit
 ){
     when(completedOrdersState){
         is CompletedOrdersState.Empty -> {}
@@ -202,7 +208,9 @@ fun CompletedOrdersSection(
                     CompletedOrderItemDetails(
                         orderItem = item,
                         buttonText = "Leave Review",
-                        onButtonClick = onLeaveReviewClicked,
+                        onButtonClick = {
+                            onLeaveReviewClicked(item)
+                        },
                         hasReview = Random.nextBoolean(),
                         status = order.status.toLocalizedString()
                     )

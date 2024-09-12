@@ -15,5 +15,7 @@ data class Shoe(
     val price: Double,
     val productType: String,
     val variants: List<ShoeVariant>,
-    val isInWishList: Boolean
+    val isInWishList: Boolean,
+    val averageRating: Double,
+    val totalReviews: Int,
 )

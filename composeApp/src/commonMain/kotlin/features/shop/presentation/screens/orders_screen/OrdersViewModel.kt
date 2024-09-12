@@ -3,15 +3,26 @@ package features.shop.presentation.screens.orders_screen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import core.data.preferences.SessionHandler
 import core.data.utils.DataResult
+import features.profile.domain.models.User
 import features.shop.domain.models.Order
+import features.shop.domain.models.OrderItem
 import features.shop.domain.repository.OrderRepository
+import features.shop.domain.request.ReviewRequest
+import features.shop.presentation.components.ReviewBottomSheetState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 class OrdersViewModel(
-    private val orderRepository: OrderRepository
+    private val orderRepository: OrderRepository,
 ): ViewModel() {
 
     private val _activeOrdersState = MutableStateFlow<ActiveOrdersState>(ActiveOrdersState.Empty)
@@ -19,6 +30,7 @@ class OrdersViewModel(
 
     private val _completedOrdersState = MutableStateFlow<CompletedOrdersState>(CompletedOrdersState.Empty)
     val completedOrdersState = _completedOrdersState.asStateFlow()
+
 
 
     fun fetchActiveOrders() = viewModelScope.launch {
