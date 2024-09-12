@@ -30,7 +30,7 @@ sqlite = "2.5.0-SNAPSHOT"
 koin = "3.6.0-Beta4"
 koinCompose = "3.6.0-Beta4"
 koinComposeMultiplatform = "1.2.0-alpha3"
-flexibleBottomsheetMaterial = "0.1.4"
+flexibleBottomsheetMaterial = "0.1.5"
 compass = "1.2.0"
 
 [libraries]
