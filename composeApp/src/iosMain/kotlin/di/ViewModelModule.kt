@@ -12,6 +12,7 @@ import features.shop.presentation.screens.most_popular_screen.MostPopularScreenV
 import features.shop.presentation.screens.orders_screen.OrdersViewModel
 import features.shop.presentation.screens.product_details_screen.ProductDetailsViewModel
 import features.shop.presentation.screens.profile_screen.ProfileViewModel
+import features.shop.presentation.screens.review_screen.ReviewViewModel
 import features.shop.presentation.screens.search_screen.SearchViewModel
 import features.shop.presentation.screens.wish_list_screen.WishListViewModel
 import org.koin.core.module.dsl.singleOf
@@ -32,4 +33,5 @@ actual val viewModelModule = module {
     singleOf(::ProfileViewModel)
     singleOf(::EditProfileViewModel)
     singleOf(::OrdersViewModel)
+    singleOf(::ReviewViewModel)
 }

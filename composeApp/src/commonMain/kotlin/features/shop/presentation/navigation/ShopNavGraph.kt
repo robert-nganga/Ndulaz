@@ -21,6 +21,7 @@ import features.shop.presentation.screens.home_screen.HomeScreen
 import features.shop.presentation.screens.home_screen.HomeScreenViewModel
 import features.shop.presentation.screens.most_popular_screen.MostPopularScreen
 import features.shop.presentation.screens.most_popular_screen.MostPopularScreenViewModel
+import features.shop.presentation.screens.order_details_screen.OrderDetailsScreen
 import features.shop.presentation.screens.orders_screen.OrdersScreen
 import features.shop.presentation.screens.orders_screen.OrdersViewModel
 import features.shop.presentation.screens.payment_success_screen.PaymentSuccessScreen
@@ -28,6 +29,8 @@ import features.shop.presentation.screens.product_details_screen.ProductDetailsS
 import features.shop.presentation.screens.product_details_screen.ProductDetailsViewModel
 import features.shop.presentation.screens.profile_screen.ProfileScreen
 import features.shop.presentation.screens.profile_screen.ProfileViewModel
+import features.shop.presentation.screens.review_screen.ReviewScreen
+import features.shop.presentation.screens.review_screen.ReviewViewModel
 import features.shop.presentation.screens.search_screen.SearchScreen
 import features.shop.presentation.screens.search_screen.SearchViewModel
 import features.shop.presentation.screens.wish_list_screen.WishListScreen
@@ -40,8 +43,10 @@ import features.shop.presentation.utils.EDIT_PROFILE_SCREEN
 import features.shop.presentation.utils.MOST_POPULAR_SCREEN
 import features.shop.presentation.utils.NavigationUtils
 import features.shop.presentation.utils.ORDERS_SCREEN
+import features.shop.presentation.utils.ORDER_DETAILS_SCREEN
 import features.shop.presentation.utils.PAYMENT_SUCCESS_SCREEN
 import features.shop.presentation.utils.PRODUCT_DETAILS_SCREEN
+import features.shop.presentation.utils.REVIEW_SCREEN
 import features.shop.presentation.utils.SEARCH_SCREEN
 import features.shop.presentation.utils.SHOP_GRAPH_ROUTE
 
@@ -57,7 +62,8 @@ fun NavGraphBuilder.shopNavGraph(
     profileViewModel: ProfileViewModel,
     homeScreenViewModel: HomeScreenViewModel,
     wishListViewModel: WishListViewModel,
-    ordersViewModel: OrdersViewModel
+    ordersViewModel: OrdersViewModel,
+    reviewViewModel: ReviewViewModel
 ){
 
     navigation(startDestination = BottomNavItem.Home.route, route = SHOP_GRAPH_ROUTE){
@@ -261,7 +267,35 @@ fun NavGraphBuilder.shopNavGraph(
                 onNavigateBack = {
                     navController.navigateUp()
                 },
-                viewModel = ordersViewModel
+                viewModel = ordersViewModel,
+                onNavigateToOrderDetails = {order, orderItemId->
+                    NavigationUtils.order = order
+                    NavigationUtils.orderItemId = orderItemId
+                    navController.navigate(ORDER_DETAILS_SCREEN){
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToReview = {
+                    NavigationUtils.orderItem = it
+                    navController.navigate(REVIEW_SCREEN){
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+        composable(ORDER_DETAILS_SCREEN){
+            OrderDetailsScreen(
+                onNavigateBack = {
+                    navController.navigateUp()
+                }
+            )
+        }
+        composable(REVIEW_SCREEN){
+            ReviewScreen(
+                viewModel = reviewViewModel,
+                onNavigateBack = {
+                    navController.navigateUp()
+                }
             )
         }
     }

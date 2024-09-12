@@ -36,6 +36,7 @@ import features.shop.presentation.screens.home_screen.HomeScreenViewModel
 import features.shop.presentation.screens.orders_screen.OrdersViewModel
 import features.shop.presentation.screens.product_details_screen.ProductDetailsViewModel
 import features.shop.presentation.screens.profile_screen.ProfileViewModel
+import features.shop.presentation.screens.review_screen.ReviewViewModel
 import features.shop.presentation.screens.search_screen.SearchViewModel
 import features.shop.presentation.screens.wish_list_screen.WishListViewModel
 import features.shop.presentation.utils.PRODUCT_DETAILS_SCREEN
@@ -59,6 +60,7 @@ fun MainScreen(
     val homeScreenViewModel = getKoinViewModel<HomeScreenViewModel>()
     val wishListViewModel = getKoinViewModel<WishListViewModel>()
     val ordersViewModel = getKoinViewModel<OrdersViewModel>()
+    val reviewViewModel = getKoinViewModel<ReviewViewModel>()
 
     val cartItems by cartViewModel.cartItems.collectAsState()
 
@@ -103,7 +105,8 @@ fun MainScreen(
                 profileViewModel,
                 homeScreenViewModel,
                 wishListViewModel,
-                ordersViewModel
+                ordersViewModel,
+                reviewViewModel
             )
         }
     }
