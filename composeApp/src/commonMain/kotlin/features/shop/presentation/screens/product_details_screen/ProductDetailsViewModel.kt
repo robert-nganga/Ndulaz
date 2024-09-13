@@ -99,6 +99,10 @@ class ProductDetailsViewModel(
             is ProductDetailsEvent.OnSaveCartItem -> {
                 saveCartItem(event.item)
             }
+
+            is ProductDetailsEvent.OnSeeMoreReviews -> {
+                getAllReviews(_productDetailsState.value.product!!.id)
+            }
         }
     }
 
@@ -135,7 +139,6 @@ class ProductDetailsViewModel(
         }
     }
 
-
     private fun getFeaturedReviews(shoeId: Int) = viewModelScope.launch {
         _productDetailsState.update {
             it.copy(
@@ -159,7 +162,36 @@ class ProductDetailsViewModel(
                 _productDetailsState.update {
                     it.copy(
                         featuredReviewsState = if(reviews.isEmpty()) FeaturedReviewsState.Empty
-                            else FeaturedReviewsState.Success(response.data)
+                        else FeaturedReviewsState.Success(response.data)
+                    )
+                }
+            }
+        }
+    }
+
+
+    private fun getAllReviews(shoeId: Int) = viewModelScope.launch {
+        _productDetailsState.update {
+            it.copy(
+                allReviewsState = AllReviewsState.Loading
+            )
+        }
+
+        val response = reviewRepository.getReviewsForShoe(page = 1, limit = 20, shoeId = shoeId)
+        when(response){
+            is DataResult.Empty -> {}
+            is DataResult.Error -> {
+                _productDetailsState.update {
+                    it.copy(
+                        allReviewsState = AllReviewsState.Error(response.message)
+                    )
+                }
+            }
+            is DataResult.Loading -> {}
+            is DataResult.Success -> {
+                _productDetailsState.update {
+                    it.copy(
+                        allReviewsState =  AllReviewsState.Success(response.data.reviews)
                     )
                 }
             }

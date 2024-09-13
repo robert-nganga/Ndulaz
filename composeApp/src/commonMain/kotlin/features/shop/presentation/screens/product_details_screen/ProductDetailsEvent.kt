@@ -9,6 +9,8 @@ sealed interface ProductDetailsEvent {
     data class OnQuantityChange(val newQuantity: Int): ProductDetailsEvent
     data class OnImageSelected(val image: String): ProductDetailsEvent
     data class OnSaveCartItem(val item: CartItem): ProductDetailsEvent
+
+    data object OnSeeMoreReviews: ProductDetailsEvent
     data object OnWishListIconClick : ProductDetailsEvent
     data object OnResetError: ProductDetailsEvent
     data object OnAddToCart: ProductDetailsEvent

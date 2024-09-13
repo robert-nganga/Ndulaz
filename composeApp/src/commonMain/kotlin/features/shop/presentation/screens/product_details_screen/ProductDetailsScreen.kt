@@ -33,7 +33,6 @@ import androidx.compose.material.Snackbar
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.StarHalf
 import androidx.compose.material.icons.automirrored.outlined.ArrowBackIos
@@ -49,6 +48,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -65,6 +65,7 @@ import features.shop.domain.models.Review
 import features.shop.domain.models.Shoe
 import features.shop.domain.models.ShoeVariant
 import features.shop.presentation.components.AddToCartBottomSheet
+import features.shop.presentation.components.AllReviewsBottomSheet
 import features.shop.presentation.components.ExpandableText
 import features.shop.presentation.components.RatingBar
 import features.shop.presentation.components.Ratings
@@ -93,11 +94,21 @@ fun ProductDetailsScreen(
     val uiState by viewModel.productDetailsState.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
 
-    val sheetState = rememberFlexibleBottomSheetState(
+    val addToCartSheetState = rememberFlexibleBottomSheetState(
         isModal = true,
         skipIntermediatelyExpanded = false,
         skipSlightlyExpanded = true
     )
+
+    val allReviewsSheetState = rememberFlexibleBottomSheetState(
+        isModal = true,
+        skipIntermediatelyExpanded = true,
+        skipSlightlyExpanded = true
+    )
+
+    var showAllReviewsSheet by remember {
+        mutableStateOf(false)
+    }
 
     val scope = rememberCoroutineScope()
 
@@ -146,14 +157,14 @@ fun ProductDetailsScreen(
             ){ paddingValues ->
                 if (uiState.showAddToCartSheet){
                     AddToCartBottomSheet(
-                        sheetState = sheetState,
+                        sheetState = addToCartSheetState,
                         addToCartState = uiState.addToCartState,
                         onAddToCart = {
                            viewModel.onEvent(ProductDetailsEvent.OnSaveCartItem(it))
                         },
                         onNavigateBack = {
                             scope.launch {
-                                sheetState.hide()
+                                addToCartSheetState.hide()
                             }.invokeOnCompletion {
                                 viewModel.updateAddToCartSheetVisibility(false)
                                 onNavigateBack()
@@ -162,20 +173,34 @@ fun ProductDetailsScreen(
                         },
                         onDismiss = {
                             scope.launch {
-                                sheetState.hide()
+                                addToCartSheetState.hide()
                             }.invokeOnCompletion {
                                 viewModel.updateAddToCartSheetVisibility(false)
                             }
                         },
                         onNavigateToCart = {
                             scope.launch {
-                                sheetState.hide()
+                                addToCartSheetState.hide()
                             }.invokeOnCompletion {
                                 viewModel.updateAddToCartSheetVisibility(false)
                                 onNavigateToCart()
                                 viewModel.resetState()
                             }
                         },
+                    )
+                }
+
+                if (showAllReviewsSheet){
+                    AllReviewsBottomSheet(
+                        sheetState = allReviewsSheetState,
+                        state = uiState.allReviewsState,
+                        onDismiss = {
+                            scope.launch {
+                                allReviewsSheetState.hide()
+                            }.invokeOnCompletion {
+                                showAllReviewsSheet = false
+                            }
+                        }
                     )
                 }
 
@@ -189,6 +214,10 @@ fun ProductDetailsScreen(
                     },
                     onWishListIconClick = {
                         viewModel.onEvent(ProductDetailsEvent.OnWishListIconClick)
+                    },
+                    onSeeAllReviews = {
+                        viewModel.onEvent(ProductDetailsEvent.OnSeeMoreReviews)
+                        showAllReviewsSheet = true
                     }
                 )
             }
@@ -202,7 +231,8 @@ fun ProductDetailsScreenContent(
     modifier: Modifier = Modifier,
     onEvent: (ProductDetailsEvent) -> Unit,
     onNavigateBack: () -> Unit,
-    onWishListIconClick: () -> Unit
+    onWishListIconClick: () -> Unit,
+    onSeeAllReviews: () -> Unit
 ){
     Box(
         modifier = Modifier
@@ -256,8 +286,7 @@ fun ProductDetailsScreenContent(
             Spacer(modifier = Modifier.height(16.dp))
             ReviewSection(
                 featuredReviewsState = uiState.featuredReviewsState,
-                onSeeAllReviews = {
-                }
+                onSeeAllReviews = onSeeAllReviews
             )
         }
 
@@ -333,7 +362,9 @@ fun ReviewSection(
                                     color = MaterialTheme.colors.onBackground,
                                     shape = RoundedCornerShape(8.dp)
                                 )
-                                .clickable {  }
+                                .clickable {
+                                    onSeeAllReviews()
+                                }
                         ){
                             Text(
                                 "See more",
