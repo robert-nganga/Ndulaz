@@ -1,6 +1,7 @@
 package features.shop.presentation.screens.product_details_screen
 
 import features.shop.domain.models.CartItem
+import features.shop.domain.models.PaginatedReview
 import features.shop.domain.models.Shoe
 import features.shop.domain.models.ShoeVariant
 
@@ -19,7 +20,8 @@ data class ProductDetailsState(
     val addToWishListMessage: String? = null,
     val addToWishListError: Boolean = false,
     val showAddToCartSheet: Boolean = false,
-    val addToCartState: AddToCartState = AddToCartState.Loading
+    val addToCartState: AddToCartState = AddToCartState.Loading,
+    val featuredReviewsState: FeaturedReviewsState = FeaturedReviewsState.Loading
 ){
     fun toCartItem(): CartItem {
         return CartItem(
@@ -37,9 +39,18 @@ data class ProductDetailsState(
     }
 }
 
-sealed interface AddToCartState{
+sealed interface AddToCartState {
     data class Idle(val item: CartItem): AddToCartState
     data object Loading: AddToCartState
     data class Success(val message: String): AddToCartState
     data class Error(val message: String): AddToCartState
+}
+
+
+sealed interface FeaturedReviewsState {
+    data object Loading: FeaturedReviewsState
+    data object Empty: FeaturedReviewsState
+    data class Success(val paginatedReview: PaginatedReview): FeaturedReviewsState
+    data class Error(val message: String): FeaturedReviewsState
+
 }

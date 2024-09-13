@@ -24,6 +24,7 @@ fun Ratings(
     rating: Int,
     starSize: Dp,
     starColor: Color,
+    spacing: Dp = 5.dp,
     onRatingChanged: ((rating: Double) -> Unit)? = null
 ){
     Row(
@@ -44,7 +45,7 @@ fun Ratings(
                     },
                 tint = starColor
             )
-            Spacer(modifier = Modifier.width(5.dp))
+            Spacer(modifier = Modifier.width(spacing))
         }
     }
 }

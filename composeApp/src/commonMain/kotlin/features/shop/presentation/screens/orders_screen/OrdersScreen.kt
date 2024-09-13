@@ -39,7 +39,6 @@ import features.shop.domain.models.OrderItem
 import features.shop.domain.models.toLocalizedString
 import features.shop.presentation.components.CompletedOrderItemDetails
 import features.shop.presentation.components.OrderItemDetails
-import kotlin.random.Random
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -211,7 +210,6 @@ fun CompletedOrdersSection(
                         onButtonClick = {
                             onLeaveReviewClicked(item)
                         },
-                        hasReview = Random.nextBoolean(),
                         status = order.status.toLocalizedString()
                     )
                 }

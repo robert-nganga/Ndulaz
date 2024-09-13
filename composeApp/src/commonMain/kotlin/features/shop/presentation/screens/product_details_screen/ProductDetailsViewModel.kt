@@ -6,6 +6,7 @@ import core.data.utils.DataResult
 import features.shop.domain.models.CartItem
 import features.shop.domain.models.Shoe
 import features.shop.domain.repository.CartRepository
+import features.shop.domain.repository.ReviewRepository
 import features.shop.domain.repository.WishListRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +16,8 @@ import kotlinx.coroutines.launch
 
 class ProductDetailsViewModel(
     private val wishListRepository: WishListRepository,
-    private val cartRepository: CartRepository
+    private val cartRepository: CartRepository,
+    private val reviewRepository: ReviewRepository
 ): ViewModel(){
 
     private val _productDetailsState = MutableStateFlow(ProductDetailsState())
@@ -50,6 +52,7 @@ class ProductDetailsViewModel(
                 }
             }
             is ProductDetailsEvent.OnQuantityChange -> {
+                if(_productDetailsState.value.selectedVariation == null) return
                 _productDetailsState.update {
                     it.copy(
                         quantity = event.newQuantity
@@ -133,27 +136,30 @@ class ProductDetailsViewModel(
     }
 
 
-    private fun addItemToCart(cartItem: CartItem) = viewModelScope.launch {
+    private fun getFeaturedReviews(shoeId: Int) = viewModelScope.launch {
         _productDetailsState.update {
             it.copy(
-                isError = false,
+                featuredReviewsState = FeaturedReviewsState.Loading
             )
         }
-        when(val response = cartRepository.upsertCartItem(cartItem)){
+
+        val response = reviewRepository.getReviewsForShoe(page = 1, limit = 3, shoeId = shoeId)
+        when(response){
             is DataResult.Empty -> {}
             is DataResult.Error -> {
                 _productDetailsState.update {
                     it.copy(
-                        snackBarMessage = response.message,
-                        isError = true
+                        featuredReviewsState = FeaturedReviewsState.Error(response.message)
                     )
                 }
             }
             is DataResult.Loading -> {}
             is DataResult.Success -> {
+                val reviews = response.data.reviews
                 _productDetailsState.update {
                     it.copy(
-                        snackBarMessage = response.data
+                        featuredReviewsState = if(reviews.isEmpty()) FeaturedReviewsState.Empty
+                            else FeaturedReviewsState.Success(response.data)
                     )
                 }
             }
@@ -273,5 +279,6 @@ class ProductDetailsViewModel(
                 selectedImage = product.images.first()
             )
         }
+        getFeaturedReviews(shoeId = product.id)
     }
 }

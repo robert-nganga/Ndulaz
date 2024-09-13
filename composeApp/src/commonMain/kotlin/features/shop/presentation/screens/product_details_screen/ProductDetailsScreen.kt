@@ -33,6 +33,7 @@ import androidx.compose.material.Snackbar
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.StarHalf
 import androidx.compose.material.icons.automirrored.outlined.ArrowBackIos
@@ -45,6 +46,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -59,10 +61,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.skydoves.flexible.core.rememberFlexibleBottomSheetState
 import features.shop.domain.models.Brand
+import features.shop.domain.models.Review
 import features.shop.domain.models.Shoe
 import features.shop.domain.models.ShoeVariant
 import features.shop.presentation.components.AddToCartBottomSheet
 import features.shop.presentation.components.ExpandableText
+import features.shop.presentation.components.RatingBar
+import features.shop.presentation.components.Ratings
+import features.shop.presentation.components.ReviewItem
 import features.shop.presentation.utils.parseColorFromString
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
@@ -248,6 +254,11 @@ fun ProductDetailsScreenContent(
                 description = uiState.product.description
             )
             Spacer(modifier = Modifier.height(16.dp))
+            ReviewSection(
+                featuredReviewsState = uiState.featuredReviewsState,
+                onSeeAllReviews = {
+                }
+            )
         }
 
         ProductDetailsTopAppBar(
@@ -259,6 +270,146 @@ fun ProductDetailsScreenContent(
             onWishListIconClick = onWishListIconClick
         )
     }
+}
+
+@Composable
+fun ReviewSection(
+    modifier: Modifier = Modifier,
+    featuredReviewsState: FeaturedReviewsState,
+    onSeeAllReviews: () -> Unit
+){
+    Column(
+        modifier = modifier
+            .padding(
+                horizontal = 16.dp
+            )
+    ){
+        Text(
+            "Reviews",
+            style = MaterialTheme.typography.h6.copy(
+                letterSpacing = 0.08.sp
+            )
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        when(featuredReviewsState){
+            is FeaturedReviewsState.Error -> {
+            }
+            is FeaturedReviewsState.Loading -> {
+            }
+            is FeaturedReviewsState.Success -> {
+                val totalReviews = featuredReviewsState.paginatedReview.totalCount
+                val reviews = featuredReviewsState.paginatedReview.reviews
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+
+                ){
+                    ReviewHeaderSection(
+                        reviews = reviews
+                    )
+                    Spacer(modifier = Modifier.height(30.dp))
+                    reviews.forEachIndexed { index, review ->
+                        ReviewItem(
+                            review = review
+                        )
+                        if (index != reviews.size - 1){
+                            Divider(
+                                modifier = Modifier.fillMaxWidth(),
+                                color = MaterialTheme.colors.primary.copy(
+                                    alpha = 0.15f
+                                ),
+                                thickness = 0.8.dp
+                            )
+                            Spacer(modifier = Modifier.height(10.dp))
+                        }
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
+                    if (totalReviews > 1){
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .border(
+                                    width = 1.dp,
+                                    color = MaterialTheme.colors.onBackground,
+                                    shape = RoundedCornerShape(8.dp)
+                                )
+                                .clickable {  }
+                        ){
+                            Text(
+                                "See more",
+                                modifier = Modifier
+                                    .padding(10.dp),
+                                style = MaterialTheme.typography.body2
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                }
+            }
+
+            is FeaturedReviewsState.Empty -> {
+            }
+        }
+    }
+}
+
+@Composable
+fun ReviewHeaderSection(
+    modifier: Modifier = Modifier,
+    reviews: List<Review>
+) {
+    val averageRating by remember(reviews) {
+        mutableStateOf(reviews.getAverageRating())
+    }
+
+    Row(
+        modifier = modifier
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                "$averageRating",
+                style = MaterialTheme.typography.h3.copy(
+                    fontWeight = FontWeight.Bold
+                )
+            )
+            Spacer(modifier = Modifier.height(5.dp))
+            Ratings(
+                rating = averageRating.toInt(),
+                starColor = MaterialTheme.colors.primary,
+                starSize = 15.dp
+            )
+            Spacer(modifier = Modifier.height(5.dp))
+            Text(
+                "(${reviews.size} reviews)",
+                style = MaterialTheme.typography.body2
+            )
+        }
+        Spacer(modifier = Modifier.width(10.dp))
+        Column(
+            modifier = Modifier
+                .weight(1f)
+        ) {
+            (5 downTo 1).forEach { rating ->
+                RatingBar(
+                    number = rating,
+                    value = reviews.numberOfReviews(rating).toFloat() / reviews.size,
+                )
+            }
+        }
+    }
+}
+
+
+fun List<Review>.numberOfReviews(rating: Int): Int{
+    return this.count { it.rating.toInt() == rating }
+}
+
+fun List<Review>.getAverageRating(): Double {
+    return this.map { it.rating }.average()
 }
 
 @OptIn(ExperimentalMaterialApi::class)

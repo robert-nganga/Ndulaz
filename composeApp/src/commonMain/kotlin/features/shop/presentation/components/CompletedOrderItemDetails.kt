@@ -46,7 +46,6 @@ fun CompletedOrderItemDetails(
     orderItem: OrderItem,
     status: String,
     buttonText: String,
-    hasReview: Boolean = false,
     onButtonClick: () -> Unit,
 ){
     val variant by remember {
@@ -187,9 +186,9 @@ fun CompletedOrderItemDetails(
                             letterSpacing = 0.sp
                         )
                     )
-                    if(hasReview) {
+                    if(orderItem.rating != null) {
                         ReviewSection(
-                            rating = 4.5f,
+                            rating = orderItem.rating,
                         )
                     }else{
                         Button(
@@ -218,7 +217,7 @@ fun CompletedOrderItemDetails(
 @Composable
 fun ReviewSection(
     modifier: Modifier = Modifier,
-    rating: Float,
+    rating: Double,
 ){
     Box(
         modifier = Modifier

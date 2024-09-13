@@ -1,9 +1,11 @@
 package features.shop.presentation.utils
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.random.Random
 
 fun  String.parseColorFromString(): Color {
     return when(this){
@@ -33,6 +35,13 @@ fun String.getFirstName(): String {
         .split(" ")
         .firstOrNull() ?: ""
 
+}
+
+fun randomColor(): Color {
+    val red = Random.nextInt(0, 128)
+    val green = Random.nextInt(0, 128)
+    val blue = Random.nextInt(0, 128)
+    return Color(red, green, blue)
 }
 
 fun getGreetings(): String{
