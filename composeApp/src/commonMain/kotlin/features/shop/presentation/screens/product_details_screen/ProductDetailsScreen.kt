@@ -64,8 +64,8 @@ import features.shop.domain.models.Brand
 import features.shop.domain.models.Review
 import features.shop.domain.models.Shoe
 import features.shop.domain.models.ShoeVariant
-import features.shop.presentation.components.AddToCartBottomSheet
-import features.shop.presentation.components.AllReviewsBottomSheet
+import features.shop.presentation.sheets.AddToCartBottomSheet
+import features.shop.presentation.sheets.AllReviewsBottomSheet
 import features.shop.presentation.components.ExpandableText
 import features.shop.presentation.components.RatingBar
 import features.shop.presentation.components.Ratings

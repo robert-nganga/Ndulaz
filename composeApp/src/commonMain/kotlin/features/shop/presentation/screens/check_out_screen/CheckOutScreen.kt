@@ -54,8 +54,8 @@ import features.shop.domain.models.PaymentMethod
 import features.shop.domain.models.ShippingAddress
 import features.shop.domain.models.toOrderItemRequest
 import features.shop.presentation.components.CheckOutItem
-import features.shop.presentation.components.PaymentMethodsBottomSheet
-import features.shop.presentation.components.ShippingAddressBottomSheet
+import features.shop.presentation.sheets.PaymentMethodsBottomSheet
+import features.shop.presentation.sheets.ShippingAddressBottomSheet
 import features.shop.presentation.utils.NavigationUtils
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource

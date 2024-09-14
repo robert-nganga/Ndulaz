@@ -1,4 +1,4 @@
-package features.shop.presentation.components
+package features.shop.presentation.sheets
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

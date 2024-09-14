@@ -1,4 +1,4 @@
-package features.shop.presentation.components
+package features.shop.presentation.sheets
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -41,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.skydoves.flexible.bottomsheet.material.FlexibleBottomSheet
 import com.skydoves.flexible.core.FlexibleSheetState
+import features.shop.presentation.components.ReviewItem
 import features.shop.presentation.screens.product_details_screen.AllReviewsState
 
 
