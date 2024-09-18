@@ -5,6 +5,7 @@ import core.data.utils.DataResult
 import core.data.utils.dataResultSafeApiCall
 import features.shop.domain.models.Brand
 import features.shop.domain.models.Category
+import features.shop.domain.models.FilterOptions
 import features.shop.domain.models.Shoe
 import features.shop.domain.models.ShoeResponse
 import features.shop.domain.repository.ShoesRepository
@@ -40,6 +41,21 @@ class ShoesRepositoryImpl(
         }
         val shoe = response.body<Shoe>()
         shoe
+    }
+
+    override suspend fun getAllShoesFiltered(filterOptions: FilterOptions): DataResult<List<Shoe>> = dataResultSafeApiCall{
+        val response = httpClient.get("$BASE_URL/shoes/filter"){
+            parameter("category", filterOptions.category)
+            parameter("brand", filterOptions.brand)
+            parameter("minPrice", filterOptions.minPrice)
+            parameter("maxPrice", filterOptions.maxPrice)
+            parameter("sortBy", filterOptions.sortBy)
+            parameter("sortOrder", filterOptions.sortOrder)
+            parameter("page", filterOptions.page)
+            parameter("pageSize", filterOptions.pageSize)
+        }
+        val shoes = response.body<ShoeResponse>()
+        shoes.shoes
     }
 
     override suspend fun filterShoesByCategory(category: String): DataResult<List<Shoe>> = dataResultSafeApiCall{
