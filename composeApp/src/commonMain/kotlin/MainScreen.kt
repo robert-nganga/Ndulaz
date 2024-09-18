@@ -33,6 +33,7 @@ import features.shop.presentation.screens.brand_screen.BrandScreenViewModel
 import features.shop.presentation.screens.cart_screen.CartViewModel
 import features.shop.presentation.screens.check_out_screen.CheckOutViewModel
 import features.shop.presentation.screens.home_screen.HomeScreenViewModel
+import features.shop.presentation.screens.most_popular_screen.MostPopularScreenViewModel
 import features.shop.presentation.screens.orders_screen.OrdersViewModel
 import features.shop.presentation.screens.product_details_screen.ProductDetailsViewModel
 import features.shop.presentation.screens.profile_screen.ProfileViewModel
@@ -61,6 +62,7 @@ fun MainScreen(
     val wishListViewModel = getKoinViewModel<WishListViewModel>()
     val ordersViewModel = getKoinViewModel<OrdersViewModel>()
     val reviewViewModel = getKoinViewModel<ReviewViewModel>()
+    val mostPopularScreenViewModel = getKoinViewModel<MostPopularScreenViewModel>()
 
     val cartItems by cartViewModel.cartItems.collectAsState()
 
@@ -106,7 +108,8 @@ fun MainScreen(
                 homeScreenViewModel,
                 wishListViewModel,
                 ordersViewModel,
-                reviewViewModel
+                reviewViewModel,
+                mostPopularScreenViewModel
             )
         }
     }

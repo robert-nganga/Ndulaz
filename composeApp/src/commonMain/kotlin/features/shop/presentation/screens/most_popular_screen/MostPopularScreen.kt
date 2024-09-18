@@ -14,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -24,14 +25,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.skydoves.flexible.core.rememberFlexibleBottomSheetState
 import features.shop.domain.models.Shoe
 import features.shop.presentation.components.CategoryItem
 import features.shop.presentation.components.ShoesVerticalGrid
 import features.shop.presentation.screens.home_screen.PopularShoesState
+import features.shop.presentation.sheets.SortAndFilterBottomSheet
+import kotlinx.coroutines.launch
 
 @Composable
 fun MostPopularScreen(
@@ -42,15 +50,33 @@ fun MostPopularScreen(
 
     val uiState by viewModel.mostPopularScreenState.collectAsState()
 
+    val sortAndFilterSheetState = rememberFlexibleBottomSheetState(
+        isModal = true,
+        skipIntermediatelyExpanded = false,
+        skipSlightlyExpanded = true
+    )
+
+    var showSortAndFilterSheet by remember {
+        mutableStateOf(false)
+    }
+
+    val scope = rememberCoroutineScope()
+
     LaunchedEffect(Unit) {
         viewModel.onEvent(MostPopularScreenEvents.OnFetchCategories)
-        viewModel.onEvent(MostPopularScreenEvents.OnCategorySelected("All"))
+        viewModel.onEvent(MostPopularScreenEvents.OnFetchBrands)
+        viewModel.onEvent(MostPopularScreenEvents.OnFilterOptionsChange(uiState.filterOptions))
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Most Popular") },
+                title = {
+                    Text(
+                        text = "Most Popular",
+                        style = MaterialTheme.typography.h5
+                    )
+                },
                 backgroundColor = Color.Transparent,
                 elevation = 0.dp,
                 navigationIcon = {
@@ -65,17 +91,44 @@ fun MostPopularScreen(
                 },
                 actions = {
                     IconButton(
-                        onClick = {}
+                        onClick = {
+                            showSortAndFilterSheet = true
+                        }
                     ){
                         Icon(
                             Icons.Rounded.Tune,
-                            contentDescription = "Filter icon"
+                            contentDescription = "Filter icon",
+                            tint = MaterialTheme.colors.onBackground
                         )
                     }
                 }
             )
         }
     ){ paddingValues ->
+        if (showSortAndFilterSheet){
+            SortAndFilterBottomSheet(
+                modifier = Modifier,
+                filterOptions = uiState.filterOptions,
+                onDismiss = {
+                    scope.launch {
+                        sortAndFilterSheetState.hide()
+                    }.invokeOnCompletion {
+                        showSortAndFilterSheet = false
+                    }
+                },
+                sheetState = sortAndFilterSheetState,
+                onApply = { options ->
+                    scope.launch {
+                        sortAndFilterSheetState.hide()
+                    }.invokeOnCompletion {
+                        showSortAndFilterSheet = false
+                        viewModel.onEvent(MostPopularScreenEvents.OnFilterOptionsChange(options))
+                    }
+                },
+                brands = uiState.brands.ifEmpty { null },
+            )
+        }
+
         Column(
             modifier = Modifier
                 .padding(paddingValues)
@@ -84,9 +137,12 @@ fun MostPopularScreen(
             Spacer(modifier = Modifier.height(10.dp))
             MostPopularCategoriesSection(
                 categories = uiState.categories,
-                selectedCategory = uiState.selectedCategory,
+                selectedCategory = uiState.filterOptions.category ?: "All",
                 onCategorySelected = {
-                    viewModel.onEvent(MostPopularScreenEvents.OnCategorySelected(it))
+                    val filterOptions = uiState.filterOptions.copy(
+                        category = if (it == "All") null else it
+                    )
+                    viewModel.onEvent(MostPopularScreenEvents.OnFilterOptionsChange(filterOptions))
                 }
             )
             Spacer(modifier = Modifier.height(10.dp))

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import core.data.utils.DataResult
 import features.profile.domain.utils.parseErrorMessageFromException
+import features.shop.domain.models.FilterOptions
 import features.shop.domain.repository.ShoesRepository
 import features.shop.presentation.screens.home_screen.PopularShoesState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,29 +22,32 @@ class MostPopularScreenViewModel(
 
     fun onEvent(event: MostPopularScreenEvents){
         when(event){
-            is MostPopularScreenEvents.OnCategorySelected -> {
-                _mostPopularScreenState.update {
-                    it.copy(
-                        selectedCategory = event.category
-                    )
-                }
-                filterShoesByCategory(event.category)
-            }
-
             is MostPopularScreenEvents.OnFetchCategories -> {
                 fetchAllCategories()
+            }
+
+            is MostPopularScreenEvents.OnFilterOptionsChange -> {
+                _mostPopularScreenState.update {
+                    it.copy(
+                        filterOptions = event.filterOptions
+                    )
+                }
+                filterShoes(_mostPopularScreenState.value.filterOptions)
+            }
+
+            is MostPopularScreenEvents.OnFetchBrands -> {
+                fetchAllBrands()
             }
         }
     }
 
-    private fun filterShoesByCategory(category: String) = viewModelScope.launch {
+    private fun filterShoes(filterOptions: FilterOptions) = viewModelScope.launch {
         _mostPopularScreenState.update {
             it.copy(
                 popularShoesState = PopularShoesState.Loading
             )
         }
-        val result = if(category == "All") repository.getShoes(page = 1, limit = 15) else repository.filterShoesByCategory(category)
-        when (result) {
+        when (val result = repository.getAllShoesFiltered(filterOptions)) {
             is DataResult.Empty -> {}
             is DataResult.Loading -> {
                 _mostPopularScreenState.update {
@@ -80,6 +84,22 @@ class MostPopularScreenViewModel(
                 _mostPopularScreenState.update {
                     it.copy(
                         categories = categories,
+                    )
+                }
+            }
+        }
+    }
+    private fun fetchAllBrands() = viewModelScope.launch {
+        when(val response = repository.getAllBrands()){
+            is DataResult.Empty -> {}
+            is DataResult.Loading -> {}
+            is DataResult.Error -> {}
+            is DataResult.Success -> {
+                val brands = response.data.map { it.name }.toMutableList()
+                brands.add(0, "All")
+                _mostPopularScreenState.update {
+                    it.copy(
+                        brands = brands,
                     )
                 }
             }

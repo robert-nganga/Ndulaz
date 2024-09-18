@@ -63,7 +63,8 @@ fun NavGraphBuilder.shopNavGraph(
     homeScreenViewModel: HomeScreenViewModel,
     wishListViewModel: WishListViewModel,
     ordersViewModel: OrdersViewModel,
-    reviewViewModel: ReviewViewModel
+    reviewViewModel: ReviewViewModel,
+    mostPopularScreenViewModel: MostPopularScreenViewModel
 ){
 
     navigation(startDestination = BottomNavItem.Home.route, route = SHOP_GRAPH_ROUTE){
@@ -188,7 +189,6 @@ fun NavGraphBuilder.shopNavGraph(
         }
 
         composable(MOST_POPULAR_SCREEN){
-            val mostPopularScreenViewModel = getKoinViewModel<MostPopularScreenViewModel>()
             MostPopularScreen(
                 viewModel = mostPopularScreenViewModel,
                 onNavigateBack = {
