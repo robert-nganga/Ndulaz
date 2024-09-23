@@ -1,17 +1,25 @@
 package features.shop.presentation.screens.search_screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -22,26 +30,35 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import features.shop.domain.models.Brand
+import features.shop.domain.models.Category
 import features.shop.domain.models.Shoe
 import features.shop.presentation.components.ShoesVerticalGrid
-import features.shop.presentation.components.SuggestionsVerticalGrid
+import io.kamel.image.KamelImage
+import io.kamel.image.asyncPainterResource
 
 
 @Composable
 fun SearchScreen(
     viewModel: SearchViewModel,
     onNavigateBack: () -> Unit,
-    onShoeClick: (Shoe) -> Unit
+    onShoeClick: (Shoe) -> Unit,
+    onBrandClicked: (Brand) -> Unit,
+    onCategoryClicked: (Category) -> Unit,
 ){
     val uiState by viewModel.searchState.collectAsState()
 
@@ -59,11 +76,15 @@ fun SearchScreen(
         )
     }
 
+    LaunchedEffect(Unit){
+        viewModel.fetchAllBrands()
+        viewModel.fetchAllCategories()
+    }
+
     Scaffold(
         topBar = {
             SearchScreenAppBar(
                 onNavigateBack = onNavigateBack,
-                title = "Explore",
                 query = searchQuery,
                 onQueryChange = viewModel::onQueryChange,
                 isSearchSuccessful = isSearchSuccessful,
@@ -81,7 +102,9 @@ fun SearchScreen(
             state = uiState,
             onShoeClick = onShoeClick,
             onWishListClicked = {
-            }
+            },
+            onBrandClicked = onBrandClicked,
+            onCategoryClicked = onCategoryClicked
         )
     }
 }
@@ -92,6 +115,8 @@ fun SearchScreenContent(
     state: SearchScreenState,
     onShoeClick: (Shoe) -> Unit,
     onWishListClicked: (Shoe) -> Unit,
+    onBrandClicked: (Brand) -> Unit,
+    onCategoryClicked: (Category) -> Unit,
 ){
     Column(
         modifier = modifier
@@ -127,24 +152,164 @@ fun SearchScreenContent(
             }
 
             is SearchScreenState.Idle -> {
-                val suggestions = state.suggestions
-                SuggestionsVerticalGrid(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    suggestions = suggestions,
-                    onSuggestionSelected = onShoeClick
+                val brands = state.brands
+                val categories = state.categories
+                BrandsAndCategoriesSection(
+                    brands = brands,
+                    categories = categories,
+                    onBrandClicked = onBrandClicked,
+                    onCategoryClicked = onCategoryClicked
                 )
             }
         }
-
     }
 }
+
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun BrandsAndCategoriesSection(
+    modifier: Modifier = Modifier,
+    brands: List<Brand>,
+    categories: List<Category>,
+    onBrandClicked: (Brand) -> Unit,
+    onCategoryClicked: (Category) -> Unit,
+){
+    Column(
+        modifier = modifier
+            .padding(
+                horizontal = 16.dp,
+                vertical = 10.dp
+            )
+            .verticalScroll(rememberScrollState())
+    ){
+        Text(
+            text = "Brands",
+            style = MaterialTheme.typography.h6.copy(
+                fontWeight = FontWeight.Bold
+            )
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        FlowRow(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            brands.forEach { brand ->
+                BrandInfoItem(
+                    brand = brand,
+                    onItemClick = {
+                        onBrandClicked(brand)
+                    }
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(20.dp))
+        Text(
+            text = "Categories",
+            style = MaterialTheme.typography.h6.copy(
+                fontWeight = FontWeight.Bold
+            )
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        FlowRow(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            maxItemsInEachRow = 2
+        ) {
+            categories.forEach { category ->
+                CategoryInfoItem(
+                    category = category,
+                    onItemClick = {
+                        onCategoryClicked(category)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth(0.48f)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun BrandInfoItem(
+    brand: Brand,
+    onItemClick: () -> Unit,
+    modifier: Modifier = Modifier
+){
+    Column(
+        modifier = modifier
+            .padding(horizontal = 5.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(16.dp))
+                .background(
+                    color = MaterialTheme.colors.onBackground.copy(
+                        alpha = 0.12f
+                    )
+                )
+                .clickable { onItemClick() }
+        ){
+            KamelImage(
+                resource = asyncPainterResource(brand.logoUrl ?: ""),
+                contentDescription = "${brand.name} logo",
+                modifier = Modifier
+                    .size(60.dp)
+                    .padding(10.dp),
+                colorFilter = ColorFilter.tint(
+                    color = MaterialTheme.colors.onBackground
+                )
+            )
+        }
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = brand.name,
+            style = MaterialTheme.typography.body2,
+            color = MaterialTheme.colors.onBackground
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun CategoryInfoItem(
+    category: Category,
+    onItemClick: () -> Unit,
+    modifier: Modifier = Modifier
+){
+    Card(
+        modifier = modifier,
+        onClick = onItemClick,
+        shape = RoundedCornerShape(16.dp),
+    ){
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+            KamelImage(
+                resource = asyncPainterResource(category.image),
+                contentDescription = "${category.name} image",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(150.dp),
+                contentScale = ContentScale.FillBounds
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = category.name,
+                style = MaterialTheme.typography.body1,
+                color = MaterialTheme.colors.onSurface
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+    }
+}
+
 
 @Composable
 fun SearchScreenAppBar(
     modifier: Modifier = Modifier,
     onNavigateBack: () -> Unit,
-    title: String,
     query: String,
     onQueryChange: (String) -> Unit,
     isSearchSuccessful: Boolean,
@@ -171,35 +336,27 @@ fun SearchScreenAppBar(
                     contentDescription = "Back icon"
                 )
             }
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(
-                text = title,
-                style = MaterialTheme.typography.h5.copy(
-                    fontWeight = FontWeight.Bold
-                )
+            OutlinedTextField(
+                value = query,
+                onValueChange = onQueryChange,
+                placeholder = {
+                    Text(text = "Search Shoe")
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        end = 6.dp
+                    ),
+                singleLine = true,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = MaterialTheme.colors.primary.copy(alpha = 0.5f),
+                    unfocusedBorderColor = Color.Transparent,
+                    backgroundColor = MaterialTheme.colors.primary.copy(alpha = 0.08f)
+                ),
+                shape = RoundedCornerShape(16.dp),
             )
 
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        OutlinedTextField(
-            value = query,
-            onValueChange = onQueryChange,
-            placeholder = {
-                Text(text = "Search Shoe")
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    horizontal = 16.dp
-                ),
-            singleLine = true,
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = MaterialTheme.colors.primary.copy(alpha = 0.5f),
-                unfocusedBorderColor = Color.Transparent,
-                backgroundColor = MaterialTheme.colors.primary.copy(alpha = 0.08f)
-            ),
-            shape = RoundedCornerShape(16.dp),
-        )
         if (isSearchSuccessful){
             Spacer(modifier = Modifier.height(10.dp))
             Row(
