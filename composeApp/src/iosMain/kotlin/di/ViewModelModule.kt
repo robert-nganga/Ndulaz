@@ -5,6 +5,7 @@ import features.shop.presentation.screens.add_location_screen.AddLocationViewMod
 import features.shop.presentation.screens.all_brands_screen.AllBrandsViewModel
 import features.shop.presentation.screens.brand_screen.BrandScreenViewModel
 import features.shop.presentation.screens.cart_screen.CartViewModel
+import features.shop.presentation.screens.category_screen.CategoryViewModel
 import features.shop.presentation.screens.check_out_screen.CheckOutViewModel
 import features.shop.presentation.screens.edit_profile_screen.EditProfileViewModel
 import features.shop.presentation.screens.home_screen.HomeScreenViewModel
@@ -34,4 +35,5 @@ actual val viewModelModule = module {
     singleOf(::EditProfileViewModel)
     singleOf(::OrdersViewModel)
     singleOf(::ReviewViewModel)
+    singleOf(::CategoryViewModel)
 }

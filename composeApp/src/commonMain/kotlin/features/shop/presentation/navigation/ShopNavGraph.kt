@@ -13,6 +13,8 @@ import features.shop.presentation.screens.brand_screen.BrandScreen
 import features.shop.presentation.screens.brand_screen.BrandScreenViewModel
 import features.shop.presentation.screens.cart_screen.CartScreen
 import features.shop.presentation.screens.cart_screen.CartViewModel
+import features.shop.presentation.screens.category_screen.CategoryScreen
+import features.shop.presentation.screens.category_screen.CategoryViewModel
 import features.shop.presentation.screens.check_out_screen.CheckOutScreen
 import features.shop.presentation.screens.check_out_screen.CheckOutViewModel
 import features.shop.presentation.screens.edit_profile_screen.EditProfileScreen
@@ -38,6 +40,7 @@ import features.shop.presentation.screens.wish_list_screen.WishListViewModel
 import features.shop.presentation.utils.ADD_LOCATION_SCREEN
 import features.shop.presentation.utils.ALL_BRANDS_SCREEN
 import features.shop.presentation.utils.BRAND_SCREEN
+import features.shop.presentation.utils.CATEGORY_SCREEN
 import features.shop.presentation.utils.CHECK_OUT_SCREEN
 import features.shop.presentation.utils.EDIT_PROFILE_SCREEN
 import features.shop.presentation.utils.MOST_POPULAR_SCREEN
@@ -129,6 +132,18 @@ fun NavGraphBuilder.shopNavGraph(
                 onShoeClick = {
                     productDetailsViewModel.onProductSelected(it)
                     navController.navigate(PRODUCT_DETAILS_SCREEN) {
+                        launchSingleTop = true
+                    }
+                },
+                onCategoryClicked = {
+                    NavigationUtils.category = it
+                    navController.navigate(CATEGORY_SCREEN){
+                        launchSingleTop = true
+                    }
+                },
+                onBrandClicked = {
+                    brandViewModel.updateBrand(it)
+                    navController.navigate(BRAND_SCREEN){
                         launchSingleTop = true
                     }
                 }
@@ -296,6 +311,16 @@ fun NavGraphBuilder.shopNavGraph(
                 onNavigateBack = {
                     navController.navigateUp()
                 }
+            )
+        }
+        composable(CATEGORY_SCREEN) {
+            val categoryScreenViewModel = getKoinViewModel<CategoryViewModel>()
+            CategoryScreen(
+                viewModel = categoryScreenViewModel,
+                onNavigateBack = {
+                    navController.navigateUp()
+                },
+                category = NavigationUtils.category
             )
         }
     }

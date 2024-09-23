@@ -58,7 +58,6 @@ import features.shop.domain.models.Brand
 import features.shop.domain.models.Shoe
 import features.shop.presentation.components.CategoryItem
 import features.shop.presentation.components.HomeScreenBrandItem
-import features.shop.presentation.components.NewShoeItem
 import features.shop.presentation.components.ShoeItem
 import features.shop.presentation.components.ShoesVerticalGrid
 import features.shop.presentation.utils.getFirstName
@@ -76,7 +75,6 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeScreenViewModel,
@@ -487,7 +485,6 @@ fun GreetingsSection(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BannersSection(
     modifier: Modifier = Modifier,
