@@ -86,7 +86,7 @@ fun NavGraphBuilder.shopNavGraph(
                     }
                 },
                 onNavigateToBrand = {
-                    brandViewModel.updateBrand(it)
+                    NavigationUtils.brand = it
                     navController.navigate(BRAND_SCREEN){
                         launchSingleTop = true
                     }
@@ -142,7 +142,7 @@ fun NavGraphBuilder.shopNavGraph(
                     }
                 },
                 onBrandClicked = {
-                    brandViewModel.updateBrand(it)
+                    NavigationUtils.brand = it
                     navController.navigate(BRAND_SCREEN){
                         launchSingleTop = true
                     }
@@ -239,7 +239,7 @@ fun NavGraphBuilder.shopNavGraph(
                   navController.navigateUp()
                 },
                 onBrandClick = {
-                    brandViewModel.updateBrand(it)
+                    NavigationUtils.brand = it
                     navController.navigate(BRAND_SCREEN){
                         launchSingleTop = true
                     }

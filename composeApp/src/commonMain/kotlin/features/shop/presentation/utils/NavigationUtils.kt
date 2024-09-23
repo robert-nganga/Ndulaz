@@ -1,6 +1,7 @@
 package features.shop.presentation.utils
 
 import features.profile.domain.models.User
+import features.shop.domain.models.Brand
 import features.shop.domain.models.CartItem
 import features.shop.domain.models.Category
 import features.shop.domain.models.Order
@@ -16,4 +17,5 @@ object NavigationUtils {
     var orderItemId: Int = 0
     lateinit var orderItem: OrderItem
     lateinit var category: Category
+    lateinit var brand: Brand
 }
