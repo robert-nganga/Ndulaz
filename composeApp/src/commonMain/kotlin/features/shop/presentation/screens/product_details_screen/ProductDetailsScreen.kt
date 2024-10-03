@@ -83,6 +83,8 @@ import ndula.composeapp.generated.resources.size
 import ndula.composeapp.generated.resources.units_left
 import ndula.composeapp.generated.resources.variation
 import org.jetbrains.compose.resources.stringResource
+import kotlin.math.round
+import kotlin.math.roundToInt
 
 
 @Composable
@@ -440,7 +442,7 @@ fun List<Review>.numberOfReviews(rating: Int): Int{
 }
 
 fun List<Review>.getAverageRating(): Double {
-    return this.map { it.rating }.average()
+    return (round(this.map { it.rating }.average() * 10) / 10)
 }
 
 @OptIn(ExperimentalMaterialApi::class)
