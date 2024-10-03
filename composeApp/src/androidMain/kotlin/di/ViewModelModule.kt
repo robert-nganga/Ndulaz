@@ -15,6 +15,7 @@ import features.shop.presentation.screens.product_details_screen.ProductDetailsV
 import features.shop.presentation.screens.profile_screen.ProfileViewModel
 import features.shop.presentation.screens.review_screen.ReviewViewModel
 import features.shop.presentation.screens.search_screen.SearchViewModel
+import features.shop.presentation.screens.settings_screen.SettingsViewModel
 import features.shop.presentation.screens.wish_list_screen.WishListViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
@@ -36,4 +37,5 @@ actual val viewModelModule = module {
     viewModelOf(::OrdersViewModel)
     viewModelOf(::ReviewViewModel)
     viewModelOf(::CategoryViewModel)
+    viewModelOf(::SettingsViewModel)
 }

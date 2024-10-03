@@ -26,6 +26,7 @@ fun NavGraphBuilder.authNavGraph(navController: NavController, authViewModel: Au
                 },
                 onNavigateToHome = {
                     navController.navigate(SHOP_GRAPH_ROUTE){
+                        launchSingleTop = true
                         popUpTo(AUTH_GRAPH_ROUTE){
                             inclusive = true
                         }
@@ -42,6 +43,7 @@ fun NavGraphBuilder.authNavGraph(navController: NavController, authViewModel: Au
                 },
                 onNavigateToHome = {
                     navController.navigate(SHOP_GRAPH_ROUTE){
+                        launchSingleTop = true
                         popUpTo(AUTH_GRAPH_ROUTE){
                             inclusive = true
                         }

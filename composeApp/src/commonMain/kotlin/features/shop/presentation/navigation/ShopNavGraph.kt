@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import core.presentation.utils.getKoinViewModel
+import features.shop.presentation.screens.settings_screen.SettingsScreen
 import features.shop.presentation.screens.add_location_screen.AddLocationScreen
 import features.shop.presentation.screens.add_location_screen.AddLocationViewModel
 import features.shop.presentation.screens.all_brands_screen.AllBrandsScreen
@@ -35,6 +36,7 @@ import features.shop.presentation.screens.review_screen.ReviewScreen
 import features.shop.presentation.screens.review_screen.ReviewViewModel
 import features.shop.presentation.screens.search_screen.SearchScreen
 import features.shop.presentation.screens.search_screen.SearchViewModel
+import features.shop.presentation.screens.settings_screen.SettingsViewModel
 import features.shop.presentation.screens.wish_list_screen.WishListScreen
 import features.shop.presentation.screens.wish_list_screen.WishListViewModel
 import features.shop.presentation.utils.ADD_LOCATION_SCREEN
@@ -51,7 +53,9 @@ import features.shop.presentation.utils.PAYMENT_SUCCESS_SCREEN
 import features.shop.presentation.utils.PRODUCT_DETAILS_SCREEN
 import features.shop.presentation.utils.REVIEW_SCREEN
 import features.shop.presentation.utils.SEARCH_SCREEN
+import features.shop.presentation.utils.SETTINGS_SCREEN
 import features.shop.presentation.utils.SHOP_GRAPH_ROUTE
+import org.koin.compose.viewmodel.koinViewModel
 
 
 fun NavGraphBuilder.shopNavGraph(
@@ -161,6 +165,11 @@ fun NavGraphBuilder.shopNavGraph(
                 },
                 onNavigateToOrdersScreen = {
                     navController.navigate(ORDERS_SCREEN){
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToSettingsScreen = {
+                    navController.navigate(SETTINGS_SCREEN){
                         launchSingleTop = true
                     }
                 }
@@ -321,6 +330,15 @@ fun NavGraphBuilder.shopNavGraph(
                     navController.navigateUp()
                 },
                 category = NavigationUtils.category
+            )
+        }
+        composable(SETTINGS_SCREEN) {
+            val settingsScreenViewModel = koinViewModel<SettingsViewModel>()
+            SettingsScreen(
+                onNavigateBack = {
+                    navController.navigateUp()
+                },
+                viewModel = settingsScreenViewModel
             )
         }
     }

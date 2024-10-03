@@ -2,7 +2,9 @@ package di
 
 import core.data.HttpClientFactory
 import core.data.preferences.DefaultSessionHandler
+import core.data.preferences.DefaultUserPreferencesRepository
 import core.data.preferences.SessionHandler
+import core.data.preferences.UserPreferencesRepository
 import core.domain.InputValidation
 import features.profile.data.AuthRepositoryImpl
 import features.profile.domain.repositories.AuthRepository
@@ -39,5 +41,6 @@ val appModule = module {
     single { UserRepositoryImpl(httpClient = get(), sessionHandler = get()) }.bind<UserRepository>()
     single { OrderRepositoryImpl(httpClient = get()) }.bind<OrderRepository>()
     single { ReviewRepositoryImpl(httpClient = get()) }.bind<ReviewRepository>()
+    single { DefaultUserPreferencesRepository(dataStore = get()) }.bind<UserPreferencesRepository>()
 
 }

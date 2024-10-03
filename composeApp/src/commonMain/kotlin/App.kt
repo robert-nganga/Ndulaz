@@ -1,3 +1,4 @@
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -15,9 +16,12 @@ import core.presentation.utils.getKoinViewModel
 import features.profile.presentation.screens.AuthStatus
 import features.profile.presentation.screens.AuthViewModel
 import features.profile.presentation.utils.AUTH_GRAPH_ROUTE
+import features.shop.presentation.screens.settings_screen.SettingsViewModel
+import features.shop.presentation.screens.settings_screen.ThemeSelection
 import features.shop.presentation.utils.SHOP_GRAPH_ROUTE
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinContext
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 @Preview
@@ -26,8 +30,18 @@ fun App(
     dynamicColor: Boolean
 ) {
     KoinContext {
+
+        // Get the user preferences
+        val settingsViewModel = koinViewModel<SettingsViewModel>()
+        val userPreferences by settingsViewModel.userPreferences.collectAsState(null)
+        val isDarkTheme = when(userPreferences?.appTheme){
+            ThemeSelection.Light -> false
+            ThemeSelection.Dark -> true
+            else -> isSystemInDarkTheme()
+        }
+
         NdulaTheme(
-            darkTheme = darkTheme,
+            darkTheme = isDarkTheme,
             dynamicColor = dynamicColor
         ) {
             Surface(

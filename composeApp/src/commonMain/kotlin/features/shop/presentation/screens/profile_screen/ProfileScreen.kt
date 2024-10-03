@@ -1,6 +1,5 @@
 package features.shop.presentation.screens.profile_screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -20,7 +19,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.HelpCenter
 import androidx.compose.material.icons.automirrored.rounded.Logout
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.LocationCity
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.ShoppingBag
@@ -30,22 +28,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import features.profile.domain.models.User
 import features.shop.presentation.components.CircularProfilePhoto
-import ndula.composeapp.generated.resources.Res
-import ndula.composeapp.generated.resources.sample_profile
-import org.jetbrains.compose.resources.painterResource
 
 
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel,
-    onNavigateToEditProfile: (User)-> Unit,
-    onNavigateToOrdersScreen: () -> Unit
+    onNavigateToEditProfile: (User) -> Unit,
+    onNavigateToOrdersScreen: () -> Unit,
+    onNavigateToSettingsScreen: () -> Unit
 ){
     val currentUser by viewModel.currentUser.collectAsState()
 
@@ -64,7 +59,7 @@ fun ProfileScreen(
         MenuItem(
             icon = Icons.Outlined.Settings,
             title = "Settings",
-            onClick = {}
+            onClick = onNavigateToSettingsScreen
         )
         Spacer(modifier = Modifier.height(10.dp))
         MenuItem(
