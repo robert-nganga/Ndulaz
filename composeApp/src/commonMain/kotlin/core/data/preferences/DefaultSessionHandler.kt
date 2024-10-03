@@ -14,10 +14,6 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-private object PreferenceKeys {
-    val USER_JSON = stringPreferencesKey("user_json")
-}
-
 class DefaultSessionHandler(
     private val dataStore: DataStore<Preferences>,
     private val json: Json = Json { ignoreUnknownKeys = true }
