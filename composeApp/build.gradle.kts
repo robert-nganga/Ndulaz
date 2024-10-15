@@ -80,8 +80,8 @@ kotlin {
             implementation(libs.compass.geolocation.mobile)
             implementation(libs.compass.permissions.mobile)
             implementation(libs.koin.compose)
-            implementation(libs.koin.compose.viewmodel)
-            implementation(libs.koin.compose.viewmodel.navigation)
+//            implementation(libs.koin.compose.viewmodel)
+//            implementation(libs.koin.compose.viewmodel.navigation)
         }
     }
 }
