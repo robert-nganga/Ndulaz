@@ -7,15 +7,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
 import androidx.compose.material.icons.outlined.FilterList
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -46,15 +51,10 @@ fun BrandScreen(
 ){
     val uiState by viewModel.brandScreenState.collectAsState()
 
-    val sortAndFilterSheetState = rememberFlexibleBottomSheetState(
-        isModal = true,
-        skipIntermediatelyExpanded = false,
-        skipSlightlyExpanded = true
+    val sortAndFilterSheetState = rememberModalBottomSheetState(
+        ModalBottomSheetValue.Hidden,
+        skipHalfExpanded = true
     )
-
-    var showSortAndFilterSheet by remember {
-        mutableStateOf(false)
-    }
 
     val scope = rememberCoroutineScope()
 
@@ -64,71 +64,93 @@ fun BrandScreen(
         viewModel.fetchAllCategories()
     }
 
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text("Brand")
-                },
-                backgroundColor = Color.Transparent,
-                elevation = 0.dp,
-                navigationIcon = {
-                    IconButton(
-                        onClick = onNavigateBack
-                    ){
-                        Icon(
-                            Icons.AutoMirrored.Default.ArrowBackIos,
-                            contentDescription = "Back icon"
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(
-                        onClick = {
-                            showSortAndFilterSheet = true
-                        }
-                    ){
-                        Icon(
-                            Icons.Outlined.FilterList,
-                            contentDescription = "Back icon"
-                        )
-                    }
-                }
-            )
-        }
-    ){
-        if (showSortAndFilterSheet){
+    ModalBottomSheetLayout(
+        sheetContent = {
             SortAndFilterBottomSheet(
                 modifier = Modifier,
                 filterOptions = uiState.filterOptions,
                 onDismiss = {
                     scope.launch {
                         sortAndFilterSheetState.hide()
-                    }.invokeOnCompletion {
-                        showSortAndFilterSheet = false
                     }
                 },
-                sheetState = sortAndFilterSheetState,
                 onApply = { options ->
                     scope.launch {
                         sortAndFilterSheetState.hide()
                     }.invokeOnCompletion {
-                        showSortAndFilterSheet = false
-                        viewModel.updateFilterOptions(options)
+                        viewModel.updateFilterOptions(options.copy(brand = brand.name))
                     }
                 },
                 categories = uiState.categories.ifEmpty { null }
             )
+        },
+        scrimColor = Color.Black.copy(alpha = 0.2f),
+        sheetShape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+        sheetState = sortAndFilterSheetState,
+        sheetBackgroundColor = MaterialTheme.colors.background,
+    ){
+        Scaffold(
+            topBar = {
+                BrandScreenTopAppBar(
+                    title = "Brand",
+                    onNavigateBack = onNavigateBack,
+                    onChangeFilterOptions = {
+                        scope.launch {
+                            println("show filter sheet")
+                            sortAndFilterSheetState.show()
+                        }.invokeOnCompletion {
+                            println(sortAndFilterSheetState)
+                        }
+                    }
+                )
+            }
+        ){
+            BrandScreenContent(
+                modifier = Modifier.padding(it),
+                brandState = uiState,
+                brand = brand,
+                onShoeClick = onShoeClick
+            )
         }
-
-        BrandScreenContent(
-            modifier = Modifier.padding(it),
-            brandState = uiState,
-            brand = brand,
-            onShoeClick = onShoeClick
-        )
     }
+
+}
+
+@Composable
+fun BrandScreenTopAppBar(
+    modifier: Modifier = Modifier,
+    title: String,
+    onNavigateBack: () -> Unit,
+    onChangeFilterOptions: () -> Unit
+){
+    TopAppBar(
+        modifier = modifier,
+        title = {
+            Text(title)
+        },
+        backgroundColor = Color.Transparent,
+        elevation = 0.dp,
+        navigationIcon = {
+            IconButton(
+                onClick = onNavigateBack
+            ){
+                Icon(
+                    Icons.AutoMirrored.Default.ArrowBackIos,
+                    contentDescription = "Back icon"
+                )
+            }
+        },
+        actions = {
+            IconButton(
+                onClick = onChangeFilterOptions
+            ){
+                Icon(
+                    Icons.Outlined.FilterList,
+                    contentDescription = "Back icon"
+                )
+            }
+        }
+    )
 }
 
 @Composable

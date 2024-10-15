@@ -11,16 +11,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
 import androidx.compose.material.icons.rounded.Tune
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -50,15 +54,10 @@ fun MostPopularScreen(
 
     val uiState by viewModel.mostPopularScreenState.collectAsState()
 
-    val sortAndFilterSheetState = rememberFlexibleBottomSheetState(
-        isModal = true,
-        skipIntermediatelyExpanded = false,
-        skipSlightlyExpanded = true
+    val sortAndFilterSheetState = rememberModalBottomSheetState(
+        ModalBottomSheetValue.Hidden,
+        skipHalfExpanded = true
     )
-
-    var showSortAndFilterSheet by remember {
-        mutableStateOf(false)
-    }
 
     val scope = rememberCoroutineScope()
 
@@ -68,44 +67,8 @@ fun MostPopularScreen(
         viewModel.onEvent(MostPopularScreenEvents.OnFilterOptionsChange(uiState.filterOptions))
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Most Popular",
-                        style = MaterialTheme.typography.h5
-                    )
-                },
-                backgroundColor = Color.Transparent,
-                elevation = 0.dp,
-                navigationIcon = {
-                    IconButton(
-                        onClick = onNavigateBack
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBackIos,
-                            contentDescription = "Back"
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(
-                        onClick = {
-                            showSortAndFilterSheet = true
-                        }
-                    ){
-                        Icon(
-                            Icons.Rounded.Tune,
-                            contentDescription = "Filter icon",
-                            tint = MaterialTheme.colors.onBackground
-                        )
-                    }
-                }
-            )
-        }
-    ){ paddingValues ->
-        if (showSortAndFilterSheet){
+    ModalBottomSheetLayout(
+        sheetContent = {
             SortAndFilterBottomSheet(
                 modifier = Modifier,
                 filterOptions = uiState.filterOptions,
@@ -113,45 +76,89 @@ fun MostPopularScreen(
                     scope.launch {
                         sortAndFilterSheetState.hide()
                     }.invokeOnCompletion {
-                        showSortAndFilterSheet = false
+                        //showSortAndFilterSheet = false
                     }
                 },
-                sheetState = sortAndFilterSheetState,
                 onApply = { options ->
                     scope.launch {
                         sortAndFilterSheetState.hide()
                     }.invokeOnCompletion {
-                        showSortAndFilterSheet = false
+                        //showSortAndFilterSheet = false
                         viewModel.onEvent(MostPopularScreenEvents.OnFilterOptionsChange(options))
                     }
                 },
                 brands = uiState.brands.ifEmpty { null },
             )
-        }
-
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-        ){
-            Spacer(modifier = Modifier.height(10.dp))
-            MostPopularCategoriesSection(
-                categories = uiState.categories,
-                selectedCategory = uiState.filterOptions.category ?: "All",
-                onCategorySelected = {
-                    val filterOptions = uiState.filterOptions.copy(
-                        category = if (it == "All") null else it
-                    )
-                    viewModel.onEvent(MostPopularScreenEvents.OnFilterOptionsChange(filterOptions))
-                }
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            ShoesListSection(
-                popularShoesState = uiState.popularShoesState,
-                onShoeClick = onShoeClick
-            )
+        },
+        scrimColor = Color.Black.copy(alpha = 0.2f),
+        sheetShape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+        sheetState = sortAndFilterSheetState,
+        sheetBackgroundColor = MaterialTheme.colors.background,
+    ){
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = "Most Popular",
+                            style = MaterialTheme.typography.h5
+                        )
+                    },
+                    backgroundColor = Color.Transparent,
+                    elevation = 0.dp,
+                    navigationIcon = {
+                        IconButton(
+                            onClick = onNavigateBack
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBackIos,
+                                contentDescription = "Back"
+                            )
+                        }
+                    },
+                    actions = {
+                        IconButton(
+                            onClick = {
+                                scope.launch {
+                                    sortAndFilterSheetState.show()
+                                }
+                            }
+                        ){
+                            Icon(
+                                Icons.Rounded.Tune,
+                                contentDescription = "Filter icon",
+                                tint = MaterialTheme.colors.onBackground
+                            )
+                        }
+                    }
+                )
+            }
+        ){ paddingValues ->
+            Column(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+            ){
+                Spacer(modifier = Modifier.height(10.dp))
+                MostPopularCategoriesSection(
+                    categories = uiState.categories,
+                    selectedCategory = uiState.filterOptions.category ?: "All",
+                    onCategorySelected = {
+                        val filterOptions = uiState.filterOptions.copy(
+                            category = if (it == "All") null else it
+                        )
+                        viewModel.onEvent(MostPopularScreenEvents.OnFilterOptionsChange(filterOptions))
+                    }
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                ShoesListSection(
+                    popularShoesState = uiState.popularShoesState,
+                    onShoeClick = onShoeClick
+                )
+            }
         }
     }
+
 }
 
 @Composable

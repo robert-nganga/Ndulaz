@@ -21,7 +21,6 @@ import features.shop.presentation.screens.settings_screen.ThemeSelection
 import features.shop.presentation.utils.SHOP_GRAPH_ROUTE
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinContext
-import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 @Preview
@@ -32,7 +31,7 @@ fun App(
     KoinContext {
 
         // Get the user preferences
-        val settingsViewModel = koinViewModel<SettingsViewModel>()
+        val settingsViewModel = getKoinViewModel<SettingsViewModel>()
         val userPreferences by settingsViewModel.userPreferences.collectAsState(null)
         val isDarkTheme = when(userPreferences?.appTheme){
             ThemeSelection.Light -> false

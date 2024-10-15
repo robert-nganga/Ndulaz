@@ -140,6 +140,7 @@ fun CustomRangeSliders(
         Text(
             text = "${leftThumbValue.roundToInt()}",
             modifier = Modifier
+                .padding(start = 10.dp)
                 .offset { IntOffset(leftThumbPos.roundToInt() - 12, 40) },
             color = activeColor
         )

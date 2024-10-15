@@ -57,7 +57,6 @@ import features.shop.presentation.utils.REVIEW_SCREEN
 import features.shop.presentation.utils.SEARCH_SCREEN
 import features.shop.presentation.utils.SETTINGS_SCREEN
 import features.shop.presentation.utils.SHOP_GRAPH_ROUTE
-import org.koin.compose.viewmodel.koinViewModel
 
 
 fun NavGraphBuilder.shopNavGraph(
@@ -73,7 +72,9 @@ fun NavGraphBuilder.shopNavGraph(
     wishListViewModel: WishListViewModel,
     ordersViewModel: OrdersViewModel,
     reviewViewModel: ReviewViewModel,
-    mostPopularScreenViewModel: MostPopularScreenViewModel
+    mostPopularScreenViewModel: MostPopularScreenViewModel,
+    categoryScreenViewModel: CategoryViewModel,
+    settingsScreenViewModel: SettingsViewModel
 ){
 
     navigation(startDestination = BottomNavItem.Home.route, route = SHOP_GRAPH_ROUTE){
@@ -330,7 +331,6 @@ fun NavGraphBuilder.shopNavGraph(
             )
         }
         composable(CATEGORY_SCREEN) {
-            val categoryScreenViewModel = getKoinViewModel<CategoryViewModel>()
             CategoryScreen(
                 viewModel = categoryScreenViewModel,
                 onNavigateBack = {
@@ -340,7 +340,6 @@ fun NavGraphBuilder.shopNavGraph(
             )
         }
         composable(SETTINGS_SCREEN) {
-            val settingsScreenViewModel = koinViewModel<SettingsViewModel>()
             SettingsScreen(
                 onNavigateBack = {
                     navController.navigateUp()

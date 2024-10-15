@@ -22,6 +22,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,8 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.skydoves.flexible.bottomsheet.material.FlexibleBottomSheet
-import com.skydoves.flexible.core.FlexibleSheetState
 import features.shop.domain.models.FilterOptions
 import features.shop.presentation.components.CustomRangeSliders
 
@@ -40,13 +39,13 @@ import features.shop.presentation.components.CustomRangeSliders
 @Composable
 fun SortAndFilterBottomSheet(
     modifier: Modifier = Modifier,
-    sheetState: FlexibleSheetState,
     onDismiss: () -> Unit,
     brands: List<String>? =null,
     categories: List<String>? = null,
     onApply: (FilterOptions) -> Unit,
     filterOptions: FilterOptions
 ){
+
     val sortOptions = listOf(
         "Most Recent",
         "Rating: Low to High",
@@ -65,134 +64,128 @@ fun SortAndFilterBottomSheet(
         val sortOption = getSortOption(sortBy = filterOptions.sortBy, sortOrder = filterOptions.sortOrder)
         mutableStateOf(sortOption)
     }
+    LaunchedEffect(Unit){
+        println("Bottom sheet options $filterOptions")
+    }
 
-    FlexibleBottomSheet(
-        onDismissRequest = onDismiss,
-        modifier = modifier,
-        sheetState = sheetState,
-        containerColor = MaterialTheme.colors.surface,
-        scrimColor = MaterialTheme.colors.onSurface.copy(
-            alpha = 0.2f
-        ),
+    Column(
+        modifier = modifier
+            .padding(
+                horizontal = 16.dp,
+                vertical = 24.dp
+            )
     ){
-        Column(
+        Text(
+            "Sort & Filter",
+            style = MaterialTheme.typography.h5,
+            color = MaterialTheme.colors.onBackground,
             modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    horizontal = 16.dp,
-                )
-        ){
-            Text(
-                "Sort & Filter",
-                style = MaterialTheme.typography.h5,
-                color = MaterialTheme.colors.onBackground,
-                modifier = Modifier
-                    .align(alignment = Alignment.CenterHorizontally)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Divider(
-                color = MaterialTheme.colors.onBackground.copy(
-                    alpha = 0.2f
-                ),
-                thickness = 1.dp
-            )
-            if (brands != null){
-                Spacer(modifier = Modifier.height(12.dp))
-                OptionsSection(
-                    title = "Brands",
-                    selectedOption = selectedBrand,
-                    options = brands,
-                    onOptionSelected = {
-                        selectedBrand = it
-                    }
-                )
-            }
-            if (categories != null){
-                Spacer(modifier = Modifier.height(24.dp))
-                OptionsSection(
-                    title = "Categories",
-                    selectedOption = selectedCategory,
-                    options = categories,
-                    onOptionSelected = {
-                        selectedCategory = it
-                    }
-                )
-            }
-            Spacer(modifier = Modifier.height(24.dp))
-            Text(
-                text = "Price Range",
-                style = MaterialTheme.typography.h6,
-                color = MaterialTheme.colors.onBackground,
-                modifier = Modifier
-            )
+                .align(alignment = Alignment.CenterHorizontally)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Divider(
+            color = MaterialTheme.colors.onBackground.copy(
+                alpha = 0.2f
+            ),
+            thickness = 1.dp
+        )
+        if (brands != null){
             Spacer(modifier = Modifier.height(16.dp))
-            CustomRangeSliders(
-                initialRange = 0f..12000f,
-                initialValues = sliderPosition,
-                onRangeChange = { sliderPosition = it }
-            )
-            Spacer(modifier = Modifier.height(24.dp))
             OptionsSection(
-                title = "Sort By",
-                selectedOption = selectedSortOption,
-                options = sortOptions,
+                title = "Brands",
+                selectedOption = selectedBrand,
+                options = brands,
                 onOptionSelected = {
-                    selectedSortOption = it
+                    selectedBrand = it
                 }
             )
-            Spacer(modifier = Modifier.height(30.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
+        }
+        if (categories != null){
+            Spacer(modifier = Modifier.height(32.dp))
+            OptionsSection(
+                title = "Categories",
+                selectedOption = selectedCategory,
+                options = categories,
+                onOptionSelected = {
+                    selectedCategory = it
+                }
+            )
+        }
+        Spacer(modifier = Modifier.height(32.dp))
+        Text(
+            text = "Price Range",
+            style = MaterialTheme.typography.h6,
+            color = MaterialTheme.colors.onBackground,
+            modifier = Modifier
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        CustomRangeSliders(
+            initialRange = 0f..12000f,
+            initialValues = sliderPosition,
+            onRangeChange = { sliderPosition = it }
+        )
+        Spacer(modifier = Modifier.height(32.dp))
+        OptionsSection(
+            title = "Sort By",
+            selectedOption = selectedSortOption,
+            options = sortOptions,
+            onOptionSelected = {
+                selectedSortOption = it
+            }
+        )
+        Spacer(modifier = Modifier.height(30.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+        ){
+            Button(
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(32.dp),
+                onClick = onDismiss,
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = MaterialTheme.colors.primary.copy(
+                        alpha = 0.04f
+                    )
+                )
             ){
-                Button(
-                    modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(32.dp),
-                    onClick = onDismiss,
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = MaterialTheme.colors.primary.copy(
-                            alpha = 0.04f
-                        )
-                    )
-                ){
-                    Text(
-                        "Cancel",
-                        style = MaterialTheme.typography.button.copy(
-                            color = MaterialTheme.colors.primary
-                        ),
-                        modifier = Modifier.padding(10.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.width(16.dp))
-                Button(
-                    shape = RoundedCornerShape(32.dp),
-                    onClick = {
-                      val (sortBy, sortOrder) = getSortByAndSortOrder(selectedSortOption)
-                      val options = filterOptions.copy(
-                          minPrice = if (sliderPosition.start == 0f) null else sliderPosition.start.toDouble(),
-                          maxPrice = if (sliderPosition.endInclusive == 10000f) null else sliderPosition.endInclusive.toDouble(),
-                          brand = if (selectedBrand == "All") null else selectedBrand,
-                          category = if (selectedCategory == "All") null else selectedCategory,
-                          sortBy = sortBy,
-                          sortOrder = sortOrder
-                      )
-                      onApply(options)
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor =  MaterialTheme.colors.primary
+                Text(
+                    "Cancel",
+                    style = MaterialTheme.typography.button.copy(
+                        color = MaterialTheme.colors.primary
                     ),
-                    modifier = Modifier.weight(1f),
-                ){
-                    Text(
-                        "Apply",
-                        style = MaterialTheme.typography.button.copy(
-                            color = MaterialTheme.colors.onPrimary
-                        ),
-                        modifier = Modifier.padding(10.dp)
+                    modifier = Modifier.padding(10.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            Button(
+                shape = RoundedCornerShape(32.dp),
+                onClick = {
+                    val (sortBy, sortOrder) = getSortByAndSortOrder(selectedSortOption)
+                    val options = filterOptions.copy(
+                        minPrice = if (sliderPosition.start == 0f) null else sliderPosition.start.toDouble(),
+                        maxPrice = if (sliderPosition.endInclusive == 10000f) null else sliderPosition.endInclusive.toDouble(),
+                        brand = if (selectedBrand == "All") null else selectedBrand,
+                        category = if (selectedCategory == "All") null else selectedCategory,
+                        sortBy = sortBy,
+                        sortOrder = sortOrder
                     )
-                }
+                    onApply(options)
+                },
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor =  MaterialTheme.colors.primary
+                ),
+                modifier = Modifier.weight(1f),
+            ){
+                Text(
+                    "Apply",
+                    style = MaterialTheme.typography.button.copy(
+                        color = MaterialTheme.colors.onPrimary
+                    ),
+                    modifier = Modifier.padding(10.dp)
+                )
             }
         }
+        Spacer(modifier = Modifier.height(30.dp))
     }
 }
 
