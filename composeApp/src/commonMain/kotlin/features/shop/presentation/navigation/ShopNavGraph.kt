@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import core.presentation.utils.getKoinViewModel
+import features.shop.presentation.screens.AddressScreen
 import features.shop.presentation.screens.settings_screen.SettingsScreen
 import features.shop.presentation.screens.add_location_screen.AddLocationScreen
 import features.shop.presentation.screens.add_location_screen.AddLocationViewModel
@@ -39,6 +40,7 @@ import features.shop.presentation.screens.search_screen.SearchViewModel
 import features.shop.presentation.screens.settings_screen.SettingsViewModel
 import features.shop.presentation.screens.wish_list_screen.WishListScreen
 import features.shop.presentation.screens.wish_list_screen.WishListViewModel
+import features.shop.presentation.utils.ADDRESS_SCREEN
 import features.shop.presentation.utils.ADD_LOCATION_SCREEN
 import features.shop.presentation.utils.ALL_BRANDS_SCREEN
 import features.shop.presentation.utils.BRAND_SCREEN
@@ -102,6 +104,11 @@ fun NavGraphBuilder.shopNavGraph(
                 },
                 onNavigateToSearch = {
                     navController.navigate(SEARCH_SCREEN){
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToNotifications = {
+                    navController.navigate(ADDRESS_SCREEN) {
                         launchSingleTop = true
                     }
                 }
@@ -339,6 +346,13 @@ fun NavGraphBuilder.shopNavGraph(
                     navController.navigateUp()
                 },
                 viewModel = settingsScreenViewModel
+            )
+        }
+        composable(ADDRESS_SCREEN) {
+            AddressScreen(
+                onNavigateBack = {
+                    navController.navigateUp()
+                }
             )
         }
     }

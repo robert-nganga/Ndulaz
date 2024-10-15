@@ -1,6 +1,5 @@
 package features.shop.presentation.screens.home_screen
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -79,28 +78,30 @@ import org.jetbrains.compose.resources.stringResource
 fun HomeScreen(
     viewModel: HomeScreenViewModel,
     onProductClick: (Shoe) -> Unit,
-    onNavigateToMostPopular: ()-> Unit,
-    onNavigateToBrand: (Brand)-> Unit,
-    onNavigateToAllBrands: ()-> Unit,
-    onNavigateToSearch: ()-> Unit
+    onNavigateToMostPopular: () -> Unit,
+    onNavigateToBrand: (Brand) -> Unit,
+    onNavigateToAllBrands: () -> Unit,
+    onNavigateToSearch: () -> Unit,
+    onNavigateToNotifications: () -> Unit
 ) {
+
 
     val uiState by viewModel.homeScreenState.collectAsState()
     val user by viewModel.user.collectAsState()
 
-    val pagerState = rememberPagerState{ 3 }
+    val pagerState = rememberPagerState { 3 }
     val snackBarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(Unit){
+    LaunchedEffect(Unit) {
         viewModel.onEvent(HomeScreenEvents.OnFetchBrands)
         viewModel.onEvent(HomeScreenEvents.OnFetchCategories)
-        if (uiState.selectedCategory == ""){
+        if (uiState.selectedCategory == "") {
             viewModel.onEvent(HomeScreenEvents.OnSelectCategory("All"))
         }
     }
 
-    LaunchedEffect(uiState.addToWishListMessage){
-        if (uiState.addToWishListMessage != null){
+    LaunchedEffect(uiState.addToWishListMessage) {
+        if (uiState.addToWishListMessage != null) {
             snackBarHostState.showSnackbar(
                 message = uiState.addToWishListMessage!!,
                 actionLabel = "Dismiss",
@@ -116,13 +117,15 @@ fun HomeScreen(
             SnackbarHost(snackBarHostState) { snackBarData ->
                 Snackbar(
                     modifier = Modifier.padding(bottom = 60.dp),
-                    snackbarData =  snackBarData,
-                    backgroundColor = if (uiState.addToWishListError) MaterialTheme.colors.error else Color(0xFF188503),
+                    snackbarData = snackBarData,
+                    backgroundColor = if (uiState.addToWishListError) MaterialTheme.colors.error else Color(
+                        0xFF188503
+                    ),
                     actionColor = MaterialTheme.colors.onError
                 )
             }
-       },
-    ){
+        },
+    ) {
         LazyVerticalGrid(
             modifier = Modifier
                 .fillMaxSize(),
@@ -133,25 +136,23 @@ fun HomeScreen(
                 end = 11.dp,
                 bottom = 55.dp
             )
-        ){
+        ) {
             item(
                 span = {
                     GridItemSpan(2)
                 }
-            ){
+            ) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(
                             horizontal = 5.dp
                         ),
-                ){
+                ) {
                     HomeScreenAppBar(
                         onSearchClick = onNavigateToSearch,
                         user = user,
-                        onNotificationClick = {
-
-                        }
+                        onNotificationClick = onNavigateToNotifications
                     )
                     Spacer(modifier = Modifier.height(20.dp))
                     BannersSection(
@@ -182,19 +183,19 @@ fun HomeScreen(
                 }
             }
 
-            when(uiState.popularShoesState){
+            when (uiState.popularShoesState) {
                 is PopularShoesState.Error -> {
                     item(
                         span = {
                             GridItemSpan(2)
                         },
-                    ){
+                    ) {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 50.dp),
                             contentAlignment = Alignment.Center
-                        ){
+                        ) {
                             Text(
                                 text = (uiState.popularShoesState as PopularShoesState.Error).errorMessage,
                                 style = MaterialTheme.typography.body2
@@ -202,27 +203,29 @@ fun HomeScreen(
                         }
                     }
                 }
+
                 is PopularShoesState.Loading -> {
                     item(
                         span = {
                             GridItemSpan(2)
                         },
-                    ){
+                    ) {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 50.dp),
                             contentAlignment = Alignment.Center
-                        ){
+                        ) {
                             CircularProgressIndicator()
                         }
                     }
                 }
+
                 is PopularShoesState.Success -> {
                     val shoes = (uiState.popularShoesState as PopularShoesState.Success).shoes
                     items(
-                       count =  shoes.size
-                    ){
+                        count = shoes.size
+                    ) {
                         val shoe = shoes[it]
                         ShoeItem(
                             shoe = shoe,
@@ -233,6 +236,7 @@ fun HomeScreen(
                         )
                     }
                 }
+
                 is PopularShoesState.Idle -> {
 
                 }
@@ -247,8 +251,8 @@ fun BrandsSection(
     brandsState: BrandsState,
     onSeeAllClick: () -> Unit,
     onItemClick: (Brand) -> Unit
-){
-    when(brandsState){
+) {
+    when (brandsState) {
         is BrandsState.Error -> {}
         is BrandsState.Loading -> {}
         is BrandsState.Success -> {
@@ -261,14 +265,14 @@ fun BrandsSection(
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
-                ){
+                ) {
                     Text(
                         stringResource(Res.string.top_brands),
                         style = MaterialTheme.typography.h6
                     )
                     TextButton(
                         onClick = onSeeAllClick
-                    ){
+                    ) {
                         Text(
                             stringResource(Res.string.see_all),
                             style = MaterialTheme.typography.body2,
@@ -300,28 +304,30 @@ fun BrandsSection(
 fun PopularShoesSection(
     modifier: Modifier = Modifier,
     popularShoesState: PopularShoesState,
-    onItemClick: (Shoe)-> Unit,
-){
-    when(popularShoesState){
+    onItemClick: (Shoe) -> Unit,
+) {
+    when (popularShoesState) {
         is PopularShoesState.Error -> {
             Box(
                 modifier = modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
-            ){
+            ) {
                 Text(
                     text = popularShoesState.errorMessage,
                     style = MaterialTheme.typography.body2
                 )
             }
         }
+
         is PopularShoesState.Loading -> {
             Box(
                 modifier = modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
-            ){
+            ) {
                 CircularProgressIndicator()
             }
         }
+
         is PopularShoesState.Success -> {
             val shoes = popularShoesState.shoes
             ShoesVerticalGrid(
@@ -331,6 +337,7 @@ fun PopularShoesSection(
                 onWishListClicked = {}
             )
         }
+
         is PopularShoesState.Idle -> {
 
         }
@@ -343,9 +350,9 @@ fun CategoriesSection(
     modifier: Modifier = Modifier,
     categoriesState: CategoriesState,
     selectedCategory: String,
-    onCategorySelected: (String)-> Unit,
+    onCategorySelected: (String) -> Unit,
     onSeeAllClick: () -> Unit
-){
+) {
     Column {
         Row(
             modifier = Modifier
@@ -359,7 +366,7 @@ fun CategoriesSection(
             )
             TextButton(
                 onClick = onSeeAllClick
-            ){
+            ) {
                 Text(
                     stringResource(Res.string.see_all),
                     style = MaterialTheme.typography.body2,
@@ -368,11 +375,12 @@ fun CategoriesSection(
             }
         }
         Spacer(modifier = Modifier.height(6.dp))
-        when(categoriesState){
+        when (categoriesState) {
             is CategoriesState.Error -> {}
             is CategoriesState.Loading -> {
                 // Show loading indicator
             }
+
             is CategoriesState.Success -> {
                 val categories = categoriesState.categories
                 Row(
@@ -380,7 +388,7 @@ fun CategoriesSection(
                         .fillMaxWidth()
                         .horizontalScroll(rememberScrollState()),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ){
+                ) {
                     categories.forEach { category ->
                         CategoryItem(
                             category = category,
@@ -400,14 +408,14 @@ fun CategoriesSection(
 fun HomeScreenAppBar(
     modifier: Modifier = Modifier,
     user: User?,
-    onSearchClick: ()-> Unit,
-    onNotificationClick: ()-> Unit
-){
+    onSearchClick: () -> Unit,
+    onNotificationClick: () -> Unit
+) {
     Row(
         modifier = modifier
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
-    ){
+    ) {
         user?.let { user ->
             GreetingsSection(
                 name = user.name,
@@ -417,7 +425,7 @@ fun HomeScreenAppBar(
         Row {
             IconButton(
                 onClick = onSearchClick
-            ){
+            ) {
                 Icon(
                     imageVector = Icons.Outlined.Search,
                     contentDescription = "Search"
@@ -425,7 +433,7 @@ fun HomeScreenAppBar(
             }
             IconButton(
                 onClick = onNotificationClick
-            ){
+            ) {
                 Icon(
                     imageVector = Icons.Outlined.Notifications,
                     contentDescription = "Notifications"
@@ -440,11 +448,11 @@ fun HomeScreenAppBar(
 fun GreetingsSection(
     modifier: Modifier = Modifier,
     name: String
-){
+) {
     val initials by remember(name) { mutableStateOf(name.getInitials()) }
-    val firstName by remember(name) { mutableStateOf(name.getFirstName())  }
+    val firstName by remember(name) { mutableStateOf(name.getFirstName()) }
     val greetings by remember { mutableStateOf(getGreetings()) }
-    LaunchedEffect(Unit){
+    LaunchedEffect(Unit) {
         println(getGreetings())
     }
     Row(
@@ -460,7 +468,7 @@ fun GreetingsSection(
                     shape = CircleShape
                 ),
             contentAlignment = Alignment.Center
-        ){
+        ) {
             Text(
                 initials,
                 style = MaterialTheme.typography.body2.copy(
@@ -491,12 +499,12 @@ fun BannersSection(
     banners: List<DrawableResource> = emptyList(),
     pagerState: PagerState,
     onBannerClick: () -> Unit
-){
+) {
     Column(
         modifier = modifier
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
+    ) {
         HorizontalPager(
             state = pagerState,
             modifier = modifier
@@ -504,7 +512,7 @@ fun BannersSection(
                 .height(160.dp)
                 .clip(RoundedCornerShape(24.dp)),
             pageSpacing = 10.dp
-        ){ index ->
+        ) { index ->
             Image(
                 painter = painterResource(resource = banners[index]),
                 contentDescription = "Banner",
@@ -530,13 +538,13 @@ fun BannerPagerIndicator(
     modifier: Modifier = Modifier,
     pageCount: Int,
     currentPage: Int
-){
+) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .padding(8.dp),
         horizontalArrangement = Arrangement.Center
-    ){
+    ) {
         (0..<pageCount).forEach {
             Box(
                 modifier = Modifier
@@ -544,7 +552,9 @@ fun BannerPagerIndicator(
                     .height(8.dp)
                     .clip(RoundedCornerShape(6.dp))
                     .background(
-                        color = if (it == currentPage) MaterialTheme.colors.primary else MaterialTheme.colors.primary.copy(alpha = 0.2f)
+                        color = if (it == currentPage) MaterialTheme.colors.primary else MaterialTheme.colors.primary.copy(
+                            alpha = 0.2f
+                        )
                     )
             )
             Spacer(modifier = Modifier.width(8.dp))

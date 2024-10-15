@@ -11,6 +11,7 @@ androidx-espresso-core = "3.5.1"
 androidx-material = "1.12.0"
 androidx-test-junit = "1.1.5"
 compose-plugin = "1.7.0-dev1809"
+coreSplashscreen = "1.0.1"
 datastorePreferencesCore = "1.1.1"
 junit = "4.13.2"
 koinComposeVersion = "4.0.0"
@@ -35,6 +36,7 @@ flexibleBottomsheetMaterial = "0.1.5"
 compass = "1.2.0"
 
 [libraries]
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 flexible-bottomsheet-material = { module = "com.github.skydoves:flexible-bottomsheet-material", version.ref = "flexibleBottomsheetMaterial" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferencesCore" }
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastorePreferencesCore" }

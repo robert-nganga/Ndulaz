@@ -43,7 +43,7 @@ fun App(
         NdulaTheme(
             darkTheme = isDarkTheme,
             dynamicColor = dynamicColor
-        ) {
+        ){
             Surface(
                 color = MaterialTheme.colors.background,
                 modifier = Modifier.fillMaxSize()
