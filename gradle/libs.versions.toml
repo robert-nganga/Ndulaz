@@ -73,7 +73,7 @@ room-runtime-android = { module = "androidx.room:room-runtime-android", version.
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
-koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinComposeMultiplatform" }
+koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinComposeVersion" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 kamel-image = { module = "media.kamel:kamel-image", version.ref = "kamelImage" }
 compass-geocoder = { module = "dev.jordond.compass:geocoder", version.ref = "compass" }
