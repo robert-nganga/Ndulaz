@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import core.data.utils.DataResult
 import features.shop.domain.models.CartItem
+import features.shop.domain.models.ReviewFilterOptions
 import features.shop.domain.models.Shoe
 import features.shop.domain.repository.CartRepository
 import features.shop.domain.repository.ReviewRepository
 import features.shop.domain.repository.WishListRepository
+import features.shop.presentation.sheets.ReviewsFilterOption
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -101,7 +103,16 @@ class ProductDetailsViewModel(
             }
 
             is ProductDetailsEvent.OnSeeMoreReviews -> {
-                getAllReviews(_productDetailsState.value.product!!.id)
+                getAllReviews(_productDetailsState.value.reviewFilterOptions, _productDetailsState.value.product!!.id)
+            }
+
+            is ProductDetailsEvent.OnReviewFilterOptionsUpdate -> {
+                _productDetailsState.update {
+                    it.copy(
+                        reviewFilterOptions = event.options
+                    )
+                }
+                getAllReviews(_productDetailsState.value.reviewFilterOptions, _productDetailsState.value.product!!.id)
             }
         }
     }
@@ -146,7 +157,8 @@ class ProductDetailsViewModel(
             )
         }
 
-        val response = reviewRepository.getReviewsForShoe(page = 1, limit = 3, shoeId = shoeId)
+        val filterOptions = ReviewFilterOptions(page = 1, pageSize = 3)
+        val response = reviewRepository.getReviewsForShoe(filterOptions, shoeId = shoeId)
         when(response){
             is DataResult.Empty -> {}
             is DataResult.Error -> {
@@ -170,14 +182,14 @@ class ProductDetailsViewModel(
     }
 
 
-    private fun getAllReviews(shoeId: Int) = viewModelScope.launch {
+    private fun getAllReviews(filterOptions: ReviewFilterOptions, shoeId: Int) = viewModelScope.launch {
         _productDetailsState.update {
             it.copy(
                 allReviewsState = AllReviewsState.Loading
             )
         }
 
-        val response = reviewRepository.getReviewsForShoe(page = 1, limit = 20, shoeId = shoeId)
+        val response = reviewRepository.getReviewsForShoe(filterOptions, shoeId = shoeId)
         when(response){
             is DataResult.Empty -> {}
             is DataResult.Error -> {

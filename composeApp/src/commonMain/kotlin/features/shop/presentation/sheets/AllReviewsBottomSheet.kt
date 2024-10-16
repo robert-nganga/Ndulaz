@@ -10,11 +10,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
@@ -29,21 +31,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.skydoves.flexible.bottomsheet.material.FlexibleBottomSheet
 import com.skydoves.flexible.core.FlexibleSheetState
+import features.shop.domain.models.ReviewFilterOptions
 import features.shop.presentation.components.ReviewItem
 import features.shop.presentation.screens.product_details_screen.AllReviewsState
-
+import io.ktor.util.PlatformUtils
 
 
 @Composable
@@ -51,12 +51,14 @@ fun AllReviewsBottomSheet(
     modifier: Modifier = Modifier,
     state: AllReviewsState,
     sheetState: FlexibleSheetState,
-    onDismiss: () -> Unit
+    filterOptions: ReviewFilterOptions,
+    onDismiss: () -> Unit,
+    onFilterOptionsChange: (ReviewFilterOptions) -> Unit
 ){
 
-    var selectedOption by remember {
-        mutableStateOf("All")
-    }
+//    var selectedOption by remember(filterOptions) {
+//        mutableStateOf(if (filterOptions.rating == null) "All" else "${filterOptions.rating.toInt()}")
+//    }
 
     FlexibleBottomSheet(
         onDismissRequest = onDismiss,
@@ -66,12 +68,14 @@ fun AllReviewsBottomSheet(
         scrimColor = MaterialTheme.colors.onSurface.copy(
             alpha = 0.2f
         ),
-        dragHandle = null
+        dragHandle = null,
+        windowInsets = WindowInsets.statusBars,
+        shape = RectangleShape
     ){
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 80.dp)
+                .padding(top = if(PlatformUtils.IS_NATIVE) 80.dp else 0.dp)
         ){
             AllReviewsTopBar(
                 title = "All Reviews",
@@ -81,9 +85,10 @@ fun AllReviewsBottomSheet(
                 onDismiss = onDismiss
             )
             AllReviewsFilterOptions(
-                selectedOption = selectedOption,
-                onOptionSelected = {
-                    selectedOption = it
+                selectedOption = if (filterOptions.rating == null) "All" else "${filterOptions.rating.toInt()}",
+                onOptionSelected = { option ->
+                    val rating = if(option == "All") null else option.toDouble()
+                    onFilterOptionsChange(filterOptions.copy(rating = rating))
                 }
             )
 

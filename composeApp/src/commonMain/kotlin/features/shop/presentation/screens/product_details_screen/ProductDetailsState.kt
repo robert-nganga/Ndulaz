@@ -3,6 +3,7 @@ package features.shop.presentation.screens.product_details_screen
 import features.shop.domain.models.CartItem
 import features.shop.domain.models.PaginatedReview
 import features.shop.domain.models.Review
+import features.shop.domain.models.ReviewFilterOptions
 import features.shop.domain.models.Shoe
 import features.shop.domain.models.ShoeVariant
 
@@ -23,7 +24,8 @@ data class ProductDetailsState(
     val showAddToCartSheet: Boolean = false,
     val addToCartState: AddToCartState = AddToCartState.Loading,
     val featuredReviewsState: FeaturedReviewsState = FeaturedReviewsState.Loading,
-    val allReviewsState: AllReviewsState = AllReviewsState.Loading
+    val allReviewsState: AllReviewsState = AllReviewsState.Loading,
+    val reviewFilterOptions: ReviewFilterOptions = ReviewFilterOptions()
 ){
     fun toCartItem(): CartItem {
         return CartItem(

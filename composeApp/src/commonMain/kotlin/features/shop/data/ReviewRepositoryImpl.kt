@@ -5,6 +5,7 @@ import core.data.utils.DataResult
 import core.data.utils.dataResultSafeApiCall
 import features.shop.domain.models.PaginatedReview
 import features.shop.domain.models.Review
+import features.shop.domain.models.ReviewFilterOptions
 import features.shop.domain.repository.ReviewRepository
 import features.shop.domain.request.ReviewRequest
 import io.ktor.client.HttpClient
@@ -28,10 +29,12 @@ class ReviewRepositoryImpl(
         response.body<Review>()
     }
 
-    override suspend fun getReviewsForShoe(page: Int, limit: Int, shoeId: Int): DataResult<PaginatedReview> = dataResultSafeApiCall {
+    override suspend fun getReviewsForShoe(filterOptions: ReviewFilterOptions, shoeId: Int): DataResult<PaginatedReview> = dataResultSafeApiCall {
         val response = httpClient.get("$BASE_URL/reviews/shoe"){
-            parameter("page", page)
-            parameter("pageSize", limit)
+            parameter("page", filterOptions.page)
+            parameter("pageSize", filterOptions.pageSize)
+            parameter("rating", filterOptions.rating)
+
             url {
                 appendPathSegments("$shoeId")
             }

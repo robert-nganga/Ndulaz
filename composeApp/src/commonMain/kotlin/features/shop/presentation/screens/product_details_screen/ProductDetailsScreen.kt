@@ -64,12 +64,12 @@ import features.shop.domain.models.Brand
 import features.shop.domain.models.Review
 import features.shop.domain.models.Shoe
 import features.shop.domain.models.ShoeVariant
-import features.shop.presentation.sheets.AddToCartBottomSheet
-import features.shop.presentation.sheets.AllReviewsBottomSheet
 import features.shop.presentation.components.ExpandableText
 import features.shop.presentation.components.RatingBar
 import features.shop.presentation.components.Ratings
 import features.shop.presentation.components.ReviewItem
+import features.shop.presentation.sheets.AddToCartBottomSheet
+import features.shop.presentation.sheets.AllReviewsBottomSheet
 import features.shop.presentation.utils.parseColorFromString
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
@@ -84,7 +84,6 @@ import ndula.composeapp.generated.resources.units_left
 import ndula.composeapp.generated.resources.variation
 import org.jetbrains.compose.resources.stringResource
 import kotlin.math.round
-import kotlin.math.roundToInt
 
 
 @Composable
@@ -196,6 +195,10 @@ fun ProductDetailsScreen(
                     AllReviewsBottomSheet(
                         sheetState = allReviewsSheetState,
                         state = uiState.allReviewsState,
+                        filterOptions = uiState.reviewFilterOptions,
+                        onFilterOptionsChange = {
+                           viewModel.onEvent(ProductDetailsEvent.OnReviewFilterOptionsUpdate(it, uiState.product!!.id))
+                        },
                         onDismiss = {
                             scope.launch {
                                 allReviewsSheetState.hide()
