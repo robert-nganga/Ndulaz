@@ -3,7 +3,7 @@ package core.presentation.ui
 import androidx.compose.ui.graphics.Color
 
 val lightColorScheme = ThemeColors(
-    primary = Color.Black,
+    primary = Color(0xff285ff7),
     secondary = Color.Black,
     background = Color.White,
     error = Color.Red,
@@ -24,4 +24,16 @@ val darkColorScheme = ThemeColors(
     onBackGround = Color.White,
     onError = Color.White,
     onSurface = Color.White
+)
+
+val blueColorScheme = ThemeColors(
+    primary = Color(0xff285ff7),
+    secondary = Color.Black,
+    background = Color.White,
+    error = Color.Red,
+    onPrimary = Color.White,
+    onSecondary = Color.White,
+    onBackGround = Color.Black,
+    onError = Color.White,
+    onSurface = Color.Black
 )

@@ -474,7 +474,7 @@ fun ProductDetailsTopAppBar(
                 Icons.AutoMirrored.Outlined.ArrowBackIos,
                 contentDescription = "",
                 modifier = Modifier.padding(10.dp),
-                tint = MaterialTheme.colors.onSurface
+                tint = MaterialTheme.colors.primary
             )
         }
 
@@ -488,7 +488,7 @@ fun ProductDetailsTopAppBar(
                 if (isShoeInWishList) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
                 contentDescription = "",
                 modifier = Modifier.padding(10.dp),
-                tint = MaterialTheme.colors.onSurface
+                tint = MaterialTheme.colors.primary
             )
         }
     }
@@ -615,7 +615,7 @@ fun ColorItem(
             )
             .border(
                 width = 1.5.dp,
-                color = if (isSelected) MaterialTheme.colors.primary.copy( alpha = 0.6f) else MaterialTheme.colors.primary.copy( alpha = 0.2f),
+                color = if (isSelected) MaterialTheme.colors.onBackground.copy( alpha = 0.6f) else MaterialTheme.colors.onBackground.copy( alpha = 0.2f),
                 shape = CircleShape
             )
             .clickable { onColorSelected() },
@@ -652,7 +652,7 @@ fun QuantityButtons(
                 .size(boxSize)
                 .clip(CircleShape)
                 .background(
-                    color = MaterialTheme.colors.primary.copy(alpha = 0.5f)
+                    color = MaterialTheme.colors.onBackground.copy(alpha = 0.5f)
                 )
                 .clickable { if (quantity > 1) onQuantityChanged(quantity - 1) },
             contentAlignment = Alignment.Center
@@ -660,7 +660,7 @@ fun QuantityButtons(
             Text(
                 "-",
                 style = MaterialTheme.typography.h6.copy(
-                    color = MaterialTheme.colors.onPrimary
+                    color = MaterialTheme.colors.background
                 ),
                 modifier = Modifier
                     .padding(2.dp)
@@ -677,7 +677,7 @@ fun QuantityButtons(
                 .size(boxSize)
                 .clip(CircleShape)
                 .background(
-                    color = MaterialTheme.colors.primary,
+                    color = MaterialTheme.colors.onBackground,
                 )
                 .clickable { onQuantityChanged(quantity + 1)},
             contentAlignment = Alignment.Center
@@ -685,7 +685,7 @@ fun QuantityButtons(
             Text(
                 "+",
                 style = MaterialTheme.typography.h6.copy(
-                    color = MaterialTheme.colors.onPrimary
+                    color = MaterialTheme.colors.background
                 ),
                 modifier = Modifier
                     .padding(2.dp)
@@ -706,7 +706,9 @@ fun ProductInfoSection(
     ) {
         Text(
             text = "Ksh ${shoe.price}",
-            style = MaterialTheme.typography.h5,
+            style = MaterialTheme.typography.h5.copy(
+                color = MaterialTheme.colors.primary
+            ),
             fontWeight = FontWeight.Bold,
         )
         Spacer(modifier = Modifier.height(10.dp))
@@ -726,7 +728,7 @@ fun ProductInfoSection(
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(6.dp))
-                    .background(color = MaterialTheme.colors.primary.copy(alpha = 0.15f))
+                    .background(color = MaterialTheme.colors.onBackground.copy(alpha = 0.15f))
                     .padding(
                         horizontal = 8.dp,
                         vertical = 2.dp
@@ -931,24 +933,24 @@ fun SizeItem(
     onSizeSelected: ()-> Unit
 ){
     val textColor = if (isSelected) {
-        MaterialTheme.colors.onPrimary
+        MaterialTheme.colors.background
     } else {
         if (isSelectable){
-            MaterialTheme.colors.primary
+            MaterialTheme.colors.onBackground
         } else{
-            MaterialTheme.colors.primary.copy(alpha = 0.3f)
+            MaterialTheme.colors.onBackground.copy(alpha = 0.3f)
         }
     }
     Box(
         modifier = modifier
             .border(
                 width = 1.5.dp,
-                color = if (isSelected) MaterialTheme.colors.primary else MaterialTheme.colors.primary.copy(alpha = 0.25f),
+                color = if (isSelected) MaterialTheme.colors.onBackground else MaterialTheme.colors.onBackground.copy(alpha = 0.25f),
                 shape = RoundedCornerShape(4.dp)
             )
             .clip(RoundedCornerShape(4.dp))
             .background(
-                color = if (isSelected) MaterialTheme.colors.primary else Color.Transparent
+                color = if (isSelected) MaterialTheme.colors.onBackground else Color.Transparent
             )
             .isSelectable(
                 isSelectable = isSelectable,
@@ -1027,7 +1029,7 @@ fun ImagesSection(
                         .background(color = Color.Gray.copy(alpha = 0.55f))
                         .border(
                             width = 1.5.dp,
-                            color = if(selectedImage == image) Color.Blue else Color.Gray.copy(alpha = 0.3f),
+                            color = if(selectedImage == image) MaterialTheme.colors.primary else MaterialTheme.colors.onBackground.copy(alpha = 0.3f),
                             shape = RoundedCornerShape(8.dp)
                         )
                         .clickable {

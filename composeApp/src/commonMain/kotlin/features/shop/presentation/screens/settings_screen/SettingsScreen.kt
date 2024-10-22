@@ -62,7 +62,7 @@ fun SettingsScreen(
 
     val userPreferences by viewModel.userPreferences.collectAsState(null)
 
-    LaunchedEffect(Unit){
+    LaunchedEffect(userPreferences){
         userPreferences?.let {
             viewModel.updateSelectedTheme(it.appTheme)
         }
@@ -109,7 +109,7 @@ fun SettingsScreen(
                 "Theme",
                 style = MaterialTheme.typography.h5.copy(
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colors.primary
+                    color = MaterialTheme.colors.onBackground
                 )
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -163,7 +163,7 @@ fun SettingsScreen(
                 "Data usage",
                 style = MaterialTheme.typography.h5.copy(
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colors.primary
+                    color = MaterialTheme.colors.onBackground
                 )
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -240,7 +240,7 @@ fun SettingsScreen(
                 "Support us",
                 style = MaterialTheme.typography.h5.copy(
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colors.primary
+                    color = MaterialTheme.colors.onBackground
                 )
             )
             Spacer(modifier = Modifier.height(16.dp))

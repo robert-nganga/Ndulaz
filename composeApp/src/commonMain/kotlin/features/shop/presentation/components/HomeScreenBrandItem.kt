@@ -37,7 +37,7 @@ fun HomeScreenBrandItem(
             modifier = Modifier
                 .clip(CircleShape)
                 .background(
-                    color = MaterialTheme.colors.primary.copy(
+                    color = MaterialTheme.colors.onBackground.copy(
                         alpha = 0.12f
                     )
                 )

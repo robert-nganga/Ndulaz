@@ -171,13 +171,13 @@ fun RowScope.AddItem(
                     if(badgeCount != null && badgeCount > 0){
                         Badge(
                             modifier = Modifier.align(Alignment.Center),
-                            backgroundColor = MaterialTheme.colors.primary,
+                            backgroundColor = MaterialTheme.colors.error,
                             contentColor = MaterialTheme.colors.onPrimary
                         ){
                             Text(
                                 text = "$badgeCount",
                                 style = TextStyle(
-                                    color = MaterialTheme.colors.onPrimary
+                                    color = MaterialTheme.colors.onError
                                 )
                             )
                         }
@@ -210,7 +210,7 @@ fun RowScope.AddItem(
         },
         alwaysShowLabel = true,
         selectedContentColor = MaterialTheme.colors.primary,
-        unselectedContentColor = MaterialTheme.colors.primary.copy(alpha = 0.5f)
+        unselectedContentColor = MaterialTheme.colors.onBackground.copy(alpha = 0.5f)
     )
 
 }

@@ -299,21 +299,21 @@ fun FilterOption(
         modifier = modifier
             .border(
                 width = 1.5.dp,
-                color = if (isSelected) MaterialTheme.colors.primary else MaterialTheme.colors.onBackground.copy(
+                color = if (isSelected) MaterialTheme.colors.onBackground else MaterialTheme.colors.onBackground.copy(
                     alpha = 0.2f
                 ),
                 shape = RoundedCornerShape(12.dp)
             )
             .clip(RoundedCornerShape(12.dp))
             .background(
-                color = if (isSelected) MaterialTheme.colors.primary else Color.Transparent
+                color = if (isSelected) MaterialTheme.colors.onBackground else Color.Transparent
             )
             .clickable { onClick() },
         contentAlignment = Alignment.Center
     ){
         Text(
             text = option,
-            color = if (isSelected) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onBackground,
+            color = if (isSelected) MaterialTheme.colors.background else MaterialTheme.colors.onBackground,
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         )

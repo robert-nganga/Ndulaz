@@ -38,9 +38,9 @@ fun MyOutlinedTextField(
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            unfocusedBorderColor = MaterialTheme.colors.primary.copy(alpha = 0.2F),
-            focusedBorderColor = MaterialTheme.colors.primary.copy(alpha = 0.6F),
-            backgroundColor = MaterialTheme.colors.primary.copy(alpha = 0.02f)
+            unfocusedBorderColor = MaterialTheme.colors.onBackground.copy(alpha = 0.2F),
+            focusedBorderColor = MaterialTheme.colors.onBackground.copy(alpha = 0.6F),
+            backgroundColor = MaterialTheme.colors.onBackground.copy(alpha = 0.02f)
         ),
         visualTransformation = if(obscureText) PasswordVisualTransformation() else VisualTransformation.None,
         keyboardOptions = keyboardOptions,

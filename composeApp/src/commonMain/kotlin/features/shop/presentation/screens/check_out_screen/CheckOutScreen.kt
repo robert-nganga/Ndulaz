@@ -580,7 +580,7 @@ fun PromoSection(
                 onValueChange = { promo = it },
                 placeholder = {
                     Text(
-                        "Have a promo code? Enter here",
+                        "Have a promo code?",
                         style = MaterialTheme.typography.body2.copy(
                             letterSpacing = 0.sp,
                             fontWeight = FontWeight.Bold

@@ -158,7 +158,7 @@ fun OnboardingScreen(
                     Text(
                         content.description,
                         style = MaterialTheme.typography.body2.copy(
-                            color = MaterialTheme.colors.primary.copy(
+                            color = MaterialTheme.colors.onBackground.copy(
                                 alpha = 0.6f
                             )
                         ),

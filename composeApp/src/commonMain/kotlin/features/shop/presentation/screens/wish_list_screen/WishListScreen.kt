@@ -10,6 +10,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -51,7 +52,7 @@ fun WishListScreen(
                         }
                     ) {
                         Icon(
-                            Icons.Rounded.Delete,
+                            Icons.Outlined.Delete,
                             contentDescription = ""
                         )
                     }

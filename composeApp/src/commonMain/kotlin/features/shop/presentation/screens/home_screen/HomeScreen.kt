@@ -464,7 +464,7 @@ fun GreetingsSection(
                 .clip(CircleShape)
                 .border(
                     width = 2.dp,
-                    color = MaterialTheme.colors.primary,
+                    color = MaterialTheme.colors.onBackground,
                     shape = CircleShape
                 ),
             contentAlignment = Alignment.Center

@@ -56,9 +56,9 @@ fun CustomRangeSliders(
     val positionToRightValue: (Float) -> Float = { pos ->
         (pos / sliderWidth) * totalRange + initialRange.start
     }
-    val baseColor = MaterialTheme.colors.primary.copy(alpha = 0.2f)
-    val activeColor = MaterialTheme.colors.primary
-    val onActiveColor = MaterialTheme.colors.onPrimary
+    val baseColor = MaterialTheme.colors.onBackground.copy(alpha = 0.2f)
+    val activeColor = MaterialTheme.colors.onBackground
+    val onActiveColor = MaterialTheme.colors.background
 
     // Range Slider UI
     Box(
