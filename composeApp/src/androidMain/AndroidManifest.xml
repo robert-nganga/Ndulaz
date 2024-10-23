@@ -3,6 +3,7 @@
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
+        android:windowSoftInputMode="adjustResize"
         android:name=".MyApp"
         android:usesCleartextTraffic="true"
         android:allowBackup="true"

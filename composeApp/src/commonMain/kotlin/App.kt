@@ -1,5 +1,9 @@
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
@@ -47,6 +51,8 @@ fun App(
                 color = MaterialTheme.colors.background,
                 modifier = Modifier
                     .fillMaxSize()
+                    .background(MaterialTheme.colors.background)
+                    .windowInsetsPadding(WindowInsets.safeDrawing)
             ){
                 val authViewModel = getKoinViewModel<AuthViewModel>()
                 val navController = rememberNavController()

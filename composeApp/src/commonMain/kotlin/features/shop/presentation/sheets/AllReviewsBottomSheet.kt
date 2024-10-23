@@ -69,7 +69,6 @@ fun AllReviewsBottomSheet(
             alpha = 0.2f
         ),
         dragHandle = null,
-        windowInsets = WindowInsets.statusBars,
         shape = RectangleShape
     ){
         Column(

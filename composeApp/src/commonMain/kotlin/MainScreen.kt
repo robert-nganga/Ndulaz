@@ -1,5 +1,6 @@
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.Badge
@@ -95,7 +96,7 @@ fun MainScreen(
         }
     ){
         NavHost(
-            modifier = if (enableStatusPadding) Modifier.navigationBarsPadding().systemBarsPadding() else Modifier.navigationBarsPadding(),
+            modifier = Modifier,
             navController = navController,
             startDestination = if (isLoggedIn) SHOP_GRAPH_ROUTE else AUTH_GRAPH_ROUTE
         ){
@@ -194,6 +195,7 @@ fun RowScope.AddItem(
                 imageVector = if (isSelected) screen.focusedIcon else screen.unFocusedIcon,
                 contentDescription = "Navigation Icon",
                 modifier = Modifier.size(26.dp),
+                tint = if (isSelected) MaterialTheme.colors.primary else MaterialTheme.colors.onBackground.copy(alpha = 0.4f)
             )
         },
         selected = isSelected,
@@ -210,7 +212,7 @@ fun RowScope.AddItem(
         },
         alwaysShowLabel = true,
         selectedContentColor = MaterialTheme.colors.primary,
-        unselectedContentColor = MaterialTheme.colors.onBackground.copy(alpha = 0.5f)
+        unselectedContentColor = MaterialTheme.colors.onBackground.copy(alpha = 0.4f)
     )
 
 }

@@ -131,7 +131,7 @@ fun HomeScreen(
                 .fillMaxSize(),
             columns = GridCells.Fixed(2),
             contentPadding = PaddingValues(
-                top = 10.dp,
+                top = 2.dp,
                 start = 11.dp,
                 end = 11.dp,
                 bottom = 55.dp
