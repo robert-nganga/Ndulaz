@@ -20,7 +20,6 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
-import io.ktor.util.logging.Logger
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.serialization.json.Json
 

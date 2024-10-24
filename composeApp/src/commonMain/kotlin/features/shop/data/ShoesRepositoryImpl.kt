@@ -1,5 +1,8 @@
 package features.shop.data
 
+import core.data.database.NdulaDatabase
+import core.data.database.mappers.toDomain
+import core.data.database.mappers.toEntity
 import core.data.utils.BASE_URL
 import core.data.utils.DataResult
 import core.data.utils.dataResultSafeApiCall
@@ -16,8 +19,12 @@ import io.ktor.client.request.parameter
 import io.ktor.http.appendPathSegments
 
 class ShoesRepositoryImpl(
-    private val httpClient: HttpClient
+    private val httpClient: HttpClient,
+    private val database: NdulaDatabase
 ): ShoesRepository {
+
+    private val brandDao = database.brandDao()
+    private val categoryDao = database.categoryDao()
     override suspend fun getShoes(page: Int, limit: Int): DataResult<List<Shoe>> = dataResultSafeApiCall {
         val response = httpClient.get("$BASE_URL/shoes/all") {
             parameter("page", page)
@@ -26,11 +33,21 @@ class ShoesRepositoryImpl(
         val shoeResponse = response.body<ShoeResponse>()
         shoeResponse.shoes
     }
-    override suspend fun getCategories(): DataResult<List<Category>> = dataResultSafeApiCall {
-        val response = httpClient.get("$BASE_URL/categories/all"){
+    override suspend fun getCategories(): DataResult<List<Category>> {
+        val cachedCategories = categoryDao.getAllCategories()
+        return try {
+            val response = httpClient.get("$BASE_URL/categories/all")
+            val categoryResponse = response.body<List<Category>>()
+            categoryDao.updateCachedCategories(categoryResponse.map { it.toEntity() })
+            val categories = categoryDao.getAllCategories()
+            DataResult.Success(categories.map { it.toDomain() })
+        } catch (e: Exception){
+            if (cachedCategories.isEmpty()){
+                DataResult.Error("Unable to get categories")
+            } else {
+                DataResult.Success(cachedCategories.map { it.toDomain() })
+            }
         }
-        val categoryResponse = response.body<List<Category>>()
-        categoryResponse
     }
 
     override suspend fun getShoeById(id: Int): DataResult<Shoe> = dataResultSafeApiCall{
@@ -82,9 +99,20 @@ class ShoesRepositoryImpl(
         shoes
     }
 
-    override suspend fun getAllBrands(): DataResult<List<Brand>> = dataResultSafeApiCall {
-        val response = httpClient.get("$BASE_URL/brands/all")
-        val brands = response.body<List<Brand>>()
-        brands
+    override suspend fun getAllBrands(): DataResult<List<Brand>> {
+        val cachedBrands = brandDao.getAllBrands()
+        return try {
+            val response = httpClient.get("$BASE_URL/brands/all")
+            val remoteBrands = response.body<List<Brand>>()
+            brandDao.updateCachedBrands(remoteBrands.map { it.toEntity() })
+            val brands = brandDao.getAllBrands().map { it.toDomain() }
+            DataResult.Success(brands)
+        } catch (e: Exception){
+            if (cachedBrands.isEmpty()){
+                DataResult.Error("Unable to fetch brands")
+            } else {
+                DataResult.Success(cachedBrands.map { it.toDomain() })
+            }
+        }
     }
 }

@@ -33,7 +33,7 @@ val appModule = module {
     single { DefaultSessionHandler(dataStore = get()) }.bind<SessionHandler>()
     single { HttpClientFactory.createHttpClient(sessionHandler = get(), engine = get()) }
     single { AuthRepositoryImpl(httpClient = get(), sessionHandler = get()) }.bind<AuthRepository>()
-    single { ShoesRepositoryImpl(httpClient = get()) }.bind<ShoesRepository>()
+    single { ShoesRepositoryImpl(httpClient = get(), database = get()) }.bind<ShoesRepository>()
     single { WishListRepositoryImpl(httpClient = get()) }.bind<WishListRepository>()
     single { CartRepositoryImpl(database = get()) }.bind<CartRepository>()
     single { LocationRepositoryImpl(httpClient = get()) }.bind<LocationRepository>()
