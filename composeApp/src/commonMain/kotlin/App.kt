@@ -40,12 +40,14 @@ fun App(
         val isDarkTheme = when(userPreferences?.appTheme){
             ThemeSelection.Light -> false
             ThemeSelection.Dark -> true
+            ThemeSelection.LightBlue -> false
             else -> isSystemInDarkTheme()
         }
 
         NdulaTheme(
             darkTheme = isDarkTheme,
-            dynamicColor = dynamicColor
+            dynamicColor = dynamicColor,
+            themeSelection = userPreferences?.appTheme ?: ThemeSelection.System
         ){
             Surface(
                 color = MaterialTheme.colors.background,
@@ -91,6 +93,7 @@ fun App(
                             }
                         }
                         MainScreen(
+                            darkTheme = darkTheme,
                             authViewModel =authViewModel,
                             navController = navController,
                             isLoggedIn = authStatus == AuthStatus.LoggedIn

@@ -74,7 +74,8 @@ fun NavGraphBuilder.shopNavGraph(
     reviewViewModel: ReviewViewModel,
     mostPopularScreenViewModel: MostPopularScreenViewModel,
     categoryScreenViewModel: CategoryViewModel,
-    settingsScreenViewModel: SettingsViewModel
+    settingsScreenViewModel: SettingsViewModel,
+    darkTheme: Boolean
 ){
 
     navigation(startDestination = BottomNavItem.Home.route, route = SHOP_GRAPH_ROUTE){
@@ -341,6 +342,7 @@ fun NavGraphBuilder.shopNavGraph(
         }
         composable(SETTINGS_SCREEN) {
             SettingsScreen(
+                darkTheme = darkTheme,
                 onNavigateBack = {
                     navController.navigateUp()
                 },

@@ -43,19 +43,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import core.presentation.ui.ThemeColors
+import core.presentation.ui.blueColorScheme
 import core.presentation.ui.darkColorScheme
 import core.presentation.ui.lightColorScheme
 
 
 enum class ThemeSelection{
     Light,
-    Dark
+    Dark,
+    LightBlue,
+    System
 }
 
 @Composable
 fun SettingsScreen(
     onNavigateBack: () -> Unit,
-    viewModel: SettingsViewModel
+    viewModel: SettingsViewModel,
+    darkTheme: Boolean
 ){
 
     val state by viewModel.settingsState.collectAsState()
@@ -117,14 +121,15 @@ fun SettingsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
             ){
-                ThemeSelection.entries.forEach { theme ->
+                ThemeSelection.entries.dropLast(1).forEach { theme ->
                     ThemeTemplate(
                         modifier = Modifier.width(100.dp),
                         onThemeClick = {
                             viewModel.updateTheme(theme)
                         },
                         isSelected = state.selectedTheme == theme,
-                        themeSelection = theme
+                        themeSelection = theme,
+                        darkTheme = darkTheme
                     )
                     Spacer(modifier = Modifier.width(16.dp))
                 }
@@ -146,8 +151,13 @@ fun SettingsScreen(
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Switch(
-                    checked = true,
-                    onCheckedChange = {
+                    checked = userPreferences?.appTheme == ThemeSelection.System,
+                    onCheckedChange = { useSystem ->
+                        if (useSystem) {
+                            viewModel.updateTheme(ThemeSelection.System)
+                        } else {
+                            viewModel.updateTheme(ThemeSelection.Light)
+                        }
                     }
                 )
             }
@@ -299,10 +309,12 @@ fun SettingsScreen(
     }
 }
 
-fun ThemeSelection.getThemeColors(): ThemeColors{
+fun ThemeSelection.getThemeColors(darkTheme: Boolean): ThemeColors {
     return when(this){
         ThemeSelection.Light -> lightColorScheme
         ThemeSelection.Dark -> darkColorScheme
+        ThemeSelection.LightBlue -> blueColorScheme
+        ThemeSelection.System -> if (darkTheme) darkColorScheme else lightColorScheme
     }
 }
 @OptIn(ExperimentalMaterialApi::class)
@@ -311,17 +323,18 @@ fun ThemeTemplate(
     modifier: Modifier = Modifier,
     onThemeClick: () -> Unit,
     isSelected: Boolean,
-    themeSelection: ThemeSelection
+    themeSelection: ThemeSelection,
+    darkTheme: Boolean
 ){
     val theme by remember(themeSelection) {
-        mutableStateOf(themeSelection.getThemeColors())
+        mutableStateOf(themeSelection.getThemeColors(darkTheme))
     }
 
     Column{
         Card(
             onClick = {
                 onThemeClick()
-            } ,
+            },
             border = BorderStroke(
                 width = 3.dp,
                 color = if(isSelected) MaterialTheme.colors.primary else Color.Transparent,

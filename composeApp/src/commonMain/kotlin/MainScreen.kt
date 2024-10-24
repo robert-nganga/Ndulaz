@@ -1,8 +1,5 @@
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.Badge
 import androidx.compose.material.BadgedBox
 import androidx.compose.material.BottomNavigation
@@ -51,7 +48,8 @@ import features.shop.presentation.utils.SHOP_GRAPH_ROUTE
 fun MainScreen(
     navController: NavHostController,
     isLoggedIn: Boolean,
-    authViewModel: AuthViewModel
+    authViewModel: AuthViewModel,
+    darkTheme: Boolean
 ){
     val productDetailsViewModel = getKoinViewModel<ProductDetailsViewModel>()
     val brandViewModel = getKoinViewModel<BrandScreenViewModel>()
@@ -116,7 +114,8 @@ fun MainScreen(
                 reviewViewModel,
                 mostPopularScreenViewModel,
                 categoryScreenViewModel,
-                settingsScreenViewModel
+                settingsScreenViewModel,
+                darkTheme
             )
         }
     }
