@@ -3,6 +3,7 @@ package features.shop.presentation.sheets
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -48,6 +49,7 @@ fun ShippingAddressBottomSheet(
         scrimColor = MaterialTheme.colors.onSurface.copy(
             alpha = 0.2f
         ),
+        windowInsets = WindowInsets(left = 0.dp, right = 0.dp, top = 0.dp, bottom = 0.dp)
     ){
         Column(
             modifier = Modifier

@@ -69,7 +69,8 @@ fun AllReviewsBottomSheet(
             alpha = 0.2f
         ),
         dragHandle = null,
-        shape = RectangleShape
+        shape = RectangleShape,
+        windowInsets = WindowInsets(left = 0.dp, right = 0.dp, top = 0.dp, bottom = 0.dp)
     ){
         Column(
             modifier = Modifier
