@@ -50,5 +50,10 @@
 	<string>To deliver items to your exact location</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>To deliver items to your exact location</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 </dict>
 </plist>
