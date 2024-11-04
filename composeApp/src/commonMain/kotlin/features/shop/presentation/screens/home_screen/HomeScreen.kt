@@ -93,10 +93,19 @@ fun HomeScreen(
     val snackBarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
-        viewModel.onEvent(HomeScreenEvents.OnFetchBrands)
-        viewModel.onEvent(HomeScreenEvents.OnFetchCategories)
+        if(uiState.brandsState !is BrandsState.Success){
+            viewModel.onEvent(HomeScreenEvents.OnFetchBrands)
+        }
+        if(uiState.categoriesState !is CategoriesState.Success){
+            viewModel.onEvent(HomeScreenEvents.OnFetchCategories)
+        }
+
         if (uiState.selectedCategory == "") {
             viewModel.onEvent(HomeScreenEvents.OnSelectCategory("All"))
+        } else{
+            if(uiState.popularShoesState !is PopularShoesState.Success){
+                viewModel.onEvent(HomeScreenEvents.OnSelectCategory(uiState.selectedCategory))
+            }
         }
     }
 
@@ -297,7 +306,6 @@ fun BrandsSection(
             }
         }
     }
-
 }
 
 @Composable

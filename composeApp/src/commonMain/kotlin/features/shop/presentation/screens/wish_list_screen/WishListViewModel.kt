@@ -49,6 +49,23 @@ class WishListViewModel(
         }
     }
 
+    fun clearMyWishList() = viewModelScope.launch {
+        when(val result = wishListRepository.clearWishList()){
+            is DataResult.Empty -> {}
+            is DataResult.Error -> {
+                _wishListState.update {
+                    WishListScreenState.Failure(result.message)
+                }
+                }
+            is DataResult.Loading -> {}
+            is DataResult.Success -> {
+                _wishListState.update {
+                    WishListScreenState.Empty
+                }
+            }
+        }
+    }
+
 
 
 

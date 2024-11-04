@@ -16,6 +16,8 @@ class MainActivity : ComponentActivity() {
         System.setProperty(DEBUG_PROPERTY_NAME, DEBUG_PROPERTY_VALUE_ON)
         enableEdgeToEdge()
         //installSplashScreen()
+        val dbFile = applicationContext.getDatabasePath("my_room.db")
+        println(dbFile.absolutePath)
         setContent {
             App(
                 darkTheme = isSystemInDarkTheme(),

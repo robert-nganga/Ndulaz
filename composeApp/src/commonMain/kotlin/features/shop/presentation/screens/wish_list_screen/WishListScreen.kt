@@ -11,16 +11,19 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import features.shop.domain.models.Shoe
+import features.shop.presentation.components.ConfirmDialog
 import features.shop.presentation.components.ShoesVerticalGrid
 
 
@@ -30,6 +33,8 @@ fun WishListScreen(
     onShoeClick: (Shoe) -> Unit
 ){
     val uiState by viewModel.wishListState.collectAsState()
+
+    var showClearWishListDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit){
 //        if(uiState is WishListScreenState.Failure){
@@ -49,6 +54,7 @@ fun WishListScreen(
                 actions = {
                     IconButton(
                         onClick = {
+                            showClearWishListDialog = true
                         }
                     ) {
                         Icon(
@@ -60,6 +66,21 @@ fun WishListScreen(
             )
         }
     ){
+        if (showClearWishListDialog){
+            ConfirmDialog(
+                title = "Clear wishlist",
+                message = "Are you sure you want to clear the wishlist",
+                confirmButtonText = "Yes",
+                dismissButtonText = "No",
+                onDismiss = {
+                    showClearWishListDialog = false
+                },
+                onConfirm = {
+                    viewModel.clearMyWishList()
+                    showClearWishListDialog = false
+                }
+            )
+        }
         WishListScreenContent(
             wishListState = uiState,
             onShoeClick = onShoeClick,
@@ -105,6 +126,19 @@ fun WishListScreenContent(
                 onClick = onShoeClick,
                 onWishListClicked = {}
             )
+        }
+
+        is WishListScreenState.Empty -> {
+            Box(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
+                contentAlignment = Alignment.Center
+                ){
+                Text(
+                    "Your wishlist is empty"
+                )
+            }
         }
     }
 }

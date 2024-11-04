@@ -20,7 +20,7 @@ import core.data.database.entities.ShippingAddressEntity
         BrandEntity::class,
         CategoryEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @ConstructedBy(NdulaDatabaseConstructor::class)

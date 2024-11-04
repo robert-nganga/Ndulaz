@@ -26,12 +26,16 @@ import androidx.compose.material.icons.outlined.ShoppingCartCheckout
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import features.shop.domain.models.CartItem
 import features.shop.presentation.components.CartItemInfo
+import features.shop.presentation.components.ConfirmDialog
 import features.shop.presentation.components.SwipeToDeleteContainer
 
 @Composable
@@ -41,6 +45,7 @@ fun CartScreen(
 ){
     val cartItems by viewModel.cartItems.collectAsState(emptyList())
     val totalPrice by viewModel.totalPrice.collectAsState(0.0)
+    var showClearCartDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier
@@ -60,7 +65,7 @@ fun CartScreen(
                 actions = {
                     IconButton(
                         onClick = {
-                            viewModel.clearCart()
+                            showClearCartDialog = true
                         }
                     ){
                         Icon(
@@ -76,6 +81,21 @@ fun CartScreen(
             alpha = 0.035f
         )
     ){ paddingValues ->
+        if(showClearCartDialog){
+            ConfirmDialog(
+                title = "Clear Cart",
+                message = "Are you sure you want to clear your cart?",
+                onDismiss = {
+                    showClearCartDialog = false
+                },
+                confirmButtonText = "Yes",
+                dismissButtonText = "No",
+                onConfirm = {
+                    viewModel.clearCart()
+                    showClearCartDialog = false
+                }
+            )
+        }
         CartScreenContent(
             modifier = Modifier
                 .padding(paddingValues)
@@ -202,7 +222,6 @@ fun CheckOutSection(
                     )
                 }
             }
-
         }
     }
 }
