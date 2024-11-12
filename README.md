@@ -1,14 +1,139 @@
-This is a Kotlin Multiplatform project targeting Android, iOS.
+# KMP eCommerce App
 
-* `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - `commonMain` is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    `iosMain` would be the right folder for such calls.
+A modern eCommerce application built with Kotlin Multiplatform Mobile (KMM) and Jetpack Compose, demonstrating cross-platform development capabilities while maintaining native performance and user experience.
 
-* `/iosApp` contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform, 
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+## 📱 Features
 
+- **Cross-Platform Implementation**: Single codebase targeting both iOS and Android platforms
+- **JWT Authentication**: Secure user authentication and session management
+- **Product Catalog**: Browse and search through shoe products
+- **Shopping Cart**: Add/remove items, manage quantities
+- **Wishlists**: Save favorite items for later
+- **Order Management**: Track order status and history
+- **Reviews & Ratings**: View and submit product reviews
+- **Location Services**: Find nearby stores and delivery options
+- **Offline Support**: Local data persistence for cart and wishlist
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+## 🛠 Technologies & Libraries
+
+### Core Technologies
+
+- **[Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html)**: Framework for cross-platform development
+- **[Compose Multiplatform](https://www.jetbrains.com/lp/compose-multiplatform/)**: UI toolkit for building native applications for Android, iOS, and desktop
+
+### Networking & Data
+
+- **[Ktor Client](https://ktor.io/docs/getting-started-ktor-client.html)**: Multiplatform HTTP client
+  - OkHttp engine for Android
+  - Darwin engine for iOS
+- **[KotlinX Serialization](https://github.com/Kotlin/kotlinx.serialization)**: JSON parsing and serialization
+- **[Kamel](https://github.com/Kamel-Media/Kamel)**: Async image loading library for Compose Multiplatform
+
+### State Management & DI
+
+- **[Koin](https://insert-koin.io/)**: Lightweight dependency injection framework
+  - Koin Compose for ViewModel injection
+- **[Lifecycle ViewModel](https://developer.android.com/jetpack/compose/libraries#viewmodel)**: Managing UI-related data in a lifecycle-conscious way
+
+### Storage
+
+- **[DataStore Preferences](https://developer.android.com/topic/libraries/architecture/datastore)**: Key-value storage for user preferences and session management
+- **[Room](https://developer.android.com/training/data-storage/room)**: Local database for cart and wishlist persistence
+  - Note: Currently used on Android, with equivalent iOS implementation
+
+### Navigation
+
+- **[Navigation Compose](https://developer.android.com/jetpack/compose/navigation)**: Type-safe navigation framework for Compose
+
+### Location Services
+
+- **[Compass Geolocation](https://github.com/Kotlin/kotlinx-io)**: Cross-platform location services
+
+## 🏗 Architecture
+
+The app follows Clean Architecture principles with feature-based modules:
+
+```
+shared/
+├── core/
+│   ├── data/          # Core data layer utilities, network client
+│   ├── domain/        # Core domain layer utilities, base models
+│   └── presentation/  # Core presentation layer utilities, base ViewModels
+│
+├── feature/
+│   ├── profile/
+│   │   ├── data/         # User profile, auth repositories
+│   │   │   ├── model/    # API DTOs, local entities
+│   │   │   ├── remote/   # API services
+│   │   │   ├── local/    # Local storage
+│   │   │   └── repository/ # Repository implementations
+│   │   ├── domain/       # Profile business logic
+│   │   │   ├── model/    # Domain models
+│   │   │   ├── repository/ # Repository interfaces
+│   │   │   └── usecase/  # Profile use cases
+│   │   └── presentation/ # Profile UI logic
+│   │       ├── model/    # UI models, states
+│   │       └── viewmodel/ # Profile ViewModels
+│   │
+│   └── shop/
+│       ├── data/         # Products, cart, orders repositories
+│       │   ├── model/    # API DTOs, local entities
+│       │   ├── remote/   # API services
+│       │   ├── local/    # Local storage
+│       │   └── repository/ # Repository implementations
+│       ├── domain/       # Shopping business logic
+│       │   ├── model/    # Domain models
+│       │   ├── repository/ # Repository interfaces
+│       │   └── usecase/  # Shopping use cases
+│       └── presentation/ # Shop UI logic
+│           ├── model/    # UI models, states
+│           └── viewmodel/ # Shop ViewModels
+│
+└── di/              # Dependency injection modules
+
+androidApp/         # Android-specific implementation
+├── ui/            # Compose UI components
+└── MainActivity   # Android entry point
+
+iosApp/            # iOS-specific implementation
+├── ui/            # SwiftUI components
+└── iOSApp        # iOS entry point
+```
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Android Studio Arctic Fox or newer
+- Xcode 13 or newer (for iOS development)
+- JDK 11 or newer
+- Kotlin Multiplatform Mobile plugin
+
+### Setup
+
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/kmp-ecommerce.git
+```
+
+2. Open the project in Android Studio
+
+3. Sync Gradle files and build the project
+
+4. Run the desired target platform:
+   - Android: Run 'androidApp' configuration
+   - iOS: Run 'iosApp' configuration
+
+## 📚 Learning Resources
+
+- [Kotlin Multiplatform Documentation](https://kotlinlang.org/docs/multiplatform.html)
+- [Compose Multiplatform Guide](https://www.jetbrains.com/lp/compose-multiplatform/)
+- [KMM Samples](https://kotlinlang.org/docs/multiplatform-mobile-samples.html)
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
