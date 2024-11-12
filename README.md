@@ -1,6 +1,6 @@
 # KMP eCommerce App
 
-A modern eCommerce application built with Kotlin Multiplatform Mobile (KMM) and Jetpack Compose, demonstrating cross-platform development capabilities while maintaining native performance and user experience.
+A cross-platform e-commerce application for shopping the latest footwear, built with Kotlin Multiplatform and Compose Multiplatform. This app offers a smooth shopping experience with essential e-commerce functionalities and a modern UI design, tailored to Android and iOS.
 
 ## 📱 Features
 
@@ -11,7 +11,6 @@ A modern eCommerce application built with Kotlin Multiplatform Mobile (KMM) and 
 - **Wishlists**: Save favorite items for later
 - **Order Management**: Track order status and history
 - **Reviews & Ratings**: View and submit product reviews
-- **Location Services**: Find nearby stores and delivery options
 - **Offline Support**: Local data persistence for cart and wishlist
 
 ## 🛠 Technologies & Libraries
@@ -133,7 +132,3 @@ git clone https://github.com/yourusername/kmp-ecommerce.git
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
