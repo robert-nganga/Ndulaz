@@ -361,7 +361,7 @@ fun ReviewSection(
                         }
                         Spacer(modifier = Modifier.height(10.dp))
                     }
-                    if (totalReviews > 3){
+                    if (totalReviews > 2){
                         Box(
                             modifier = Modifier
                                 .align(Alignment.CenterHorizontally)

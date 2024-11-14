@@ -37,8 +37,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import features.shop.domain.models.Shoe
+import features.shop.presentation.screens.product_details_screen.getAverageRating
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
+import kotlin.math.round
 
 @Composable
 fun ShoeItem(
@@ -93,7 +95,7 @@ fun ShoeItem(
                 )
                 Spacer(modifier = Modifier.width(5.dp))
                 Text(
-                    "${shoe.averageRating}",
+                    "${(round(shoe.averageRating * 10) / 10)}",
                 )
                 Spacer(modifier = Modifier.width(5.dp))
                 Text(
