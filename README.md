@@ -13,11 +13,21 @@ A cross-platform e-commerce application for shopping the latest footwear, built 
 - **Reviews & Ratings**: View and submit product reviews
 - **Offline Support**: Local data persistence for cart and wishlist
 
-## 📱 Screenshots
+## 📱 iOS Screenshots
+
+### Onboarding & Authentication
+<div align="center">
+<img src="screenshots/ios/Screenshot-onboarding-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-login-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-signup-portrait.png" width="250" />
+</div>
 
 ### Home & Shop
 <div align="center">
 <img src="screenshots/ios/Screenshot-home-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-popular-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-brand-portrait.png" width="250" />
+</div>
+
+### Search & Details
+<div align="center">
+<img src="screenshots/ios/Screenshot-search-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-searchresults-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-productdetails-portrait.png" width="250" />
 </div>
 
 ### Product & Cart
