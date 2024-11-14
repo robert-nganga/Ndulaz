@@ -13,6 +13,28 @@ A cross-platform e-commerce application for shopping the latest footwear, built 
 - **Reviews & Ratings**: View and submit product reviews
 - **Offline Support**: Local data persistence for cart and wishlist
 
+## 📱 Screenshots
+
+### Home & Shop
+<div align="center">
+<img src="screenshots/ios/Screenshot-home-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-popular-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-brand-portrait.png" width="250" />
+</div>
+
+### Product & Cart
+<div align="center">
+<img src="screenshots/ios/Screenshot-addtocart-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-addedtocart-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-cart-portrait.png" width="250" />
+</div>
+
+### Orders & Tracking
+<div align="center">
+<img src="screenshots/ios/Screenshot-checkout-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-activeorders-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-completedorders-portrait.png" width="250" />
+</div>
+
+### User & Preferences
+<div align="center">
+<img src="screenshots/ios/Screenshot-profile-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-settings-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-wishlist-portrait.png" width="250" />
+</div>
+
 ## 🛠 Technologies & Libraries
 
 ### Core Technologies
