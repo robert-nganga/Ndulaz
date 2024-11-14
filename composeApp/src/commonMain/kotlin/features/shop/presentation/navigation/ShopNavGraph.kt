@@ -132,7 +132,12 @@ fun NavGraphBuilder.shopNavGraph(
         composable(BottomNavItem.WishList.route){
             WishListScreen(
                 viewModel = wishListViewModel,
-               onShoeClick = {}
+               onShoeClick = {
+                   productDetailsViewModel.onProductSelected(it)
+                   navController.navigate(PRODUCT_DETAILS_SCREEN){
+                       launchSingleTop = true
+                   }
+               }
             )
         }
 

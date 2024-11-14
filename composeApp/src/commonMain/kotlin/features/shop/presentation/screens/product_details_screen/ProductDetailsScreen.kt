@@ -3,6 +3,7 @@ package features.shop.presentation.screens.product_details_screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -318,12 +319,14 @@ fun ReviewSection(
                 horizontal = 16.dp
             )
     ){
-        Text(
-            "Reviews",
-            style = MaterialTheme.typography.h6.copy(
-                letterSpacing = 0.08.sp
+        if (featuredReviewsState is FeaturedReviewsState.Success){
+            Text(
+                "Reviews",
+                style = MaterialTheme.typography.h6.copy(
+                    letterSpacing = 0.08.sp
+                )
             )
-        )
+        }
         Spacer(modifier = Modifier.height(10.dp))
         when(featuredReviewsState){
             is FeaturedReviewsState.Error -> {
@@ -358,7 +361,7 @@ fun ReviewSection(
                         }
                         Spacer(modifier = Modifier.height(10.dp))
                     }
-                    if (totalReviews > 1){
+                    if (totalReviews > 3){
                         Box(
                             modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
@@ -1007,9 +1010,11 @@ fun ImagesSection(
         )
         Spacer(modifier = Modifier.height(10.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState()),
         ) {
+            Spacer(modifier = Modifier.width(15.dp))
             images.forEach { image ->
                 KamelImage(
                     asyncPainterResource(image),

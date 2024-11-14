@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import core.data.utils.DataResult
 import features.shop.domain.models.WishList
 import features.shop.domain.repository.WishListRepository
+import features.shop.presentation.screens.home_screen.PopularShoesState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -15,35 +16,42 @@ class WishListViewModel(
 ): ViewModel() {
 
 
-    private val _wishListState = MutableStateFlow<WishListScreenState>(WishListScreenState.Loading)
-    val wishListState = _wishListState.asStateFlow()
+    private val _wishListScreenState = MutableStateFlow(WishListScreenState())
+    val wishListScreenState = _wishListScreenState.asStateFlow()
 
-    init {
-        fetchMyWishList()
-        println("WishListViewModel init")
-    }
 
     fun updateWishList(wishList: WishList){
-        _wishListState.update {
-            WishListScreenState.Success(wishList.items)
+        _wishListScreenState.update {
+            it.copy(
+                wishListState = WishListState.Success(wishList.items)
+            )
+        }
+    }
+
+    fun resetWishListMessage(){
+        _wishListScreenState.update {
+            it.copy(
+                removeFromWishListMessage = null,
+            )
         }
     }
 
     fun fetchMyWishList() = viewModelScope.launch {
-        _wishListState.update {
-            WishListScreenState.Loading
+        _wishListScreenState.update {
+            it.copy(wishListState = WishListState.Loading)
         }
         when(val result = wishListRepository.getWishList()){
             is DataResult.Empty -> {}
             is DataResult.Error -> {
-                _wishListState.update {
-                    WishListScreenState.Failure(result.message)
+                _wishListScreenState.update {
+                    it.copy(wishListState = WishListState.Failure(result.message))
                 }
             }
             is DataResult.Loading -> {}
             is DataResult.Success -> {
-                _wishListState.update {
-                    WishListScreenState.Success(result.data.items)
+                _wishListScreenState.update {
+                    it.copy(wishListState = WishListState.Success(result.data.items))
+
                 }
             }
         }
@@ -53,18 +61,69 @@ class WishListViewModel(
         when(val result = wishListRepository.clearWishList()){
             is DataResult.Empty -> {}
             is DataResult.Error -> {
-                _wishListState.update {
-                    WishListScreenState.Failure(result.message)
+                _wishListScreenState.update {
+                    it.copy(wishListState = WishListState.Failure(result.message))
                 }
-                }
+            }
             is DataResult.Loading -> {}
             is DataResult.Success -> {
-                _wishListState.update {
-                    WishListScreenState.Empty
+                _wishListScreenState.update {
+                    it.copy(wishListState = WishListState.Success(emptyList()))
                 }
             }
         }
     }
+
+
+    fun removeItemFromWishList(shoeId: Int) = viewModelScope.launch {
+        _wishListScreenState.update {
+            it.copy(
+                removeFromWishListError = false,
+            )
+        }
+        when(val response = wishListRepository.removeItemFromWishList(shoeId)){
+            is DataResult.Empty -> {}
+            is DataResult.Error -> {
+                _wishListScreenState.update {
+                    it.copy(
+                        removeFromWishListMessage = "Couldn't remove item from wish list",
+                        removeFromWishListError = true
+                    )
+                }
+            }
+            is DataResult.Loading -> {}
+            is DataResult.Success -> {
+                _wishListScreenState.update {
+                    it.copy(
+                        removeFromWishListMessage = "Removed item from wish list",
+                        wishListState = WishListState.Success(response.data.items)
+                    )
+                }
+            }
+        }
+    }
+
+//    private fun updateItemWishListStatus(shoeId: Int) {
+//        if (_wishListScreenState.value.wishListState is WishListState.Success){
+//            val shoes = (_wishListScreenState.value.wishListState as WishListState.Success).items
+//            val new = shoes.map {
+//                if(it.id == shoeId){
+//                    it.copy(
+//                        shoe = it.shoe.copy(isInWishList = false)
+//                    )
+//                } else {
+//                    it
+//                }
+//            }
+//            _wishListScreenState.update {
+//                it.copy(
+//                    wishListState = WishListState.Success(
+//                        items = new
+//                    )
+//                )
+//            }
+//        }
+//    }
 
 
 

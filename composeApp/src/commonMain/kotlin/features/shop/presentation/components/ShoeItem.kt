@@ -93,7 +93,7 @@ fun ShoeItem(
                 )
                 Spacer(modifier = Modifier.width(5.dp))
                 Text(
-                    "4.6",
+                    "${shoe.averageRating}",
                 )
                 Spacer(modifier = Modifier.width(5.dp))
                 Text(

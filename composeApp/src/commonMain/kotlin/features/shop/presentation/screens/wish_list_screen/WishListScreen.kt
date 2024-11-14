@@ -6,7 +6,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -32,7 +36,7 @@ fun WishListScreen(
     viewModel: WishListViewModel,
     onShoeClick: (Shoe) -> Unit
 ){
-    val uiState by viewModel.wishListState.collectAsState()
+    val uiState by viewModel.wishListScreenState.collectAsState()
 
     var showClearWishListDialog by remember { mutableStateOf(false) }
 
@@ -43,7 +47,32 @@ fun WishListScreen(
         viewModel.fetchMyWishList()
     }
 
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(uiState.removeFromWishListMessage) {
+        if (uiState.removeFromWishListMessage != null && uiState.removeFromWishListError) {
+            snackBarHostState.showSnackbar(
+                message = uiState.removeFromWishListMessage!!,
+                actionLabel = "Dismiss",
+            )
+            viewModel.resetWishListMessage()
+        }
+    }
+
+
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(snackBarHostState) { snackBarData ->
+                Snackbar(
+                    modifier = Modifier.padding(bottom = 60.dp),
+                    snackbarData = snackBarData,
+                    backgroundColor = if (uiState.removeFromWishListError) MaterialTheme.colors.error else Color(
+                        0xFF188503
+                    ),
+                    actionColor = MaterialTheme.colors.onError
+                )
+            }
+        },
         topBar = {
             TopAppBar(
                 title = {
@@ -82,9 +111,12 @@ fun WishListScreen(
             )
         }
         WishListScreenContent(
-            wishListState = uiState,
+            state = uiState,
             onShoeClick = onShoeClick,
-            modifier = Modifier.padding(it)
+            modifier = Modifier.padding(it),
+            onWishListClicked = { shoe->
+                viewModel.removeItemFromWishList(shoe.id)
+            }
         )
     }
 
@@ -92,12 +124,13 @@ fun WishListScreen(
 
 @Composable
 fun WishListScreenContent(
-    wishListState: WishListScreenState,
+    state: WishListScreenState,
     modifier: Modifier = Modifier,
-    onShoeClick: (Shoe) -> Unit
+    onShoeClick: (Shoe) -> Unit,
+    onWishListClicked: (Shoe) -> Unit
 ){
-    when(wishListState){
-        is WishListScreenState.Failure -> {
+    when(val wishListState = state.wishListState){
+        is WishListState.Failure -> {
             Box(
                 modifier = modifier
                     .fillMaxSize()
@@ -109,7 +142,7 @@ fun WishListScreenContent(
                 )
             }
         }
-        is WishListScreenState.Loading -> {
+        is WishListState.Loading -> {
             Box(
                 modifier = modifier
                     .fillMaxSize()
@@ -119,16 +152,16 @@ fun WishListScreenContent(
                 CircularProgressIndicator()
             }
         }
-        is WishListScreenState.Success -> {
+        is WishListState.Success -> {
             ShoesVerticalGrid(
                 modifier = modifier,
                 shoes = wishListState.items.map { it.shoe },
                 onClick = onShoeClick,
-                onWishListClicked = {}
+                onWishListClicked = onWishListClicked
             )
         }
 
-        is WishListScreenState.Empty -> {
+        is WishListState.Empty -> {
             Box(
                 modifier = modifier
                     .fillMaxSize()
