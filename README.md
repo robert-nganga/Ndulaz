@@ -13,36 +13,61 @@ A cross-platform e-commerce application for shopping the latest footwear, built 
 - **Reviews & Ratings**: View and submit product reviews
 - **Offline Support**: Local data persistence for cart and wishlist
 
-## 📱 iOS Screenshots
+## 📱 Screenshots
 
 ### Onboarding & Authentication
 <div align="center">
+<p><strong>iOS</strong></p>
 <img src="screenshots/ios/Screenshot-onboarding-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-login-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-signup-portrait.png" width="250" />
 </div>
 
-### Home & Shop
 <div align="center">
+<p><strong>Android</strong></p>
+<img src="screenshots/android/onboarding.png" width="250" /> <img src="screenshots/android/login.png" width="250" /> <img src="screenshots/android/signup.png" width="250" />
+</div>
+
+### Home & Popular Products
+<div align="center">
+<p><strong>iOS</strong></p>
 <img src="screenshots/ios/Screenshot-home-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-popular-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-brand-portrait.png" width="250" />
 </div>
 
-### Search & Details
 <div align="center">
-<img src="screenshots/ios/Screenshot-search-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-searchresults-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-productdetails-portrait.png" width="250" />
+<p><strong>Android</strong></p>
+<img src="screenshots/android/home.png" width="250" /> <img src="screenshots/android/mostpopular.png" width="250" /> <img src="screenshots/android/brand.png" width="250" />
 </div>
 
-### Product & Cart
+### Product Details & Cart
 <div align="center">
-<img src="screenshots/ios/Screenshot-addtocart-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-addedtocart-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-cart-portrait.png" width="250" />
+<p><strong>iOS</strong></p>
+<img src="screenshots/ios/Screenshot-productdetails-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-addtocart-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-cart-portrait.png" width="250" />
 </div>
 
-### Orders & Tracking
 <div align="center">
+<p><strong>Android</strong></p>
+<img src="screenshots/android/productdetails.png" width="250" /> <img src="screenshots/android/addtocart.png" width="250" /> <img src="screenshots/android/cart.png" width="250" />
+</div>
+
+### Checkout & Orders
+<div align="center">
+<p><strong>iOS</strong></p>
 <img src="screenshots/ios/Screenshot-checkout-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-activeorders-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-completedorders-portrait.png" width="250" />
 </div>
 
-### User & Preferences
 <div align="center">
+<p><strong>Android</strong></p>
+<img src="screenshots/android/checkout.png" width="250" /> <img src="screenshots/android/activeorders.png" width="250" /> <img src="screenshots/android/completedorders.png" width="250" />
+</div>
+
+### Profile & Settings
+<div align="center">
+<p><strong>iOS</strong></p>
 <img src="screenshots/ios/Screenshot-profile-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-settings-portrait.png" width="250" /> <img src="screenshots/ios/Screenshot-wishlist-portrait.png" width="250" />
+</div>
+
+<div align="center">
+<p><strong>Android</strong></p>
+<img src="screenshots/android/prifile.png" width="250" /> <img src="screenshots/android/settings.png" width="250" /> <img src="screenshots/android/wishlist.png" width="250" />
 </div>
 
 ## 🛠 Technologies & Libraries
