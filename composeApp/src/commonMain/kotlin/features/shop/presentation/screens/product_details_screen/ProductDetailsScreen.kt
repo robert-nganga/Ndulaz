@@ -748,7 +748,7 @@ fun ProductInfoSection(
             )
             Spacer(modifier = Modifier.width(5.dp))
             Text(
-                "4.6 (20 reviews)",
+                "${shoe.averageRating} (${shoe.totalReviews} reviews)",
                 style = MaterialTheme.typography.body2
             )
         }
