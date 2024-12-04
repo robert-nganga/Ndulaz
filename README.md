@@ -1,6 +1,6 @@
 # KMP eCommerce App
 
-A cross-platform e-commerce application for shopping the latest footwear, built with Kotlin Multiplatform and Compose Multiplatform. This app offers a smooth shopping experience with essential e-commerce functionalities and a modern UI design, tailored to Android and iOS.
+A cross-platform e-commerce application for shopping the latest footwear, built with Kotlin Multiplatform and Compose Multiplatform. This app offers a smooth shopping experience with essential e-commerce functionalities and a modern UI design, tailored to Android and iOS. [Here](https://github.com/robert-nganga/ndula-postgres-backend) is the Ktor Backend
 
 ## 📱 Features
 
